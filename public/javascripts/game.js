@@ -12,7 +12,7 @@ game_state.main.prototype = {
     },
 
     create: function() { 
-        // Fuction called after 'preload' to setup the game
+        // Function called after 'preload' to setup the game
         this.hello_sprite = game.add.sprite(250, 300, 'hello');
     },
     
