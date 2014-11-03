@@ -2,6 +2,8 @@
 var game = new Phaser.Game(400, 490, Phaser.AUTO, 'game');
 var game_state = {};
 
+var playerData = new PlayerData();
+
 // Creates a new 'main' state that wil contain the game
 game_state.main = function() { };  
 game_state.main.prototype = {
@@ -22,6 +24,9 @@ game_state.main.prototype = {
     },
 };
 
+game_state.water = new WaterMiniGame(playerData);
+
 // Add and start the 'main' state to start the game
 game.state.add('main', game_state.main);  
-game.state.start('main'); 
+game.state.add('water', game_state.water);
+game.state.start('water'); 
