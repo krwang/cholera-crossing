@@ -1,0 +1,9 @@
+function WaterMinigameState() {
+	this.playerData = null;
+};
+
+WaterMinigameState.prototype = {
+  init: function(playerData){
+  	this.playerData = playerData;
+  }
+}
