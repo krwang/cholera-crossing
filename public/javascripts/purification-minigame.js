@@ -1,12 +1,8 @@
-function WaterMinigameState() {
-	this.playerData = null;
+war PurificationMinigame = function(game) {
+	this.game = game;
 };
 
-WaterMinigameState.prototype = {
-
-  	init: function(playerData){
-		this.playerData = playerData;
-  	},
+PurificationMinigame.prototype = {
 
    preload: function() { 
         // Function called first to load all the assets

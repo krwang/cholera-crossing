@@ -1,12 +1,16 @@
 // Initialize Phaser, and creates a 400x490px game
-var game = new Phaser.Game(400, 490, Phaser.AUTO, 'game');
-var game_state = {};
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+var game_state = {
+    main: main,
+    waterCollection: waterCollection,
+    waterPurification: waterPurification,
+};
 
 var playerData = new PlayerData();
 
 // Creates a new 'main' state that wil contain the game
-game_state.main = function() { };  
-game_state.main.prototype = {
+var main = function() { };  
+main.prototype = {
 
     preload: function() { 
         // Function called first to load all the assets
@@ -24,9 +28,11 @@ game_state.main.prototype = {
     },
 };
 
-game_state.water = new WaterMiniGame(playerData);
+game_state.waterPurification = new PurificationMinigame(playerData);
 
 // Add and start the 'main' state to start the game
 game.state.add('main', game_state.main);  
 game.state.add('water', game_state.water);
-game.state.start('water'); 
+game.state.add('waterCollection', waterCollection);
+
+game.state.start('waterPurification'); 
