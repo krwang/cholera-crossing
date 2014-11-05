@@ -1,8 +1,8 @@
 var instructions = "The three families living closest to you need help! " + 
-"The local doctor has seen several of the families over the past few weeks and" + 
+"The local doctor has seen several of the families over the past few weeks and " + 
 "suggests to each of the families that they've come very close to water poisoning. " +
 "Help each family figure out where to collect water and where to excete. Examine each " +
-"location carefully! Make sure to choose locations close to the houses so they families " +
+"location carefully! Make sure to choose locations close to the houses so the families " +
 "don't have to walk too much.";
 
 // Creates a new 'main' state that wil contain the game
