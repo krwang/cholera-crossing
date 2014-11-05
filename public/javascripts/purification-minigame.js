@@ -71,9 +71,10 @@ PurificationMinigame.prototype = {
                 for (var j = 0; j < conveyor.bottles.length; j++) {
                     var bottle = conveyor.bottles[j];
                     if (!bottle.pickedUp) {
-                        bottle.x += 0.7;
-                        if (bottle.x >= 350) {
+                        bottle.x += 1;
+                        if (bottle.x == 350) {
                             if (bottle.key == 'bottle_red') {
+                                conveyor.animal.destroy();
                                 conveyor.animalState < 2 ? conveyor.animalState++ : conveyor.animalState += 0;
                                 if (conveyor.animalState == 2) {
                                     this.gameEnd = true;
@@ -84,6 +85,8 @@ PurificationMinigame.prototype = {
 
                                     this.endGameText = game.add.text(100, 100, "Someone became deathly ill! Your score: " + this.score);
                                     this.endGameText.fill = 'white';
+
+                                    this.endButton = game.add.button(300, 400, 'startButton', endGame, this);
                                 }
                                 else {
                                     conveyor.animal.destroy();
@@ -99,8 +102,8 @@ PurificationMinigame.prototype = {
                         }
                     }
                     else {
-                        bottle.original_x += 0.7;
-                        if (bottle.original_x >= 350) {
+                        bottle.original_x += 1;
+                        if (bottle.original_x == 350) {
                             this.addBottleToConveyor(conveyor, 0, conveyor.position);
                         }
                     }
@@ -154,6 +157,10 @@ PurificationMinigame.prototype = {
 
 function startGame(button) {
     button.destroy();
+}
+
+function endGame(button) {
+    console.log("ending");
 }
 
 function findAndDestroy(bottle, conveyors) {
