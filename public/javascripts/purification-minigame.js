@@ -10,10 +10,10 @@ var PurificationMinigame = function(game) {
 };
 
 var animalStates = ['bottle_green', 'bottle_blue', 'bottle_red'];
-var instructions = "The water purification facility needs your help! The facility has hired new" + 
-                    "employees and they need to be trained about what water needs to be purified" +
+var instructions = "The water purification facility needs your help! The facility has hired new " + 
+                    "employees and they need to be trained about what water needs to be purified " +
                     "and what water can be left untouched. Your goal is to make sure that the people " +
-                    "(currently displayed as water bottles because we haven't made all of our sprites :( )" +
+                    "(currently displayed as water bottles because we haven't made all of our sprites :( ) " +
                     "at the end of the faility lines do not get infected";
 
 PurificationMinigame.prototype = {
@@ -49,20 +49,21 @@ PurificationMinigame.prototype = {
         this.scoreText = game.add.text(0, 0, "Your Score: " + this.score);
 
         this.graphics = game.add.graphics(0, 0);
-        this.graphics.beginFill(0xfff000);
+        this.graphics.beginFill(0x000000);
         this.graphics.drawRect(0, 0, this.game.width, this.game.height);
         this.graphics.endFill();
 
         this.startButton = game.add.button(300, 400, 'startButton', startGame, this);
 
         this.instructionText = game.add.text(50, 50, instructions);
+        this.instructionText.fill = 'white';
         this.instructionText.wordWrap = true;
         this.instructionText.wordWrapWidth = 700;
     },
     
     update: function() {
         // Function called 60 times per second
-        if (!this.startButton.game) {
+        if (!this.startButton.game && !this.gameEnd) {
             this.instructionText.destroy();
             this.graphics.destroy();
             for (var key in this.conveyors) {
@@ -70,22 +71,36 @@ PurificationMinigame.prototype = {
                 for (var j = 0; j < conveyor.bottles.length; j++) {
                     var bottle = conveyor.bottles[j];
                     if (!bottle.pickedUp) {
-                        bottle.x += 1;
-                        if (bottle.x == 350) {
+                        bottle.x += 0.7;
+                        if (bottle.x >= 350) {
                             if (bottle.key == 'bottle_red') {
-                                conveyor.animal.destroy();
                                 conveyor.animalState < 2 ? conveyor.animalState++ : conveyor.animalState += 0;
-                                conveyor.animal = game.add.sprite(450, conveyor.position, animalStates[conveyor.animalState]);
+                                if (conveyor.animalState == 2) {
+                                    this.gameEnd = true;
+                                    this.graphics = game.add.graphics(0, 0);
+                                    this.graphics.beginFill(0x000000);
+                                    this.graphics.drawRect(0, 0, this.game.width, this.game.height);
+                                    this.graphics.endFill();
+
+                                    this.endGameText = game.add.text(100, 100, "Someone became deathly ill! Your score: " + this.score);
+                                    this.endGameText.fill = 'white';
+                                }
+                                else {
+                                    conveyor.animal.destroy();
+                                    conveyor.animal = game.add.sprite(450, conveyor.position, animalStates[conveyor.animalState]);                                    
+                                } 
 
                             }
-                            bottle.destroy();
-                            conveyor.bottles.splice(j, 1);
-                            this.addBottleToConveyor(conveyor, 0, conveyor.position);
+                            if (!this.gameEnd) {
+                                bottle.destroy();
+                                conveyor.bottles.splice(j, 1);
+                                this.addBottleToConveyor(conveyor, 0, conveyor.position);
+                            }
                         }
                     }
                     else {
-                        bottle.original_x += 1;
-                        if (bottle.original_x == 350) {
+                        bottle.original_x += 0.7;
+                        if (bottle.original_x >= 350) {
                             this.addBottleToConveyor(conveyor, 0, conveyor.position);
                         }
                     }
