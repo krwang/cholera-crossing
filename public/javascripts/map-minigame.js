@@ -98,10 +98,10 @@ stage.prototype = {
             }
         } else {
             if (!features[waterSource.name].safeWater(waterSource.x, waterSource.y)) {
-                text += "The " + waterSource.name + " is not a safe location to collect water from. " + features[waterSource.name].explanationWater;
+                text += "The " + features[waterSource.name].name + " is not a safe location to collect water from. " + features[waterSource.name].explanationWater;
             }
             if (!features[excretaSink.name].safeExcreta(excretaSink.x, excretaSink.y)) {
-                text += "\n\n" +  "The " + excretaSink.name + " is not a safe place to defecate. " + features[excretaSink.name].explanationExcreta;
+                text += "\n\n" +  "The " + features[excretaSink.name].name + " is not a safe place to defecate. " + features[excretaSink.name].explanationExcreta;
             }
             createModal(button);
         }
@@ -148,7 +148,7 @@ stage.prototype = {
 
 var features = {
     lake: {
-        name: "Lake",
+        name: "lake",
         description: "This is a description",
         safeWater: function(x, y) {
             return false;
@@ -160,7 +160,7 @@ var features = {
         explanationExcreta: "There's a lot of bacteria in the lake, so it might not be the safest place to go.",
     },
     river: {
-        name: "River",
+        name: "river",
         description: "This is a river.",
         safeWater: function(x, y) {
             return false;
@@ -172,7 +172,7 @@ var features = {
         explanationExcreta: "You don't want to contaminate the river for others -- once the water moves downstream, other families might accidentally drink water from the river and become sick.",
     },
     latrines: {
-        name: "Latrines",
+        name: "latrines",
         description: "These are latrines.",
         safeWater: function(x, y) {
             return false;
@@ -184,7 +184,7 @@ var features = {
         explanationExcreta: "",
     },
     house: {
-        name: "House",
+        name: "house",
         description: "This is a house.",
         safeWater: function(x, y) {
             return false;
@@ -196,7 +196,7 @@ var features = {
         explanationExcreta: "It's better to defecate a little farther away from the house.",
     },
     rustyWater: {
-        name: "Water Fountain",
+        name: "rusty water fountain",
         description: "This is a house.",
         safeWater: function(x, y) {
             return false;
@@ -208,7 +208,7 @@ var features = {
         explanationExcreta: "Probably shouldn't defecate here in the open...",
     },
     dumpster: {
-        name: "Dumpster",
+        name: "dumpster",
         description: "This is a house.",
         safeWater: function(x, y) {
             return false;
@@ -220,7 +220,7 @@ var features = {
         explanationExcreta: "",
     },
     cleanWater: {
-        name: "Drinking Fountain",
+        name: "drinking fountain",
         description: "This is a drinking fountain.",
         safeWater: function(x, y) {
             return true;
