@@ -63,7 +63,7 @@ PurificationMinigame.prototype = {
     
     update: function() {
         // Function called 60 times per second
-        if (!this.startButton.game) {
+        if (!this.startButton.game && !this.gameEnd) {
             this.instructionText.destroy();
             this.graphics.destroy();
             for (var key in this.conveyors) {
@@ -71,22 +71,36 @@ PurificationMinigame.prototype = {
                 for (var j = 0; j < conveyor.bottles.length; j++) {
                     var bottle = conveyor.bottles[j];
                     if (!bottle.pickedUp) {
-                        bottle.x += 1;
-                        if (bottle.x == 350) {
+                        bottle.x += 0.7;
+                        if (bottle.x >= 350) {
                             if (bottle.key == 'bottle_red') {
-                                conveyor.animal.destroy();
                                 conveyor.animalState < 2 ? conveyor.animalState++ : conveyor.animalState += 0;
-                                conveyor.animal = game.add.sprite(450, conveyor.position, animalStates[conveyor.animalState]);
+                                if (conveyor.animalState == 2) {
+                                    this.gameEnd = true;
+                                    this.graphics = game.add.graphics(0, 0);
+                                    this.graphics.beginFill(0x000000);
+                                    this.graphics.drawRect(0, 0, this.game.width, this.game.height);
+                                    this.graphics.endFill();
+
+                                    this.endGameText = game.add.text(100, 100, "Someone became deathly ill! Your score: " + this.score);
+                                    this.endGameText.fill = 'white';
+                                }
+                                else {
+                                    conveyor.animal.destroy();
+                                    conveyor.animal = game.add.sprite(450, conveyor.position, animalStates[conveyor.animalState]);                                    
+                                } 
 
                             }
-                            bottle.destroy();
-                            conveyor.bottles.splice(j, 1);
-                            this.addBottleToConveyor(conveyor, 0, conveyor.position);
+                            if (!this.gameEnd) {
+                                bottle.destroy();
+                                conveyor.bottles.splice(j, 1);
+                                this.addBottleToConveyor(conveyor, 0, conveyor.position);
+                            }
                         }
                     }
                     else {
-                        bottle.original_x += 1;
-                        if (bottle.original_x == 350) {
+                        bottle.original_x += 0.7;
+                        if (bottle.original_x >= 350) {
                             this.addBottleToConveyor(conveyor, 0, conveyor.position);
                         }
                     }
