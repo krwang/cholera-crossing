@@ -58,11 +58,11 @@ stage.prototype = {
         done = game.add.button(25, 25, 'done', this.checkMap);
 
         var instructions = "One of your neighboring families needs your help! " + 
-        "The local doctor has seen several peoplep from their family over the past few weeks and " + 
-        "suggests to each of the families that they've come been drinking contaminated water. " +
-        "Help each family figure out where to collect water and where to defecate. Examine each " +
-        "location carefully! Make sure to choose locations close to the houses so they families " +
-        "don't have to walk too much in the hot weather.";
+        "The local doctor has seen several people from their family over the past few weeks and " + 
+        "guesses that they've come been drinking contaminated water. " +
+        "Help each family figure out where to collect water and where to defecate by dragging the water bucket " +
+        "and the toilet to a new location. Examine each " +
+        "location carefully! Click done when you've chosen your locations!";
         var start = new Phaser.Group(this.game, null, 'instructions', true);
         start.add(new Phaser.Image(this.game, 0, 0, 'black'));
         start.add(new Phaser.Button(this.game, 350, 500, 'done', function(button) {
@@ -74,7 +74,7 @@ stage.prototype = {
             wordWrap: true,
             wordWrapWidth: 750,
         }));
-        start.visible = false;
+        start.visible = true;
     },
     
     update: function() {
