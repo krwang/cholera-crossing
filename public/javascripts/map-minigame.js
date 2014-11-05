@@ -260,6 +260,7 @@ var winModal = function(button) {
     console.log(button.game);
     modal.add(new Phaser.Button(button.game, 650, 100, 'done', function() {
         modal.destroy();
+        game.state.start('main');
     }));
     modal.visible = true;
 }
