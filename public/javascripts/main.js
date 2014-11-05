@@ -15,9 +15,6 @@ main.prototype = {
         game.add.button(325, 25, 'mg2', function() {
             this.game.state.start('waterCollection');
         });
-        game.add.button(525, 25, 'mg3', function() {
-            this.game.state.start('doctorMinigame');
-        });
     },
     
     update: function() {
