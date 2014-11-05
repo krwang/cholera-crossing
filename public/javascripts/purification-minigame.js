@@ -10,10 +10,10 @@ var PurificationMinigame = function(game) {
 };
 
 var animalStates = ['bottle_green', 'bottle_blue', 'bottle_red'];
-var instructions = "The water purification facility needs your help! The facility has hired new" + 
-                    "employees and they need to be trained about what water needs to be purified" +
+var instructions = "The water purification facility needs your help! The facility has hired new " + 
+                    "employees and they need to be trained about what water needs to be purified " +
                     "and what water can be left untouched. Your goal is to make sure that the people " +
-                    "(currently displayed as water bottles because we haven't made all of our sprites :( )" +
+                    "(currently displayed as water bottles because we haven't made all of our sprites :( ) " +
                     "at the end of the faility lines do not get infected";
 
 PurificationMinigame.prototype = {
@@ -49,13 +49,14 @@ PurificationMinigame.prototype = {
         this.scoreText = game.add.text(0, 0, "Your Score: " + this.score);
 
         this.graphics = game.add.graphics(0, 0);
-        this.graphics.beginFill(0xfff000);
+        this.graphics.beginFill(0x000000);
         this.graphics.drawRect(0, 0, this.game.width, this.game.height);
         this.graphics.endFill();
 
         this.startButton = game.add.button(300, 400, 'startButton', startGame, this);
 
         this.instructionText = game.add.text(50, 50, instructions);
+        this.instructionText.fill = 'white';
         this.instructionText.wordWrap = true;
         this.instructionText.wordWrapWidth = 700;
     },
