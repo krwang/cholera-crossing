@@ -1,6 +1,5 @@
 var waterCollection = (function() {
 
-// Creates a new 'main' state that wil contain the game
 var stage = function(game) {
     this.game = game;
 };
@@ -78,7 +77,17 @@ stage.prototype = {
     },
     
     update: function() {
-
+        for (var i = 0; i < featureSprites.length; i++) {
+            feature = featureSprites[i];
+            if (calculateDistance(waterbucket, feature) < 40) {
+                waterbucket.x = feature.x;
+                waterbucket.y = feature.y;
+            }
+            if (calculateDistance(toilet, feature) < 40) {
+                toilet.x = feature.x;
+                toilet.y = feature.y;
+            }
+        }
     },
 
     checkMap: function(button) {
@@ -88,8 +97,6 @@ stage.prototype = {
         if (features[waterSource.name].safeWater() && features[excretaSink.name].safeExcreta()) {
             waterDistance = calculateDistance(house, waterSource);
             excretaDistance = calculateDistance(house, excretaSink);
-            console.log(waterDistance);
-            console.log(excretaDistance);
             if (waterDistance + excretaDistance < 800) {
                 winModal(button);
             } else {
@@ -106,7 +113,6 @@ stage.prototype = {
             createModal(button);
         }
         
-
         function findClosest(feature) {
             shortestDistance = 1000;
             closestFeature = null;
@@ -118,33 +124,8 @@ stage.prototype = {
             }
             return closestFeature;
         }
-
-        function calculateDistance(sprite1, sprite2) {
-            return Math.sqrt(Math.pow(sprite1.x - sprite2.x, 2) + Math.pow(sprite1.y - sprite2.y, 2));
-        }
     },
-
-    createModal: function(button) {
-        var modal = new Phaser.Group(button.game, null, 'modal', true);
-        modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
-        modal.add(new Phaser.Text(button.game, 25, 25, text, {
-            fill: "#ffffff",
-            font: "30px Open Sans",
-            wordWrap: true,
-            wordWrapWidth: 750,
-        }));
-        modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
-            modal.destroy();
-        }));
-        modal.visible = true;
-    },
-
-    endGame: function() {
-        this.game.state.start('waterPurification');
-    }
-
 };
-
 
 var features = {
     lake: {
@@ -263,6 +244,15 @@ var winModal = function(button) {
         game.state.start('main');
     }));
     modal.visible = true;
+}
+
+var calculateDistance = function(sprite1, sprite2) {
+    x1 = sprite1.x + (sprite1.width/2);
+    x2 = sprite2.x + (sprite2.width/2);
+    y1 = sprite1.y + (sprite1.height/2);
+    y2 = sprite2.y + (sprite2.height/2);
+    console.log(x1, x2);
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 }
 
 return stage;
