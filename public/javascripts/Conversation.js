@@ -18,6 +18,13 @@ Conversation.prototype.getDisplayText = function() {
 };
 
 /**
+ * @return {boolean} Can call next without errors
+ */
+Conversation.prototype.canNext = function() {
+  return (!this.isDone()) && (!this.isPlayerChoosing());
+};
+
+/**
  * Advance the conversation
  */
 Conversation.prototype.next = function() {
@@ -45,6 +52,7 @@ Conversation.prototype.chooseChoiceIndex = function(choiceIndex) {
     throw new Error('Player is not currently meant to be choosing');
   }
 
+  this.nextState = this.dialogue.choices[choiceIndex].nextState;
   this.dialogue = this.dialogue.choices[choiceIndex].dialogue;
 };
 
@@ -52,7 +60,14 @@ Conversation.prototype.chooseChoiceIndex = function(choiceIndex) {
  * @return {boolean} Whether the conversation is done
  */
 Conversation.prototype.isDone = function() {
-  return this.dialogue === null;
+  return typeof(this.dialogue) === 'undefined';
+};
+
+/**
+ * @return {boolean} Whether the player is choosing
+ */
+Conversation.prototype.isPlayerChoosing = function() {
+  return this.dialogue && this.dialogue.isPlayerChoosing();
 };
 
 /**
@@ -64,6 +79,23 @@ Conversation.prototype.getChoicesText = function() {
   }
   var choicesText = [];
   for (var i = 0; i < this.dialogue.getChoicesLength(); i++) {
-    choicesText.push(this.dialouge.getChoiceText(i));
+    choicesText.push(this.dialogue.getChoiceText(i));
   }
+  return choicesText;
 };
+
+/**
+ * @return {String} State chosen by the player
+ */
+Conversation.prototype.getNextState = function() {
+  if (!this.isDone()) {
+    throw new Error('getNextState must be called when conversation is done');
+  }
+
+  if (!this.nextState) {
+    throw new Error('Final dialogue choice did not provide a nextState');
+  }
+
+  return this.nextState;
+};
+

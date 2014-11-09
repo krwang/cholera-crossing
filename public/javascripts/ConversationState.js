@@ -1,31 +1,47 @@
+/* jshint browser: true */
+/* global LabelButton, Phaser */
+
 /**
  * Create a new ConversationState
  *
  * @constructor
- * @param {PlayerData} playerData Data passed in from Game State
+ * @param {Phaser.Game} game Global game object
  */
-function ConversationState(playerData) {
+function ConversationState(game) {
+  this.game = game;
+
+  this.x = 10;
+  this.y = this.game.height - 70;
+  this.buttonHeight = 30;
+  this.buttonPadding = 5;
+
   this.playerSprite = null;
   this.npcSprite = null;
-  this.conversation = playerData.getConversation();
-  if (!this.conversation) {
-    this.exit();
-  }
 }
 
 /**
  * Pre-load any assets required by the conversation
  */
 ConversationState.prototype.preload = function() {
+  this.conversation = this.game.playerData.conversation;
+  if (!this.conversation) {
+    throw new Error('ConversationState must be provided a conversation');
+  }
 };
 
 /**
  * Create sprites and other game objects
  */
 ConversationState.prototype.create = function() {
-  this.conversationText = this.game.add.text(this.x, this.y, '');
-  this.playerSprite = this.game.add.sprite('asdf');
-  this.npcSprite = this.game.add.sprite('fdsa');
+  var textStyle = {
+      'font': '16px Arial',
+      'fill': 'black'
+  };
+  this.conversationText = this.game.add.text(this.x, this.y, '', textStyle);
+  // TODO: Draw images for player and npc
+  // this.playerSprite = this.game.add.sprite('asdf');
+  // this.npcSprite = this.game.add.sprite('fdsa');
+  this.updateState();
 };
 
 /**
@@ -37,7 +53,38 @@ ConversationState.prototype.updateState = function() {
   } else if (!this.conversation.isDone()) {
     this.conversationText.text = this.conversation.getDisplayText();
   } else {
-    this.exit();
+    this.game.playerData.conversation = null;
+    this.game.state.start(this.conversation.getNextState());
+  }
+};
+
+/**
+ * Create the choices UI and register event listeners for the eventual choice
+ */
+ConversationState.prototype.displayPlayerChoices = function() {
+  var choicesText = this.conversation.getChoicesText();
+
+  var conversationState = this;
+  var choiceButtons = [];
+
+  function chooseCallback() {
+    console.log('ChooseCallback');
+    conversationState.conversation.chooseChoiceIndex(this.choiceIndex);
+    conversationState.updateState();
+
+    choiceButtons.forEach(function(choiceButton) {
+      choiceButton.destroy();
+    });
+  }
+
+  for (var i = 0; i < choicesText.length; i++) {
+    var x = this.x;
+    var y = this.y + i * (this.buttonHeight + this.buttonPadding);
+    // This will probably leak an insignificant amount of memory
+    var choiceButton = new LabelButton(this.game, x, y, 'button-background',
+                                       choicesText[i], chooseCallback,
+                                       {choiceIndex: i});
+    this.game.add.existing(choiceButton);
   }
 };
 
@@ -45,11 +92,12 @@ ConversationState.prototype.updateState = function() {
  * Update the Conversation
  */
 ConversationState.prototype.update = function() {
-};
-
-/**
- * Exit the conversation
- */
-ConversationState.prototype.exit = function() {
-  this.game.state.start(this.playerData.nextState);
+  if (this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON ||
+      this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACE) ||
+      this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
+    if (this.conversation.canNext()) {
+      this.conversation.next();
+      this.updateState();
+    }
+  }
 };
