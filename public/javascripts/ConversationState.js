@@ -11,7 +11,7 @@ function ConversationState(game) {
   this.game = game;
 
   this.x = 10;
-  this.y = this.game.height - 80;
+  this.y = this.game.height - 96;
   this.buttonHeight = 40;
   this.buttonPadding = 8;
 
@@ -25,6 +25,8 @@ function ConversationState(game) {
 ConversationState.prototype.preload = function() {
   this.game.load.image('button-background',
                        'images/main/conversation-button-background.png');
+  this.game.load.image('text-background',
+                       'images/main/conversation-text-background.png');
 
   this.conversation = this.game.playerData.conversation;
   if (!this.conversation) {
@@ -40,7 +42,8 @@ ConversationState.prototype.create = function() {
       'font': '16px Arial',
       'fill': 'black'
   };
-  this.conversationText = this.game.add.text(this.x, this.y, '', textStyle);
+  this.textBackground = this.game.add.image(this.x, this.y, 'text-background');
+  this.text = this.game.add.text(this.x + 5, this.y + 5, '', textStyle);
   // TODO: Draw images for player and npc
   // this.playerSprite = this.game.add.sprite('asdf');
   // this.npcSprite = this.game.add.sprite('fdsa');
@@ -52,9 +55,17 @@ ConversationState.prototype.create = function() {
  */
 ConversationState.prototype.updateState = function() {
   if (this.conversation.isPlayerChoosing()) {
+    this.text.visible = false;
+    this.textBackground.visible = false;
+    // this.choicesGroup.visible = true;
+
     this.displayPlayerChoices();
   } else if (!this.conversation.isDone()) {
-    this.conversationText.text = this.conversation.getDisplayText();
+    this.text.visible = true;
+    this.textBackground.visible = true;
+    // this.choicesGroup.visible = false;
+
+    this.text.text = this.conversation.getDisplayText();
   } else {
     this.game.playerData.conversation = null;
     this.game.state.start(this.conversation.getNextState());
