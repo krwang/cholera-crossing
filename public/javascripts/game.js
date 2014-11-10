@@ -20,8 +20,8 @@ game.playerData = new PlayerData();
 
 // Add all registered states to the game object
 Object.keys(gameStates).forEach(function(stateName) {
-  var constructedState = new gameStates[stateName](game);
-  game.state.add(stateName, constructedState);
+  var stateConstructor = gameStates[stateName];
+  game.state.add(stateName, stateConstructor);
 });
 
 game.state.start('villageState');
