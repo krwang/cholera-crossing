@@ -1,5 +1,5 @@
 /* jshint browser: true */
-/* global LabelButton, Phaser */
+/* global GradualText, LabelButton, Phaser */
 
 /**
  * Create a new ConversationState
@@ -43,7 +43,9 @@ ConversationState.prototype.create = function() {
       'fill': 'black'
   };
   this.textBackground = this.game.add.image(this.x, this.y, 'text-background');
-  this.text = this.game.add.text(this.x + 5, this.y + 5, '', textStyle);
+  this.text = new GradualText(this.game, this.x + 5, this.y + 5, '', textStyle);
+  this.game.add.existing(this.text);
+
   // TODO: Draw images for player and npc
   // this.playerSprite = this.game.add.sprite('asdf');
   // this.npcSprite = this.game.add.sprite('fdsa');
@@ -65,7 +67,8 @@ ConversationState.prototype.updateState = function() {
     this.textBackground.visible = true;
     // this.choicesGroup.visible = false;
 
-    this.text.text = this.conversation.getDisplayText();
+    this.text.hiddenText = this.conversation.getDisplayText();
+    this.text.resetProgress();
   } else {
     this.game.playerData.conversation = null;
     this.game.state.start(this.conversation.getNextState());
@@ -105,10 +108,11 @@ ConversationState.prototype.displayPlayerChoices = function() {
  * Update the Conversation
  */
 ConversationState.prototype.update = function() {
+  console.log('ConversationState.update');
   if (this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON ||
-      this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACE) ||
+      this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
-    if (this.conversation.canNext()) {
+    if (this.text.isDone() && this.conversation.canNext()) {
       this.conversation.next();
       this.updateState();
     }

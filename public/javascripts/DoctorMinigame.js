@@ -29,7 +29,7 @@ DoctorMinigame.prototype = {
       this.cat4.scale.y = 0.5;
 
       var start = new Phaser.Group(this.game, null, 'instructions', true);
-      this.instructionsText = new Phaser.Text(this.game, 25, 25, doctorText1, {
+      this.instructionsText = new GradualText(this.game, 400, 300, doctorText1, {
           fill: "#000000",
           font: "12px Open Sans",
           wordWrap: true,
