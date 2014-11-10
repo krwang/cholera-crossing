@@ -160,7 +160,7 @@ function startGame(button) {
 }
 
 function endGame(button) {
-    console.log("ending");
+  this.game.state.start('villageState');
 }
 
 function findAndDestroy(bottle, conveyors) {

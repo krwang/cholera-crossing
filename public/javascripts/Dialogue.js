@@ -1,32 +1,16 @@
 /* jshint browser: true */
 /* exported Dialogue */
-/* global ConversationState */
 
 /**
  * Create a new dialogue involving the npc saying text and the player
  * responding with one of the choices.
  * @constructor
- * @param {String} text
+ * @param {Array<String>} displayTexts Text to display at each step
  * @param {Array<String>} choices
  */
-function Dialogue(text, choices) {
-  this.text = text;
-  this.displayTexts = [];
+function Dialogue(displayTexts, choices) {
+  this.displayTexts = displayTexts;
   this.displayIndex = 0;
-
-  var displayIndex = 0;
-  var words = this.text.split(' ');
-  for (var i = 0; i < this.words.length; i++) {
-    var displayText = [];
-    var displayLength = 0;
-    while (displayLength < ConversationState.maxLength) {
-      displayText.push(words[i]);
-      displayLength += words[i].length;
-      i++;
-    }
-    this.displayTexts[displayIndex] = displayText.join(' ');
-    displayIndex++;
-  }
   this.choices = choices;
 }
 
@@ -43,7 +27,7 @@ Dialogue.prototype.next = function() {
  */
 Dialogue.prototype.getDisplayText = function() {
   if (!this.isPlayerChoosing()) {
-    return this.displayText[this.displayIndex];
+    return this.displayTexts[this.displayIndex];
   }
   throw new Error('Index passed into getDisplayText is out of bounds, the' +
       ' player should be choosing their action.');
@@ -61,7 +45,7 @@ Dialogue.prototype.getChoicesLength = function() {
  * @return {String} Display text of choice
  */
 Dialogue.prototype.getChoiceText = function(index) {
-  return this.choices[index].getText();
+  return this.choices[index].text;
 };
 
 /**
@@ -69,6 +53,6 @@ Dialogue.prototype.getChoiceText = function(index) {
  *                   displayed at this time
  */
 Dialogue.prototype.isPlayerChoosing = function() {
-  return this.displayIndex >= this.displayText.length;
+  return this.displayIndex >= this.displayTexts.length;
 };
 
