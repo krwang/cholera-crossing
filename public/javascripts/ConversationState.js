@@ -11,9 +11,9 @@ function ConversationState(game) {
   this.game = game;
 
   this.x = 10;
-  this.y = this.game.height - 70;
-  this.buttonHeight = 30;
-  this.buttonPadding = 5;
+  this.y = this.game.height - 80;
+  this.buttonHeight = 40;
+  this.buttonPadding = 8;
 
   this.playerSprite = null;
   this.npcSprite = null;
@@ -23,6 +23,9 @@ function ConversationState(game) {
  * Pre-load any assets required by the conversation
  */
 ConversationState.prototype.preload = function() {
+  this.game.load.image('button-background',
+                       'images/main/conversation-button-background.png');
+
   this.conversation = this.game.playerData.conversation;
   if (!this.conversation) {
     throw new Error('ConversationState must be provided a conversation');
@@ -68,7 +71,6 @@ ConversationState.prototype.displayPlayerChoices = function() {
   var choiceButtons = [];
 
   function chooseCallback() {
-    console.log('ChooseCallback');
     conversationState.conversation.chooseChoiceIndex(this.choiceIndex);
     conversationState.updateState();
 
@@ -78,7 +80,7 @@ ConversationState.prototype.displayPlayerChoices = function() {
   }
 
   for (var i = 0; i < choicesText.length; i++) {
-    var x = this.x;
+    var x = this.game.width / 2;
     var y = this.y + i * (this.buttonHeight + this.buttonPadding);
     // This will probably leak an insignificant amount of memory
     var choiceButton = new LabelButton(this.game, x, y, 'button-background',
