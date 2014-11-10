@@ -1,5 +1,5 @@
 var StoryboardScreen = function(thisScreen, textCompleteBeforeNext) {
-  var screen = new Phaser.Group(thisScreen.game, thisScreen.parent, thisScreen.name+"Storyboard", true);
+  var screen = new Phaser.Group(thisScreen.game, null, thisScreen.name+"Storyboard", true);
   screen.add(thisScreen);
 
   screen.textCompleteBeforeNext = textCompleteBeforeNext;
@@ -9,9 +9,9 @@ var StoryboardScreen = function(thisScreen, textCompleteBeforeNext) {
   	var screen = this;
 
   	this.add(new Phaser.Button(this.game,
-  		  300,
-  		  400,
-        'waterbucket',
+  		  100,
+  		  200,
+        'left_arrow',
 	  		function() {
 	  		  screen.showPreviousScreen();
 	  	  }
@@ -24,8 +24,8 @@ var StoryboardScreen = function(thisScreen, textCompleteBeforeNext) {
   	var screen = this;
   	this.add(new Phaser.Button(this.game,
   		  500,
-  		  400,
-        'waterbucket',
+  		  200,
+        'right_arrow',
 	  		function() {
 	  		  screen.showNextScreen();;
 	  	  }

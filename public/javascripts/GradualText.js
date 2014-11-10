@@ -19,5 +19,5 @@ var GradualText = function(game, x, y, text, style){
 };
 
 // static scroll speed constants
-GradualText.NORMAL_SCROLL = 0.002;
-GradualText.FAST_SCROLL = 0.005;
+GradualText.NORMAL_SCROLL = 0.02;
+GradualText.FAST_SCROLL = 0.05;
