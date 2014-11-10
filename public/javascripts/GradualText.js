@@ -1,7 +1,9 @@
 /* global Phaser */
 
 function GradualText(game, x, y, text, style) {
+  console.log('here1');
   Phaser.Text.call(this, game, x, y, '', style);
+  console.log('here2');
   this.hiddenText = text;
   this.displayProgress = 0;
 }
@@ -45,7 +47,7 @@ GradualText.prototype.update = function(time) {
  * @return {boolean} If the scrolling has completed
  */
 GradualText.prototype.isDone = function() {
-  return this.displayProgress >= 1;
+  return this.displayProgress >= this.hiddenText.length;
 };
 
 /** Normal scrolling rate */

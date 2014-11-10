@@ -9,7 +9,7 @@ var StoryboardScreen = function(thisScreen, textCompleteBeforeNext) {
   	var screen = this;
 
   	this.add(new Phaser.Button(this.game,
-  		  100,
+  		  20,
   		  200,
         'left_arrow',
 	  		function() {
@@ -23,7 +23,7 @@ var StoryboardScreen = function(thisScreen, textCompleteBeforeNext) {
   	this.nextScreen = nextScreen;
   	var screen = this;
   	this.add(new Phaser.Button(this.game,
-  		  500,
+  		  780 - 50,
   		  200,
         'right_arrow',
 	  		function() {

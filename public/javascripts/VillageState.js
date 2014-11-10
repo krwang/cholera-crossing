@@ -34,6 +34,15 @@ function VillageState(game) {
         nextState: 'waterCollection'},
        {text: 'On second thought nah', nextState: 'villageState'}]
   ));
+
+  this.doctorMinigameDialogue = new Conversation(new Dialogue(
+      ['I have been getting quite a few patients lately! It must be related \n' + 
+       'to this monster that everyone is talking about. Would you like to help \n' + 
+       'me take a look at these patients?'],
+      [{text: 'Yes, I\'m curious to know what is happening',
+        nextState: 'doctorMinigame'},
+       {text: 'No, I have other things to investigate', nextState: 'villageState'}]
+  ));
 }
 
 /**
@@ -57,6 +66,11 @@ VillageState.prototype.create = function() {
 
   this.game.add.button(325, 25, 'mg2', function() {
     this.game.playerData.conversation = self.waterCollectionDialogue;
+    this.game.state.start('conversationState');
+  });
+
+  this.game.add.button(525, 25, 'mg3', function() {
+    this.game.playerData.conversation = self.doctorMinigameDialogue;
     this.game.state.start('conversationState');
   });
 };
