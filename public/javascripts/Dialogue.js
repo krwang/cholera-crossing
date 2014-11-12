@@ -15,9 +15,20 @@ function Dialogue(displayTexts, choices) {
 }
 
 /**
+ * @return {boolean} Can call next without errors
+ */
+Dialogue.prototype.canNext = function() {
+  return !this.isPlayerChoosing();
+};
+
+/**
  * Advance the dialogue
  */
 Dialogue.prototype.next = function() {
+  if (this.isPlayerChoosing()) {
+    throw new Error('Player must choose before advancing dialogue');
+  }
+
   this.displayIndex++;
 };
 
@@ -41,18 +52,53 @@ Dialogue.prototype.getChoicesLength = function() {
 };
 
 /**
- * @param {number} index Choice index for text retrieval
- * @return {String} Display text of choice
+ * @return {Array<String>} List of the text of all available choices
  */
-Dialogue.prototype.getChoiceText = function(index) {
-  return this.choices[index].text;
+Dialogue.prototype.getChoicesText = function() {
+  if (!this.isPlayerChoosing()) {
+    throw new Error('Player is not currently meant to be choosing');
+  }
+  return this.choices.map(function(choice) {
+    return choice.text;
+  });
 };
+
 
 /**
  * @return {boolean} Whether the dialogue expects the player choices to be
  *                   displayed at this time
  */
 Dialogue.prototype.isPlayerChoosing = function() {
-  return this.displayIndex >= this.displayTexts.length;
+  return this.canPlayerChoose() &&
+         ((!this.displayTexts) ||
+           this.displayIndex >= this.displayTexts.length);
+};
+
+/**
+ * Whether the player can choose
+ * @return {boolean}
+ */
+Dialogue.prototype.canPlayerChoose = function() {
+  return !!this.choices;
+};
+
+/**
+ * Choose a choice from the available player dialogue choices
+ * @param {number} choiceIndex
+ * @return {Dialogue} Next dialogue, if applicable
+ */
+Dialogue.prototype.chooseChoiceIndex = function(choiceIndex) {
+  if (choiceIndex < 0 || choiceIndex >= this.getChoicesLength()) {
+    throw new Error('Choice index out of bounds');
+  }
+
+  if (!this.isPlayerChoosing()) {
+    throw new Error('Player is not currently meant to be choosing');
+  }
+
+  return {
+    dialogue: this.choices[choiceIndex].dialogue,
+    nextState: this.choices[choiceIndex].nextState
+  };
 };
 

@@ -1,12 +1,12 @@
 /* global VillageState, WaterCollection, PurificationMinigame, DoctorMinigame */
-/* global Phaser, PlayerData, ConversationState */
+/* global Phaser, PlayerData, DialogueState */
 
 
 // Initialize Phaser and create a game
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', null, true);
 
 var gameStates = {
-  conversationState: ConversationState,
+  dialogueState: DialogueState,
   villageState: VillageState,
   waterCollection: WaterCollection,
   waterPurification: PurificationMinigame,

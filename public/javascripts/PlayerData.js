@@ -9,5 +9,5 @@ function PlayerData() {
   this.location = null;
   this.completedGames = [];
   this.inventory = [];
-  this.conversation = null;
+  this.dialogue = null;
 }
