@@ -14,7 +14,7 @@ var instructions = "The water purification facility needs your help! The facilit
                     "employees and they need to be trained about what water needs to be purified " +
                     "and what water can be left untouched. Your goal is to make sure that the people " +
                     "(currently displayed as water bottles because we haven't made all of our sprites :( ) " +
-                    "at the end of the faility lines do not get infected";
+                    "at the end of the facility lines do not get infected";
 
 PurificationMinigame.prototype = {
 
@@ -160,7 +160,7 @@ function startGame(button) {
 }
 
 function endGame(button) {
-    console.log("ending");
+    game.state.start('main');
 }
 
 function findAndDestroy(bottle, conveyors) {
