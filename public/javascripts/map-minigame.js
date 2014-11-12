@@ -1,6 +1,5 @@
-var waterCollection = (function() {
+var WaterCollection = (function() {
 
-// Creates a new 'main' state that wil contain the game
 var stage = function(game) {
     this.game = game;
 };
@@ -78,7 +77,17 @@ stage.prototype = {
     },
     
     update: function() {
-
+        for (var i = 0; i < featureSprites.length; i++) {
+            feature = featureSprites[i];
+            if (calculateDistance(waterbucket, feature) < 40) {
+                waterbucket.x = feature.x;
+                waterbucket.y = feature.y;
+            }
+            if (calculateDistance(toilet, feature) < 40) {
+                toilet.x = feature.x;
+                toilet.y = feature.y;
+            }
+        }
     },
 
     checkMap: function(button) {
@@ -88,8 +97,6 @@ stage.prototype = {
         if (features[waterSource.name].safeWater() && features[excretaSink.name].safeExcreta()) {
             waterDistance = calculateDistance(house, waterSource);
             excretaDistance = calculateDistance(house, excretaSink);
-            console.log(waterDistance);
-            console.log(excretaDistance);
             if (waterDistance + excretaDistance < 800) {
                 winModal(button);
             } else {
@@ -98,15 +105,14 @@ stage.prototype = {
             }
         } else {
             if (!features[waterSource.name].safeWater(waterSource.x, waterSource.y)) {
-                text += "The " + waterSource.name + " is not a safe location to collect water from. " + features[waterSource.name].explanationWater;
+                text += "The " + features[waterSource.name].name + " is not a safe location to collect water from. " + features[waterSource.name].explanationWater;
             }
             if (!features[excretaSink.name].safeExcreta(excretaSink.x, excretaSink.y)) {
-                text += "\n\n" +  "The " + excretaSink.name + " is not a safe place to defecate. " + features[excretaSink.name].explanationExcreta;
+                text += "\n\n" +  "The " + features[excretaSink.name].name + " is not a safe place to defecate. " + features[excretaSink.name].explanationExcreta;
             }
             createModal(button);
         }
         
-
         function findClosest(feature) {
             shortestDistance = 1000;
             closestFeature = null;
@@ -118,37 +124,12 @@ stage.prototype = {
             }
             return closestFeature;
         }
-
-        function calculateDistance(sprite1, sprite2) {
-            return Math.sqrt(Math.pow(sprite1.x - sprite2.x, 2) + Math.pow(sprite1.y - sprite2.y, 2));
-        }
     },
-
-    createModal: function(button) {
-        var modal = new Phaser.Group(button.game, null, 'modal', true);
-        modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
-        modal.add(new Phaser.Text(button.game, 25, 25, text, {
-            fill: "#ffffff",
-            font: "30px Open Sans",
-            wordWrap: true,
-            wordWrapWidth: 750,
-        }));
-        modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
-            modal.destroy();
-        }));
-        modal.visible = true;
-    },
-
-    endGame: function() {
-        this.game.state.start('waterPurification');
-    }
-
 };
-
 
 var features = {
     lake: {
-        name: "Lake",
+        name: "lake",
         description: "This is a description",
         safeWater: function(x, y) {
             return false;
@@ -160,7 +141,7 @@ var features = {
         explanationExcreta: "There's a lot of bacteria in the lake, so it might not be the safest place to go.",
     },
     river: {
-        name: "River",
+        name: "river",
         description: "This is a river.",
         safeWater: function(x, y) {
             return false;
@@ -172,7 +153,7 @@ var features = {
         explanationExcreta: "You don't want to contaminate the river for others -- once the water moves downstream, other families might accidentally drink water from the river and become sick.",
     },
     latrines: {
-        name: "Latrines",
+        name: "latrines",
         description: "These are latrines.",
         safeWater: function(x, y) {
             return false;
@@ -184,7 +165,7 @@ var features = {
         explanationExcreta: "",
     },
     house: {
-        name: "House",
+        name: "house",
         description: "This is a house.",
         safeWater: function(x, y) {
             return false;
@@ -196,7 +177,7 @@ var features = {
         explanationExcreta: "It's better to defecate a little farther away from the house.",
     },
     rustyWater: {
-        name: "Water Fountain",
+        name: "rusty water fountain",
         description: "This is a house.",
         safeWater: function(x, y) {
             return false;
@@ -208,7 +189,7 @@ var features = {
         explanationExcreta: "Probably shouldn't defecate here in the open...",
     },
     dumpster: {
-        name: "Dumpster",
+        name: "dumpster",
         description: "This is a house.",
         safeWater: function(x, y) {
             return false;
@@ -220,7 +201,7 @@ var features = {
         explanationExcreta: "",
     },
     cleanWater: {
-        name: "Drinking Fountain",
+        name: "drinking fountain",
         description: "This is a drinking fountain.",
         safeWater: function(x, y) {
             return true;
@@ -260,8 +241,18 @@ var winModal = function(button) {
     console.log(button.game);
     modal.add(new Phaser.Button(button.game, 650, 100, 'done', function() {
         modal.destroy();
+        game.state.start('villageState');
     }));
     modal.visible = true;
+}
+
+var calculateDistance = function(sprite1, sprite2) {
+    x1 = sprite1.x + (sprite1.width/2);
+    x2 = sprite2.x + (sprite2.width/2);
+    y1 = sprite1.y + (sprite1.height/2);
+    y2 = sprite2.y + (sprite2.height/2);
+    console.log(x1, x2);
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 }
 
 return stage;

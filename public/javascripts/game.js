@@ -1,19 +1,27 @@
-// Initialize Phaser, and creates a 400x490px game
+/* global VillageState, WaterCollection, PurificationMinigame, DoctorMinigame */
+/* global Phaser, PlayerData, ConversationState */
+
+
+// Initialize Phaser and create a game
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', null, true);
-var game_state = {
-    main: main,
-    waterCollection: waterCollection,
-    waterPurification: waterPurification,
-    doctorMinigame: doctorMinigame
+
+var gameStates = {
+  conversationState: ConversationState,
+  villageState: VillageState,
+  waterCollection: WaterCollection,
+  waterPurification: PurificationMinigame,
+  doctorMinigame: DoctorMinigame
 };
 
-var waterPurification = new PurificationMinigame(game);
-var doctorMinigame = new DoctorMinigame(game);
+/**
+ * Game-global registry of player-related data
+ */
+game.playerData = new PlayerData();
 
-// Add and start the 'main' state to start the game
-game.state.add('main', game_state.main);  
-game.state.add('waterPurification', waterPurification);
-game.state.add('waterCollection', waterCollection);
-game.state.add('doctorMinigame', doctorMinigame);
+// Add all registered states to the game object
+Object.keys(gameStates).forEach(function(stateName) {
+  var stateConstructor = gameStates[stateName];
+  game.state.add(stateName, stateConstructor);
+});
 
-game.state.start('main');
+game.state.start('villageState');
