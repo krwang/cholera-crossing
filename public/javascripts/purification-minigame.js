@@ -9,23 +9,27 @@ var PurificationMinigame = function(game) {
     this.score = 0;
 };
 
-var animalStates = ['bottle_green', 'bottle_blue', 'bottle_red'];
+var animalStates = ['healthy_bear', 'sick_bear', 'very_sick_bear'];
 var instructions = "The water purification facility needs your help! The facility has hired new " + 
                     "employees and they need to be trained about what water needs to be purified " +
-                    "and what water can be left untouched. Your goal is to make sure that the people " +
-                    "(currently displayed as water bottles because we haven't made all of our sprites :( ) " +
-                    "at the end of the faility lines do not get infected";
+                    "and what water can be left untouched. Your goal is to make sure that the animals " +
+                    "at the end of the facility lines do not get infected. The three types of water are " +
+                    "shown below.";
 
 PurificationMinigame.prototype = {
 
    preload: function() { 
         // Function called first to load all the assets
-        game.load.image('bottle_blue', 'images/water_minigame/bottle_blue.png');
-        game.load.image('bottle_red', 'images/water_minigame/bottle_red.png');
-        game.load.image('bottle_green', 'images/water_minigame/bottle_green.png');
-        game.load.image('water_bottle_diagram', 'images/water_minigame/water_bottle_diagram.png');
-        game.load.image('conveyor_belt', 'images/water_minigame/conveyor_belt.png');
-        game.load.image('boiling_pot', 'images/water_minigame/boiling_pot.png');
+        game.load.image('bottle_blue', 'images/filtration_minigame/bottle_blue.png');
+        game.load.image('bottle_red', 'images/filtration_minigame/bottle_red.png');
+        game.load.image('bottle_green', 'images/filtration_minigame/bottle_green.png');
+        game.load.image('water_bottle_diagram', 'images/filtration_minigame/water_bottle_diagram.png');
+        game.load.image('conveyor_belt', 'images/filtration_minigame/conveyor_belt.png');
+        game.load.image('boiling_pot', 'images/filtration_minigame/boiling_pot.png');
+        game.load.image('healthy_bear', 'images/filtration_minigame/healthy_bear.png');
+        game.load.image('sick_bear', 'images/filtration_minigame/sick_bear.png');
+        game.load.image('very_sick_bear', 'images/filtration_minigame/very_sick_bear.png');
+
 
         game.load.image('startButton', 'images/collection_minigame/done.png');
     },
@@ -56,6 +60,7 @@ PurificationMinigame.prototype = {
         this.startButton = game.add.button(300, 400, 'startButton', startGame, this);
 
         this.instructionText = game.add.text(50, 50, instructions);
+        this.instructionKey = game.add.sprite(550, 275, 'water_bottle_diagram');
         this.instructionText.fill = 'white';
         this.instructionText.wordWrap = true;
         this.instructionText.wordWrapWidth = 700;
@@ -66,53 +71,79 @@ PurificationMinigame.prototype = {
         if (!this.startButton.game && !this.gameEnd) {
             this.instructionText.destroy();
             this.graphics.destroy();
-            for (var key in this.conveyors) {
-                var conveyor = this.conveyors[key];
-                for (var j = 0; j < conveyor.bottles.length; j++) {
+            this.updateAllBottles(this.conveyors);
+        }
+    },
+
+    updateAllBottles: function(conveyors) {
+        for (var key in conveyors) {
+            var conveyor = conveyors[key];
+            for (var j = 0; j < conveyor.bottles.length; j++) {
+                if (!this.gameEnd) {
                     var bottle = conveyor.bottles[j];
                     if (!bottle.pickedUp) {
-                        bottle.x += 1;
-                        if (bottle.x == 350) {
-                            if (bottle.key == 'bottle_red') {
-                                conveyor.animal.destroy();
-                                conveyor.animalState < 2 ? conveyor.animalState++ : conveyor.animalState += 0;
-                                if (conveyor.animalState == 2) {
-                                    this.gameEnd = true;
-                                    this.graphics = game.add.graphics(0, 0);
-                                    this.graphics.beginFill(0x000000);
-                                    this.graphics.drawRect(0, 0, this.game.width, this.game.height);
-                                    this.graphics.endFill();
-
-                                    this.endGameText = game.add.text(100, 100, "Someone became deathly ill! Your score: " + this.score);
-                                    this.endGameText.fill = 'white';
-
-                                    this.endButton = game.add.button(300, 400, 'startButton', endGame, this);
-                                }
-                                else {
-                                    conveyor.animal.destroy();
-                                    conveyor.animal = game.add.sprite(450, conveyor.position, animalStates[conveyor.animalState]);                                    
-                                } 
-
-                            }
-                            if (!this.gameEnd) {
-                                bottle.destroy();
-                                conveyor.bottles.splice(j, 1);
-                                this.addBottleToConveyor(conveyor, 0, conveyor.position);
-                            }
-                        }
+                        this.advanceBottle(conveyor, bottle, j);
                     }
                     else {
                         bottle.original_x += 1;
                         if (bottle.original_x == 350) {
                             this.addBottleToConveyor(conveyor, 0, conveyor.position);
                         }
-                    }
+                    }                   
                 }
+
             }
         }
     },
 
+    advanceBottle: function(conveyor, bottle, bottle_index) {
+        bottle.x += 1;
+        if (bottle.x == 350) {
+            if (bottle.key == 'bottle_red') {
+                 this.contaminateAnimal(conveyor);
+            }
+            else if (bottle.key == 'bottle_blue') {
+                if (Math.random() >= 0.9) {
+                    this.contaminateAnimal(conveyor);
+                }
+            }
+            if (!this.gameEnd) {
+                bottle.destroy();
+                conveyor.bottles.splice(bottle_index, 1);
+                this.addBottleToConveyor(conveyor, 0, conveyor.position);
+            }
+        }
+    },
+
+    contaminateAnimal: function(conveyor) {
+        conveyor.animal.destroy();
+        conveyor.animalState <= 2 ? conveyor.animalState++ : conveyor.animalState += 0;
+        if (conveyor.animalState > 2) {
+            this.endGame();
+        }
+        else {
+            conveyor.animal.destroy();
+            conveyor.animal = game.add.sprite(450, conveyor.position, animalStates[conveyor.animalState]);                                    
+        }
+    },
+
+    endGame: function() {
+        this.gameEnd = true;
+        this.graphics = game.add.graphics(0, 0);
+        this.graphics.beginFill(0x000000);
+        this.graphics.drawRect(0, 0, this.game.width, this.game.height);
+        this.graphics.endFill();
+
+        this.endGameText = game.add.text(100, 100, "A bear became deathly ill! Your score: " + this.score);
+        this.endGameText.fill = 'white';
+
+        this.endButton = game.add.button(300, 400, 'startButton', endGame, this);
+    },
+
     addBottleToConveyor: function(conveyor, x, y) {
+        if (conveyor.bottles[0] && conveyor.bottles[0].x <= x + 40) {
+            x -= 40;
+        }
         var bottle = game.add.sprite(x, y, randomBottle());
 
         bottle.inputEnabled = true;
@@ -157,10 +188,12 @@ PurificationMinigame.prototype = {
 
 function startGame(button) {
     button.destroy();
+    this.instructionKey.destroy();
 }
 
 function endGame(button) {
-  this.game.state.start('villageState');
+    this.gameEnd = false;
+    this.game.state.start('villageState');
 }
 
 function findAndDestroy(bottle, conveyors) {
