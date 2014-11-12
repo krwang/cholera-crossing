@@ -1,4 +1,4 @@
-var doctorText1 = "Hi my name is Jeffery!";
+
 
 var DoctorMinigame = function(game) {
 	this.game = game;
@@ -29,9 +29,9 @@ DoctorMinigame.prototype = {
       this.cat4.scale.y = 0.5;
 
       var start = new Phaser.Group(this.game, null, 'instructions', true);
-      this.instructionsText = new GradualText(this.game, 400, 300, doctorText1, {
+      this.instructionsText = new GradualText(this.game, 400, 300, DoctorMinigameDialogues.player_npc1_player_1, {
           fill: "#000000",
-          font: "12px Open Sans",
+          font: "16px Open Sans",
           wordWrap: true,
           wordWrapWidth: 750,
       });
