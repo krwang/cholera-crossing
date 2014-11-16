@@ -5,11 +5,11 @@
  * Create a new dialogue involving the npc saying text and the player
  * responding with one of the choices.
  * @constructor
- * @param {Array<String>} displayTexts Text to display at each step
+ * @param {Array<Object>} displays Text and other things to display at each step
  * @param {Array<String>} choices
  */
-function Dialogue(displayTexts, choices) {
-  this.displayTexts = displayTexts;
+function Dialogue(displays, choices) {
+  this.displays = displays;
   this.displayIndex = 0;
   this.choices = choices;
 }
@@ -38,11 +38,29 @@ Dialogue.prototype.next = function() {
  */
 Dialogue.prototype.getDisplayText = function() {
   if (!this.isPlayerChoosing()) {
-    return this.displayTexts[this.displayIndex];
+    var display = this.displayTexts[this.displayIndex];
+    if (typeof(display) == 'string') {
+      return display;
+    }
+    return display.text;
   }
   throw new Error('Index passed into getDisplayText is out of bounds, the' +
       ' player should be choosing their action.');
 };
+
+/**
+ * Get the current group to display
+ * @return {Phaser.Group}
+ */
+Dialogue.prototype.getDisplayGroup = function() {
+  if (!this.isPlayerChoosing()) {
+    var display = this.displayTexts[this.displayIndex];
+    return display.group;
+  }
+  throw new Error('Index passed into getDisplayText is out of bounds, the' +
+      ' player should be choosing their action.');
+};
+
 
 /**
  * @return {number} The amount of choices available to the player.
