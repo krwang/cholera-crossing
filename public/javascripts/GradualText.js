@@ -24,29 +24,22 @@ GradualText.prototype.advanceText = function() {
  * Update the scrolling position. Should be called every frame.
  */
 GradualText.prototype.update = function() {
-  console.log('GradualText.update');
   var time = this.game.time.now;
 
   if (!this.visible) {
-    console.log('Invisible');
-    this.displayProgress = 0;
-    this.text = '';
+    this.resetProgress();
     return;
   }
 
   if (!this.isDone()) {
-    console.log('Maybe advancing');
     var scrollQuickly = this.game.input.keyboard.isDown(
         Phaser.Keyboard.SPACEBAR
     );
     var scrollRate = scrollQuickly ? GradualText.FAST_SCROLL :
                                      GradualText.NORMAL_SCROLL;
     if (time - this.lastUpdate > scrollRate) {
-      console.log('Scroll!');
       this.advanceText();
       this.lastUpdate = time;
-    } else {
-      console.log('No scroll!');
     }
   }
 };
@@ -55,7 +48,6 @@ GradualText.prototype.update = function() {
  * @return {boolean} If the scrolling has completed
  */
 GradualText.prototype.isDone = function() {
-  console.log(this.displayProgress + ' ? ' + this.hiddenText.length);
   return this.displayProgress >= this.hiddenText.length;
 };
 
