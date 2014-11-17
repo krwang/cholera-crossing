@@ -10,10 +10,9 @@
 function DialogueState(game) {
   this.game = game;
 
-  this.nextState = '';
   var dialogueState = this;
-  this.dialogueView = new DialogueView(this.game, function() {
-    dialogueState.game.state.start(dialogueState.nextState);
+  this.dialogueView = new DialogueView(this.game, function(result) {
+    dialogueState.game.state.start(result.nextState);
   });
 }
 

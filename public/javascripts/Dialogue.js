@@ -38,7 +38,7 @@ Dialogue.prototype.next = function() {
  */
 Dialogue.prototype.getDisplayText = function() {
   if (!this.isPlayerChoosing()) {
-    var display = this.displayTexts[this.displayIndex];
+    var display = this.displays[this.displayIndex];
     if (typeof(display) == 'string') {
       return display;
     }
@@ -53,12 +53,11 @@ Dialogue.prototype.getDisplayText = function() {
  * @return {Phaser.Group}
  */
 Dialogue.prototype.getDisplayGroup = function() {
-  if (!this.isPlayerChoosing()) {
-    var display = this.displayTexts[this.displayIndex];
+  if (this.displayIndex < this.displays.length) {
+    var display = this.displays[this.displayIndex];
     return display.group;
   }
-  throw new Error('Index passed into getDisplayText is out of bounds, the' +
-      ' player should be choosing their action.');
+  return null;
 };
 
 
@@ -88,8 +87,8 @@ Dialogue.prototype.getChoicesText = function() {
  */
 Dialogue.prototype.isPlayerChoosing = function() {
   return this.canPlayerChoose() &&
-         ((!this.displayTexts) ||
-           this.displayIndex >= this.displayTexts.length);
+         ((!this.displays) ||
+           this.displayIndex >= this.displays.length);
 };
 
 /**
@@ -118,5 +117,12 @@ Dialogue.prototype.chooseChoiceIndex = function(choiceIndex) {
     dialogue: this.choices[choiceIndex].dialogue,
     nextState: this.choices[choiceIndex].nextState
   };
+};
+
+/**
+ * Reset the dialogue to initial conditions
+ */
+Dialogue.prototype.reset = function() {
+  this.displayIndex = 0;
 };
 

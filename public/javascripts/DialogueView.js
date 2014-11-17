@@ -12,10 +12,18 @@ function DialogueView(game, onDone) {
   this.game = game;
   this.onDone = onDone;
 
+  this.width = this.game.width - 20;
+  this.height = 96;
+
   this.x = 10;
-  this.y = this.game.height - 96;
+  this.y = this.game.height - this.height;
+
   this.buttonHeight = 40;
   this.buttonPadding = 8;
+
+  this.leftButton = null;
+  this.rightButton = null;
+
 
   this.previousGroup = null;
 }
@@ -25,33 +33,95 @@ function DialogueView(game, onDone) {
  */
 DialogueView.prototype.preload = function() {
   this.game.load.image('button-background',
-                       'images/main/dialogue-button-background.png');
+                       'images/dialogue/dialogue-button-background.png');
   this.game.load.image('text-background',
-                       'images/main/dialogue-text-background.png');
+                       'images/dialogue/dialogue-text-background.png');
+  this.game.load.image('left-arrow',
+                       'images/dialogue/left-arrow.png');
+  this.game.load.image('right-arrow',
+                       'images/dialogue/right-arrow.png');
 
   this.dialogue = this.game.playerData.dialogue;
   if (!this.dialogue) {
     throw new Error('DialogueView must be provided a dialogue');
   }
+  this.dialogue.reset();
 };
 
 /**
  * Create sprites and other game objects
  */
 DialogueView.prototype.create = function() {
+  this.textBackground = this.game.add.image(this.x, this.y + this.height / 2,
+                                            'text-background');
+  this.textBackground.x = this.x + this.width / 2;
+  this.textBackground.anchor.setTo(0.5, 0.5);
+
   var textStyle = {
-      'font': '16px Arial',
-      'fill': 'black'
+      'font': '18px Helvetica Neue',
+      'fill': 'black',
+      'wordWrap': true,
+      'wordWrapWidth': this.textBackground.width - 24
   };
-  this.textBackground = this.game.add.image(this.x, this.y, 'text-background');
-  this.text = new GradualText(this.game, this.x + 5, this.y + 5, '', textStyle);
+
+  this.text = new GradualText(
+      this.game,
+      this.x - this.textBackground.width / 2 + this.width / 2 + 12,
+      this.y - this.textBackground.height / 2 + this.height / 2 + 12,
+      '',
+      textStyle
+  );
+
   this.game.add.existing(this.text);
 
-  // TODO: Draw images for player and npc
-  // this.playerSprite = this.game.add.sprite('asdf');
-  // this.npcSprite = this.game.add.sprite('fdsa');
+  this.leftButton = this.game.add.button(this.x, this.y + this.height / 2,
+                                         'left-arrow',
+                                         this.goBack.bind(this));
+  this.leftButton.anchor.setTo(0, 0.5);
+
+  this.rightButton = this.game.add.button(this.x + this.width -
+                                          this.leftButton.width,
+                                          this.y + this.height / 2,
+                                          'right-arrow',
+                                          this.goBack.bind(this));
+  this.rightButton.anchor.setTo(0, 0.5);
+
   this.updateState();
 };
+
+/**
+ * Go forward one step if possible
+ */
+DialogueView.prototype.goForwards = function() {
+  if (this.text.isDone() && this.dialogue.canNext()) {
+    this.dialogue.next();
+    this.updateState();
+  }
+};
+
+/**
+ * Go forward one step if possible
+ */
+DialogueView.prototype.goBack = function() {
+  if (this.choicesGroup) {
+    this.choicesGroup.destroy();
+  }
+
+  if (this.dialogue.displayIndex > 0) {
+    this.dialogue.displayIndex -= 1;
+    this.updateState();
+  } else {
+    if (!this.lastDialogue) {
+      return;
+    }
+    this.dialogue = this.lastDialogue;
+    this.dialogue.displayIndex = this.dialogue.displayTexts.length - 1;
+    this.updateState();
+  }
+};
+
+/**
+ *
 
 /**
  * Update the dialogue state the DialogueView is drawing
@@ -71,20 +141,24 @@ DialogueView.prototype.updateState = function() {
     if (this.dialogue.isPlayerChoosing()) {
       this.text.visible = false;
       this.textBackground.visible = false;
-      // this.choicesGroup.visible = true;
 
       this.displayPlayerChoices();
     } else {
       this.text.visible = true;
       this.textBackground.visible = true;
-      // this.choicesGroup.visible = false;
 
       this.text.hiddenText = this.dialogue.getDisplayText();
       this.text.resetProgress();
+      if (this.choicesGroup) {
+        this.choicesGroup.destroy();
+        this.choicesGroup = null;
+      }
     }
   } else {
     if (this.onDone) {
-      this.onDone();
+      this.onDone({
+        nextState: this.nextState
+      });
     }
     this.game.playerData.dialogue = null;
   }
@@ -97,29 +171,32 @@ DialogueView.prototype.displayPlayerChoices = function() {
   var choicesText = this.dialogue.getChoicesText();
 
   var dialogueView = this;
-  var choiceButtons = [];
 
+  this.choicesGroup = new Phaser.Group(this.game, null, 'choice-buttons', true);
   function chooseCallback() {
+    dialogueView.choicesGroup.destroy();
+    dialogueView.choicesGroup = null;
+
     var choiceResult = dialogueView.dialogue
-                                    .chooseChoiceIndex(this.choiceIndex);
+                                   .chooseChoiceIndex(this.choiceIndex);
     dialogueView.nextState = choiceResult.nextState;
+    dialogueView.lastDialogue = dialogueView.dialogue;
     dialogueView.dialogue = choiceResult.dialogue;
     dialogueView.updateState();
-
-    choiceButtons.forEach(function(choiceButton) {
-      choiceButton.destroy();
-    });
   }
+
+  var buttonHeight = (this.buttonHeight + this.buttonPadding) *
+                      choicesText.length;
 
   for (var i = 0; i < choicesText.length; i++) {
     var x = this.game.width / 2;
-    var y = this.y + i * (this.buttonHeight + this.buttonPadding);
+    var y = this.y + this.height / 2 - buttonHeight / 2 +
+            (i + 0.5) * (this.buttonHeight + this.buttonPadding);
     // This will probably leak an insignificant amount of memory
     var choiceButton = new LabelButton(this.game, x, y, 'button-background',
                                        choicesText[i], chooseCallback,
                                        {choiceIndex: i});
-    choiceButtons.push(choiceButton);
-    this.game.add.existing(choiceButton);
+    this.choicesGroup.add(choiceButton);
   }
 };
 
@@ -131,9 +208,6 @@ DialogueView.prototype.update = function() {
       this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
-    if (this.text.isDone() && this.dialogue.canNext()) {
-      this.dialogue.next();
-      this.updateState();
-    }
+    this.goForwards();
   }
 };

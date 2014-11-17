@@ -38,17 +38,30 @@ function VillageState(game) {
   );
 
   this.doctorMinigameDialogue = new Dialogue(
-      ['Hi PLAYER, I have been getting quite a few patients lately! It must \n' +
-      'be related to this monster incident. Unfortunately, I couldn\'t save all \n' +
-      'of them. If they had come to me earlier on, I could have given them proper \n'+
-      'treatment!'],
-      [{text:'How horrible! Is there anything I can do to help?', dialogue: new Dialogue([
-      'I have written down the symptoms that I have been seeing alot of lately. \n' +
-      'Could you go ask the villagers if they are having any of these symptoms, and \n' +
-      'tell them to come to me right away if they are?'],
-      [{text: 'Yes, I\'m curious to know what is happening',
-        nextState: 'doctorMinigame'},
-       {text: 'No, I have other things to investigate', nextState: 'villageState'}])}]
+      ['Hi PLAYER, I have been getting quite a few patients lately! It must ' +
+       'be related to this monster incident.',
+       'Unfortunately, I couldn\'t save all of them. If they had come to me ' +
+       'earlier on, I could have given them proper treatment!'],
+      [
+       {
+        text: 'How horrible! Is there anything I can do to help?',
+        dialogue: new Dialogue(
+          ['I have written down the symptoms that I have been seeing alot of ' +
+           'lately.',
+           'Could you go ask the villagers if they are having any of these ' +
+           'symptoms, and tell them to come to me right away if they are?'],
+          [{
+             text: 'Yes, I\'m curious to know what is happening',
+             nextState: 'doctorMinigame'
+           },
+           {
+             text: 'No, I have other things to investigate',
+             nextState: 'villageState'
+           }
+          ]
+        )
+       }
+      ]
   );
 }
 
