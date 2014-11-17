@@ -9,7 +9,7 @@
  * @param {Array<String>} choices
  */
 function Dialogue(displays, choices) {
-  this.displayTexts = displays;
+  this.displays = displays;
   this.displayIndex = 0;
   this.choices = choices;
 }
