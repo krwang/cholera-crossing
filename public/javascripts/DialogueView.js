@@ -83,7 +83,7 @@ DialogueView.prototype.create = function() {
                                           this.leftButton.width,
                                           this.y + this.height / 2,
                                           'right-arrow',
-                                          this.goBack.bind(this));
+                                          this.goForwards.bind(this));
   this.rightButton.anchor.setTo(0, 0.5);
 
   this.updateState();
@@ -93,7 +93,7 @@ DialogueView.prototype.create = function() {
  * Go forward one step if possible
  */
 DialogueView.prototype.goForwards = function() {
-  if (this.text.isDone() && this.dialogue.canNext()) {
+  if (this.dialogue.canNext()) {
     this.dialogue.next();
     this.updateState();
   }
@@ -208,6 +208,8 @@ DialogueView.prototype.update = function() {
       this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
-    this.goForwards();
+    if (this.text.isDone()) {
+      this.goForwards();
+    }
   }
 };
