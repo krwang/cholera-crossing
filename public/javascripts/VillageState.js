@@ -77,8 +77,8 @@ VillageState.prototype.create = function() {
   });
 
   this.game.add.button(525, 25, 'mg3', function() {
-    this.game.playerData.conversation = self.doctorMinigameDialogue;
-    this.game.state.start('conversationState');
+    this.game.playerData.dialogue = self.doctorMinigameDialogue;
+    this.game.state.start('dialogueState');
   });
 };
 

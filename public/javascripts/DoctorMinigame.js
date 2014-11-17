@@ -29,14 +29,18 @@ DoctorMinigame.prototype = {
       this.cat4.scale.y = 0.5;
 
       var start = new Phaser.Group(this.game, null, 'instructions', true);
-      this.instructionsText = new GradualText(this.game, 400, 300, DoctorMinigameDialogues.player_npc1_player_1, {
-          fill: "#000000",
-          font: "16px Open Sans",
-          wordWrap: true,
-          wordWrapWidth: 750,
-      });
+      // this.instructionsText = new GradualText(this.game, 400, 300, DoctorMinigameDialogues.player_npc1_player_1, {
+      //     fill: "#000000",
+      //     font: "16px Open Sans",
+      //     wordWrap: true,
+      //     wordWrapWidth: 750,
+      // });
+
+      this.game.playerData.dialogue = new Dialogue([DoctorMinigameDialogues.player_npc1_player_1]);
+
+      this.dialogueView = new DialogueView(this.game);
       start.add(this.cat1);
-      start.add(this.instructionsText);
+      start.add(this.dialogueView);
 
       var second = new Phaser.Group(this.game, null, 'second', true);
       second.add(this.cat2);
