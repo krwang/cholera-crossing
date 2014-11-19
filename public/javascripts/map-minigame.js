@@ -7,7 +7,7 @@ var stage = function(game) {
 stage.prototype = {
 
     preload: function() {
-        game.load.image('grass', 'images/collection_minigame/grass.png');
+        game.load.image('land', 'images/collection_minigame/land.png');
         game.load.image('river', 'images/collection_minigame/river.png');
         game.load.image('lake', 'images/collection_minigame/lake.png');
         game.load.image('latrines', 'images/collection_minigame/latrines.png');
@@ -15,57 +15,65 @@ stage.prototype = {
         game.load.image('waterbucket', 'images/collection_minigame/waterbucket.png');
         game.load.image('toilet', 'images/collection_minigame/toilet.png');
         game.load.image('dumpster', 'images/collection_minigame/dumpster.png');
-        game.load.image('rustyWater', 'images/collection_minigame/rustyWater.jpg');
+        game.load.image('rustyWater', 'images/collection_minigame/waterPump.png');
         game.load.image('cleanWater', 'images/collection_minigame/cleanWater.jpg');
         game.load.image('done', 'images/collection_minigame/done.png');
         game.load.image('black', 'images/collection_minigame/black.png');
+        game.load.image('white', 'images/collection_minigame/white.png');
+        game.load.image('player', 'images/bunnykid.png');
+        game.load.image('question', 'images/collection_minigame/question.png');
+        game.load.image('sidebar', 'images/collection_minigame/sidebar.png');
     },
 
     create: function() {
+        game.add.sprite(0, 0, 'land');
+        
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        grass = game.add.sprite(0, 0, 'grass');
-        river = game.add.sprite(100, 0, 'river');
+        river = game.add.button(100, 0, 'river', createImageModal);
         river.name = "river";
-        house = game.add.sprite(320, 150, 'house');
+        house = game.add.button(320, 150, 'house', createImageModal);
         house.name = "house";
-        game.add.text(300, 200, "Neighbor's House", {
+        game.add.text(325, 275, "Neighbor's House", {
             fill: "#ffffff",
             font: "12px Open Sans",
             wordWrap: true,
             wordWrapWidth: 750,
         });
-        lake = game.add.sprite(700, 225, 'lake');
+        lake = game.add.button(600, 125, 'lake', createImageModal);
         lake.name = "lake";
-        latrines = game.add.sprite(480, 500, 'latrines');
+        latrines = game.add.button(480, 450, 'latrines', createImageModal);
         latrines.name = "latrines";
-        dumpster = game.add.sprite(550, 100, 'dumpster');
+        dumpster = game.add.button(450, 50, 'dumpster', createImageModal);
         dumpster.name = "dumpster";
-        rustyWater = game.add.sprite(400, 300, 'rustyWater');
+        rustyWater = game.add.button(450, 300, 'rustyWater', createImageModal);
         rustyWater.name = "rustyWater";
-        cleanWater = game.add.sprite(660, 450, 'cleanWater');
+        // rustyWater.scale.setTo(0.1, 0.1);
+        cleanWater = game.add.button(660, 500, 'cleanWater', createImageModal);
         cleanWater.name = "cleanWater";
 
         featureSprites = [river, house, lake, latrines, dumpster, rustyWater, cleanWater];
 
-        waterbucket = game.add.sprite(175, 10, 'waterbucket');
-        waterbucket.inputEnabled = true;
-        waterbucket.input.enableDrag();
-        toilet = game.add.sprite(275, 10, 'toilet');
-        toilet.inputEnabled = true;
-        toilet.input.enableDrag();
-        done = game.add.button(25, 25, 'done', this.checkMap);
+        for (var i = 0; i < featureSprites.length; i++) {
+            var feature = featureSprites[i];
+            var scale = getImageScale(feature);
+            feature.scale.setTo(scale, scale);
+        }
+        river.scale.setTo(0.5, 0.7);
+        lake.scale.setTo(0.2, 0.2);
 
         var instructions = "One of your neighboring families needs your help! " + 
         "The local doctor has seen several people from their family over the past few weeks and " + 
-        "guesses that they've come been drinking contaminated water. " +
-        "Help each family figure out where to collect water and where to defecate by dragging the water bucket " +
+        "guesses that they've come been drinking contaminated water.";
+        var instructions2 = "Help each family figure out where to collect water and where to defecate by dragging the water bucket " +
         "and the toilet to a new location. Examine each " +
-        "location carefully! Click done when you've chosen your locations!";
+        "location carefully!";
+
         var start = new Phaser.Group(this.game, null, 'instructions', true);
         start.add(new Phaser.Image(this.game, 0, 0, 'black'));
         start.add(new Phaser.Button(this.game, 350, 500, 'done', function(button) {
-            start.destroy();
+            start.visible = false;
+            start2.visible = true;
         }));
         start.add(new Phaser.Text(this.game, 25, 25, instructions, {
             fill: "#ffffff",
@@ -74,18 +82,51 @@ stage.prototype = {
             wordWrapWidth: 750,
         }));
         start.visible = true;
+        var start2 = new Phaser.Group(this.game, null, 'instructions2', true);
+        start2.add(new Phaser.Image(this.game, 0, 0, 'black'));
+        start2.add(new Phaser.Button(this.game, 350, 500, 'done', function(button) {
+            start2.visible = false;
+        }));
+        start2.add(new Phaser.Text(this.game, 25, 25, instructions2, {
+            fill: "#ffffff",
+            font: "30px Open Sans",
+            wordWrap: true,
+            wordWrapWidth: 750,
+        }));
+        start2.visible = false;
+
+        var sidebar = game.add.sprite(0, 0, 'sidebar');
+        waterbucket = game.add.sprite(10, 150, 'waterbucket');
+        waterbucket.inputEnabled = true;
+        waterbucket.input.enableDrag();
+        toilet = game.add.sprite(20, 300, 'toilet');
+        toilet.inputEnabled = true;
+        toilet.input.enableDrag();
+        done = game.add.button(10, 25, 'done', this.checkMap);
+        done.scale.setTo(0.8, 0.8);
+        var question = game.add.button(20, 450, 'question', function(button) {
+            start.visible = true;
+        });
+        question.scale.setTo(0.03, 0.03);
+
+        // var player = game.add.sprite(0, 0, 'player');
+        // player.scale.setTo(0.3, 0.3);
+        function getImageScale(image) {
+            return 100/Math.min(image.height, image.width);
+        }
+        
     },
     
     update: function() {
         for (var i = 0; i < featureSprites.length; i++) {
             feature = featureSprites[i];
             if (calculateDistance(waterbucket, feature) < 40) {
-                waterbucket.x = feature.x;
-                waterbucket.y = feature.y;
+                waterbucket.x = feature.x + feature.width/2 - waterbucket.width/2;
+                waterbucket.y = feature.y + feature.height/2 - waterbucket.height/2;
             }
             if (calculateDistance(toilet, feature) < 40) {
-                toilet.x = feature.x;
-                toilet.y = feature.y;
+                toilet.x = feature.x + feature.width/2 - toilet.width/2;
+                toilet.y = feature.y + feature.height/2 - toilet.height/2;
             }
         }
     },
@@ -114,6 +155,9 @@ stage.prototype = {
         }
         
         function findClosest(feature) {
+            if (feature.x < 325) {
+                return river;
+            }
             shortestDistance = 1000;
             closestFeature = null;
             for (var i = 0; i < featureSprites.length; i++) {
@@ -130,7 +174,7 @@ stage.prototype = {
 var features = {
     lake: {
         name: "lake",
-        description: "This is a description",
+        description: "This is a lake.",
         safeWater: function(x, y) {
             return false;
         },
@@ -178,7 +222,7 @@ var features = {
     },
     rustyWater: {
         name: "rusty water fountain",
-        description: "This is a house.",
+        description: "This is a water fountain. You notice some rust on the fountain.",
         safeWater: function(x, y) {
             return false;
         },
@@ -189,8 +233,8 @@ var features = {
         explanationExcreta: "Probably shouldn't defecate here in the open...",
     },
     dumpster: {
-        name: "dumpster",
-        description: "This is a house.",
+        name: "excreta disposal facility",
+        description: "This is an excreta disposal facility.",
         safeWater: function(x, y) {
             return false;
         },
@@ -229,6 +273,32 @@ var createModal = function(button) {
     modal.visible = true;
 }
 
+var createImageModal = function(button) {
+    // var image = 
+    var featureName = button.name;
+    var feature = features[featureName];
+    var modal = new Phaser.Group(button.game, null, 'modal', true);
+    modal.add(new Phaser.Image(button.game, 0, 0, 'white'));
+    var image = new Phaser.Image(button.game, 25, 25, featureName);
+    var scale = getImageScale(image);
+    image.scale.setTo(scale, scale);
+    modal.add(image);
+    modal.add(new Phaser.Text(button.game, 25, 325, feature.description, {
+        fill: "#000000",
+        font: "30px Open Sans",
+        wordWrap: true,
+        wordWrapWidth: 750,
+    }));
+    modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
+        modal.destroy();
+    }));
+    modal.visible = true;
+    function getImageScale(image) {
+        return 200/Math.max(image.height, image.width);
+    }
+}
+
+
 var winModal = function(button) {
     var modal = new Phaser.Group(button.game, null, 'modal', true);
     modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
@@ -238,9 +308,9 @@ var winModal = function(button) {
         wordWrap: true,
         wordWrapWidth: 750,
     }));
-    console.log(button.game);
-    modal.add(new Phaser.Button(button.game, 650, 100, 'done', function() {
+    modal.add(new Phaser.Button(button.game, 650, 400, 'done', function() {
         modal.destroy();
+        game.playerData.completedGames.push('collection');
         game.state.start('villageState');
     }));
     modal.visible = true;
@@ -251,7 +321,6 @@ var calculateDistance = function(sprite1, sprite2) {
     x2 = sprite2.x + (sprite2.width/2);
     y1 = sprite1.y + (sprite1.height/2);
     y2 = sprite2.y + (sprite2.height/2);
-    console.log(x1, x2);
     return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 }
 

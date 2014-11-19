@@ -115,7 +115,8 @@ DialogueView.prototype.goBack = function() {
       return;
     }
     this.dialogue = this.lastDialogue;
-    this.dialogue.displayIndex = this.dialogue.displayTexts.length - 1;
+    this.lastDialogue = null;
+    this.dialogue.displayIndex = this.dialogue.displays.length - 1;
     this.updateState();
   }
 };
