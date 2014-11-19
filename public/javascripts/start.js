@@ -9,7 +9,7 @@ start.prototype = {
 
     create: function() {
         game.add.sprite(100, 100, 'player');
-        game.add.text(350, 200, "Saving\nMonster", {
+        game.add.text(350, 200, "Saving\nAnimal\nVillage", {
             fill: "#000000",
             font: "60px Open Sans",
             wordWrap: true,
