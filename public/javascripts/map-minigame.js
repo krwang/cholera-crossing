@@ -225,8 +225,8 @@ var features = {
         explanationExcreta: "Probably shouldn't defecate here in the open...",
     },
     dumpster: {
-        name: "dumpster",
-        description: "This is a house.",
+        name: "excreta disposal facility",
+        description: "This is an excreta disposal facility.",
         safeWater: function(x, y) {
             return false;
         },
