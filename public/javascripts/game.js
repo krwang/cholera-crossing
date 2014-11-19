@@ -10,7 +10,10 @@ var gameStates = {
   villageState: VillageState,
   waterCollection: WaterCollection,
   waterPurification: PurificationMinigame,
-  doctorMinigame: DoctorMinigame
+  doctorMinigame: DoctorMinigame,
+  start: start,
+  end: end,
+  main: main,
 };
 
 /**
@@ -24,4 +27,4 @@ Object.keys(gameStates).forEach(function(stateName) {
   game.state.add(stateName, stateConstructor);
 });
 
-game.state.start('villageState');
+game.state.start('waterCollection');
