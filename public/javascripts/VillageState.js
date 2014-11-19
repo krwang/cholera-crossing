@@ -86,13 +86,18 @@ VillageState.prototype.create = function() {
   var self = this;
 
   this.game.add.tileSprite(0, 0, 1600, 1000, 'map');
-  this.game.add.sprite(0, 500, 'taskbar');
-  this.game.add.text(20, 525, "You have " + game.playerData.completedGames.length + " clues from completing minigames.", {
+
+  taskbar = this.game.add.sprite(0, 500, 'taskbar');
+  taskbar.fixedToCamera = true;
+  taskbarText = this.game.add.text(20, 525, "You have " + game.playerData.completedGames.length + " clues from completing minigames.", {
     fill: "#000000",
     font: "20px Open Sans",
     wordWrap: true,
     wordWrapWidth: 750,
   });
+  taskbarText.fixedToCamera = true;
+
+
   this.game.world.setBounds(0, 0, 1600, 1000);
   this.game.physics.startSystem(Phaser.Physics.P2JS);
 
