@@ -205,7 +205,7 @@ DialogueView.prototype.displayPlayerChoices = function() {
  */
 DialogueView.prototype.update = function() {
   if (this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON ||
-      this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
+      //this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
       this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
     if (this.text.isDone()) {

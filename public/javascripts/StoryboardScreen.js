@@ -56,6 +56,7 @@ var StoryboardScreen = function(thisScreen, textCompleteBeforeNext) {
   	this.visible = true;
     this.setAllChildren('visible', true);
     this.setAll('visible', true);
+
   }
 
    screen.hide = function() {

@@ -8,6 +8,12 @@
 function VillageState(game) {
   this.game = game;
 
+  this.width = this.game.width - 20;
+  this.height = this.game.height;
+
+  this.x = 0;
+  this.y = this.game.height - this.height;
+
   // var willHelpDialogue = new Dialogue(
   //     ["Thank you so much! You see, this angry mob thinks that I'm to " +
   //      "blame for the recent attacks on their village.",
@@ -37,19 +43,48 @@ function VillageState(game) {
        {text: 'On second thought nah', nextState: 'villageState'}]
   );
 
+}
+
+/**
+ * Pre-load any assets required by the game
+ */
+VillageState.prototype.preload = function() {
+  this.game.load.image('mg1', 'images/main/mg1.png');
+  this.game.load.image('mg2', 'images/main/mg2.png');
+  this.game.load.image('mg3', 'images/main/mg3.png');
+  this.game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
+};
+
+/**
+ * Create sprites and other game objects
+ */
+VillageState.prototype.create = function() {
+  var self = this;
+
+  this.doctor = game.add.sprite(0, 0, 'giraffe_doctor');
+  this.doctor.x = this.x + this.width / 2;
+  this.doctor.y = this.y + 100;
+  this.doctor.scale.x = 0.5;
+  this.doctor.scale.y = 0.5;
+
+  var doctorGroup = new Phaser.Group(this.game, null, 'doctorGroup', true);
+  doctorGroup.visible = false;
+
+  doctorGroup.add(this.doctor);
+
   this.doctorMinigameDialogue = new Dialogue(
-      ['Hi PLAYER, I have been getting quite a few patients lately! It must ' +
-       'be related to this monster incident.',
-       'Unfortunately, I couldn\'t save all of them. If they had come to me ' +
-       'earlier on, I could have given them proper treatment!'],
+      [{text: 'Hi PLAYER, I have been getting quite a few patients lately! It must ' +
+       'be related to this monster incident.', group: doctorGroup},
+       {text: 'Unfortunately, I couldn\'t save all of them. If they had come to me ' +
+       'earlier on, I could have given them proper treatment!', group: doctorGroup}],
       [
        {
         text: 'How horrible! Is there anything I can do to help?',
         dialogue: new Dialogue(
-          ['I have written down the symptoms that I have been seeing alot of ' +
-           'lately.',
-           'Could you go ask the villagers if they are having any of these ' +
-           'symptoms, and tell them to come to me right away if they are?'],
+          [{text: 'I have written down the symptoms that I have been seeing alot of ' +
+           'lately.', group: doctorGroup},
+           {text: 'Could you go ask your friends if they are having any of these ' +
+           'symptoms, and tell them to come to me right away if they are?', group: doctorGroup}],
           [{
              text: 'Yes, I\'m curious to know what is happening',
              nextState: 'doctorMinigame'
@@ -63,22 +98,7 @@ function VillageState(game) {
        }
       ]
   );
-}
 
-/**
- * Pre-load any assets required by the game
- */
-VillageState.prototype.preload = function() {
-  this.game.load.image('mg1', 'images/main/mg1.png');
-  this.game.load.image('mg2', 'images/main/mg2.png');
-  this.game.load.image('mg3', 'images/main/mg3.png');
-};
-
-/**
- * Create sprites and other game objects
- */
-VillageState.prototype.create = function() {
-  var self = this;
   this.game.add.button(125, 25, 'mg1', function() {
     this.game.playerData.dialogue = self.waterPurificationDialogue;
     this.game.state.start('dialogueState');
