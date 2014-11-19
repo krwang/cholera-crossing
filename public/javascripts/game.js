@@ -27,4 +27,4 @@ Object.keys(gameStates).forEach(function(stateName) {
   game.state.add(stateName, stateConstructor);
 });
 
-game.state.start('waterCollection');
+game.state.start('villageState');

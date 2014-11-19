@@ -302,6 +302,7 @@ var winModal = function(button) {
     }));
     modal.add(new Phaser.Button(button.game, 650, 400, 'done', function() {
         modal.destroy();
+        game.playerData.completedGames.push('collection');
         game.state.start('villageState');
     }));
     modal.visible = true;

@@ -73,7 +73,8 @@ VillageState.prototype.preload = function() {
   this.game.load.image('mg2', 'images/main/mg2.png');
   this.game.load.image('mg3', 'images/main/mg3.png');
 
-  game.load.image('map', 'images/main/map.png');
+  game.load.image('map', 'images/collection_minigame/land.png');
+  game.load.image('taskbar', 'images/main/taskbar.png');
   game.load.image('player', 'images/bunnykid.png');
 };
 
@@ -81,30 +82,41 @@ VillageState.prototype.preload = function() {
  * Create sprites and other game objects
  */
 VillageState.prototype.create = function() {
+  console.log(game.playerData);
   var self = this;
 
   this.game.add.tileSprite(0, 0, 1600, 1000, 'map');
+  this.game.add.sprite(0, 500, 'taskbar');
+  this.game.add.text(20, 525, "You have " + game.playerData.completedGames.length + " clues from completing minigames.", {
+    fill: "#000000",
+    font: "20px Open Sans",
+    wordWrap: true,
+    wordWrapWidth: 750,
+  });
   this.game.world.setBounds(0, 0, 1600, 1000);
   this.game.physics.startSystem(Phaser.Physics.P2JS);
-  player = this.game.add.sprite(400, 300, 'player');
-  player.scale.setTo(0.2, 0.2);
-  this.game.physics.p2.enable(player);
-  cursors = this.game.input.keyboard.createCursorKeys();
-  
+
   this.game.add.button(125, 125, 'mg1', function() {
     this.game.playerData.dialogue = self.waterPurificationDialogue;
     this.game.state.start('dialogueState');
   });
 
-  this.game.add.button(325, 125, 'mg2', function() {
+  var mg2 = this.game.add.button(325, 125, 'mg2', function() {
     this.game.playerData.dialogue = self.waterCollectionDialogue;
     this.game.state.start('dialogueState');
   });
+  // mg2.scale.setTo(0.1, 0.1);
 
   this.game.add.button(525, 125, 'mg3', function() {
     this.game.playerData.dialogue = self.doctorMinigameDialogue;
     this.game.state.start('dialogueState');
   });
+
+  player = this.game.add.sprite(400, 300, 'player');
+  player.scale.setTo(0.2, 0.2);
+  this.game.physics.p2.enable(player);
+  cursors = this.game.input.keyboard.createCursorKeys();
+  
 };
 
 /**
