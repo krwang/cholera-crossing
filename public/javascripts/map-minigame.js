@@ -32,10 +32,8 @@ stage.prototype = {
 
         river = game.add.button(100, 0, 'river', createImageModal);
         river.name = "river";
-        river.scale.setTo(0.5, 0.7);
         house = game.add.button(320, 150, 'house', createImageModal);
         house.name = "house";
-        house.scale.setTo(0.1, 0.1);
         game.add.text(325, 275, "Neighbor's House", {
             fill: "#ffffff",
             font: "12px Open Sans",
@@ -44,18 +42,25 @@ stage.prototype = {
         });
         lake = game.add.button(600, 125, 'lake', createImageModal);
         lake.name = "lake";
-        lake.scale.setTo(0.2, 0.2);
-        latrines = game.add.button(480, 500, 'latrines', createImageModal);
+        latrines = game.add.button(480, 450, 'latrines', createImageModal);
         latrines.name = "latrines";
-        dumpster = game.add.button(500, 50, 'dumpster', createImageModal);
+        dumpster = game.add.button(450, 50, 'dumpster', createImageModal);
         dumpster.name = "dumpster";
         rustyWater = game.add.button(450, 300, 'rustyWater', createImageModal);
         rustyWater.name = "rustyWater";
-        rustyWater.scale.setTo(0.1, 0.1);
+        // rustyWater.scale.setTo(0.1, 0.1);
         cleanWater = game.add.button(660, 500, 'cleanWater', createImageModal);
         cleanWater.name = "cleanWater";
 
         featureSprites = [river, house, lake, latrines, dumpster, rustyWater, cleanWater];
+
+        for (var i = 0; i < featureSprites.length; i++) {
+            var feature = featureSprites[i];
+            var scale = getImageScale(feature);
+            feature.scale.setTo(scale, scale);
+        }
+        river.scale.setTo(0.5, 0.7);
+        lake.scale.setTo(0.2, 0.2);
 
         var instructions = "One of your neighboring families needs your help! " + 
         "The local doctor has seen several people from their family over the past few weeks and " + 
@@ -91,7 +96,7 @@ stage.prototype = {
         start2.visible = false;
 
         var sidebar = game.add.sprite(0, 0, 'sidebar');
-        waterbucket = game.add.sprite(20, 150, 'waterbucket');
+        waterbucket = game.add.sprite(10, 150, 'waterbucket');
         waterbucket.inputEnabled = true;
         waterbucket.input.enableDrag();
         toilet = game.add.sprite(20, 300, 'toilet');
@@ -106,6 +111,9 @@ stage.prototype = {
 
         // var player = game.add.sprite(0, 0, 'player');
         // player.scale.setTo(0.3, 0.3);
+        function getImageScale(image) {
+            return 100/Math.min(image.height, image.width);
+        }
         
     },
     
