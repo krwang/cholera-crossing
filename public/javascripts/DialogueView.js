@@ -25,7 +25,6 @@ function DialogueView(game, onDone) {
   this.rightButton = null;
 
   this.group = null;
-
   this.previousGroup = null;
 }
 
@@ -39,10 +38,13 @@ DialogueView.prototype.preload = function() {
                        'images/dialogue/dialogue-text-background.png');
   this.game.load.image('left-arrow',
                        'images/dialogue/left-arrow.png');
+  this.game.load.image('player-left-arrow',
+                       'images/dialogue/player-left-arrow.png');
   this.game.load.image('right-arrow',
                        'images/dialogue/right-arrow.png');
 
   this.dialogue = this.game.playerData.dialogue;
+  this.lastDialogue = null;
   if (!this.dialogue) {
     throw new Error('DialogueView must be provided a dialogue');
   }
@@ -85,8 +87,13 @@ DialogueView.prototype.create = function() {
                                          'left-arrow',
                                          this.goBack.bind(this));
   this.leftButton.anchor.setTo(0, 0.5);
-
   this.group.add(this.leftButton);
+
+  this.playerLeftButton = this.game.add.button(this.x, this.y + this.height / 2,
+                                         'player-left-arrow',
+                                         this.goBack.bind(this));
+  this.playerLeftButton.anchor.setTo(0, 0.5);
+  this.group.add(this.playerLeftButton);
 
   this.rightButton = this.game.add.button(this.x + this.width -
                                           this.leftButton.width,
@@ -133,7 +140,16 @@ DialogueView.prototype.goBack = function() {
 };
 
 /**
- *
+ * Update dialogue element visibilities
+ * @param {boolean} playerChoosing
+ */
+DialogueView.prototype.updateVisibility = function(playerChoosing) {
+  this.text.visible = !playerChoosing;
+  this.textBackground.visible = !playerChoosing;
+  this.rightButton.visible = !playerChoosing;
+  this.leftButton.visible = !playerChoosing;
+  this.playerLeftButton.visible = playerChoosing;
+};
 
 /**
  * Update the dialogue state the DialogueView is drawing
@@ -152,13 +168,10 @@ DialogueView.prototype.updateState = function() {
     }
 
     if (this.dialogue.isPlayerChoosing()) {
-      this.text.visible = false;
-      this.textBackground.visible = false;
-
+      this.updateVisibility(true);
       this.displayPlayerChoices();
     } else {
-      this.text.visible = true;
-      this.textBackground.visible = true;
+      this.updateVisibility(false);
 
       this.text.hiddenText = this.dialogue.getDisplayText();
       this.text.resetProgress();
@@ -219,12 +232,17 @@ DialogueView.prototype.displayPlayerChoices = function() {
  * Update the Dialogue
  */
 DialogueView.prototype.update = function() {
-  if (this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON ||
-      //this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
-      this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
-      this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
-    if (this.text.isDone()) {
-      this.goForwards();
+  if (this.text.isDone()) {
+    var mouseDown = this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON &&
+                    this.game.input.x > this.textBackground.x -
+                                        this.textBackground.width / 2 &&
+                    this.game.input.x < this.textBackground.x +
+                                        this.textBackground.width / 2;
+    if (mouseDown ||
+        this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
+        this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
+        this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
+        this.goForwards();
     }
   }
 };
