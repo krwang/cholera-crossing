@@ -169,6 +169,8 @@ DialogueView.prototype.updateState = function() {
     }
   } else {
     if (this.onDone) {
+      this.group.setAllChildren('visible', false);
+      this.group.setAll('visible', false);
       this.onDone({
         nextState: this.nextState
       });
