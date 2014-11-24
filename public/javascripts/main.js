@@ -8,6 +8,7 @@ main.prototype = {
         game.load.image('mg3', 'images/main/mg3.png');
         game.load.image('map', 'images/main/map.jpg');
         game.load.image('player', 'images/doctor_minigame/bear1.png');
+        game.load.image('mayor', 'images/doctor_minigame/owlmayor.png');
     },
 
     create: function() {

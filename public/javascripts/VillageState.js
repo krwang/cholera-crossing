@@ -57,6 +57,7 @@ VillageState.prototype.preload = function() {
   game.load.image('taskbar', 'images/main/taskbar.png');
   game.load.image('player', 'images/bunnykid.png');
   game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
+  game.load.image('mayor', 'images/main/owlmayor.png');
 };
 
 /**
@@ -106,17 +107,6 @@ VillageState.prototype.create = function() {
 
   this.game.add.tileSprite(0, 0, 1600, 1000, 'map');
 
-  taskbar = this.game.add.sprite(0, 500, 'taskbar');
-  taskbar.fixedToCamera = true;
-  taskbarText = this.game.add.text(20, 525, "You have " + game.playerData.completedGames.length + " clues from completing minigames.", {
-    fill: "#000000",
-    font: "20px Open Sans",
-    wordWrap: true,
-    wordWrapWidth: 750,
-  });
-  taskbarText.fixedToCamera = true;
-
-
   this.game.world.setBounds(0, 0, 1600, 1000);
   this.game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -136,11 +126,24 @@ VillageState.prototype.create = function() {
     this.game.state.start('dialogueState');
   });
 
+  mayor = this.game.add.sprite(300, 300, 'mayor');
+  mayor.scale.setTo(0.2, 0.2);
+
   player = this.game.add.sprite(400, 300, 'player');
   player.scale.setTo(0.2, 0.2);
   this.game.physics.p2.enable(player);
   cursors = this.game.input.keyboard.createCursorKeys();
   
+  // taskbar
+  taskbar = this.game.add.sprite(0, 500, 'taskbar');
+  taskbar.fixedToCamera = true;
+  taskbarText = this.game.add.text(20, 525, "You have " + game.playerData.completedGames.length + " clues from completing minigames.", {
+    fill: "#000000",
+    font: "20px Open Sans",
+    wordWrap: true,
+    wordWrapWidth: 750,
+  });
+  taskbarText.fixedToCamera = true;
 };
 
 /**

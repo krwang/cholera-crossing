@@ -13,10 +13,8 @@ stage.prototype = {
         game.load.image('latrines', 'images/collection_minigame/latrines.png');
         game.load.image('house', 'images/collection_minigame/house.png');
         game.load.image('waterbucket', 'images/collection_minigame/waterbucket.png');
-        game.load.image('toilet', 'images/collection_minigame/toilet.png');
-        game.load.image('dumpster', 'images/collection_minigame/dumpster.png');
         game.load.image('rustyWater', 'images/collection_minigame/waterPump.png');
-        game.load.image('cleanWater', 'images/collection_minigame/cleanWater.jpg');
+        game.load.image('well', 'images/collection_minigame/well.png');
         game.load.image('done', 'images/collection_minigame/done.png');
         game.load.image('black', 'images/collection_minigame/black.png');
         game.load.image('white', 'images/collection_minigame/white.png');
@@ -30,7 +28,7 @@ stage.prototype = {
         
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        river = game.add.button(100, 0, 'river', createImageModal);
+        river = game.add.button(100, 140, 'river', createImageModal);
         river.name = "river";
         house = game.add.button(320, 150, 'house', createImageModal);
         house.name = "house";
@@ -40,19 +38,17 @@ stage.prototype = {
             wordWrap: true,
             wordWrapWidth: 750,
         });
-        lake = game.add.button(600, 125, 'lake', createImageModal);
+        lake = game.add.button(600, 200, 'lake', createImageModal);
         lake.name = "lake";
-        latrines = game.add.button(480, 450, 'latrines', createImageModal);
+        latrines = game.add.button(400, 450, 'latrines', createImageModal);
         latrines.name = "latrines";
-        dumpster = game.add.button(450, 50, 'dumpster', createImageModal);
-        dumpster.name = "dumpster";
         rustyWater = game.add.button(450, 300, 'rustyWater', createImageModal);
         rustyWater.name = "rustyWater";
         // rustyWater.scale.setTo(0.1, 0.1);
-        cleanWater = game.add.button(660, 500, 'cleanWater', createImageModal);
-        cleanWater.name = "cleanWater";
+        well = game.add.button(660, 500, 'well', createImageModal);
+        well.name = "well";
 
-        featureSprites = [river, house, lake, latrines, dumpster, rustyWater, cleanWater];
+        featureSprites = [river, house, lake, latrines, rustyWater, well];
 
         for (var i = 0; i < featureSprites.length; i++) {
             var feature = featureSprites[i];
@@ -99,9 +95,6 @@ stage.prototype = {
         waterbucket = game.add.sprite(10, 150, 'waterbucket');
         waterbucket.inputEnabled = true;
         waterbucket.input.enableDrag();
-        toilet = game.add.sprite(20, 300, 'toilet');
-        toilet.inputEnabled = true;
-        toilet.input.enableDrag();
         done = game.add.button(10, 25, 'done', this.checkMap);
         done.scale.setTo(0.8, 0.8);
         var question = game.add.button(20, 450, 'question', function(button) {
@@ -124,21 +117,15 @@ stage.prototype = {
                 waterbucket.x = feature.x + feature.width/2 - waterbucket.width/2;
                 waterbucket.y = feature.y + feature.height/2 - waterbucket.height/2;
             }
-            if (calculateDistance(toilet, feature) < 40) {
-                toilet.x = feature.x + feature.width/2 - toilet.width/2;
-                toilet.y = feature.y + feature.height/2 - toilet.height/2;
-            }
         }
     },
 
     checkMap: function(button) {
         waterSource = findClosest(waterbucket);
-        excretaSink = findClosest(toilet);
         text = "";
-        if (features[waterSource.name].safeWater() && features[excretaSink.name].safeExcreta()) {
+        if (features[waterSource.name].safeWater()) {
             waterDistance = calculateDistance(house, waterSource);
-            excretaDistance = calculateDistance(house, excretaSink);
-            if (waterDistance + excretaDistance < 800) {
+            if (waterDistance < 800) {
                 winModal(button);
             } else {
                 text = "The family has to walk so far. :(";
@@ -147,9 +134,6 @@ stage.prototype = {
         } else {
             if (!features[waterSource.name].safeWater(waterSource.x, waterSource.y)) {
                 text += "The " + features[waterSource.name].name + " is not a safe location to collect water from. " + features[waterSource.name].explanationWater;
-            }
-            if (!features[excretaSink.name].safeExcreta(excretaSink.x, excretaSink.y)) {
-                text += "\n\n" +  "The " + features[excretaSink.name].name + " is not a safe place to defecate. " + features[excretaSink.name].explanationExcreta;
             }
             createModal(button);
         }
@@ -178,11 +162,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        safeExcreta: function(x, y) {
-            return false;
-        },
         explanationWater: "It looks like there's a lot of bacteria in the lake.",
-        explanationExcreta: "There's a lot of bacteria in the lake, so it might not be the safest place to go.",
     },
     river: {
         name: "river",
@@ -190,11 +170,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        safeExcreta: function(x, y) {
-            return false;
-        },
         explanationWater: "Careful! You don't know if the river's been contaminated with excreta upstream.",
-        explanationExcreta: "You don't want to contaminate the river for others -- once the water moves downstream, other families might accidentally drink water from the river and become sick.",
     },
     latrines: {
         name: "latrines",
@@ -202,11 +178,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        safeExcreta: function(x, y) {
-            return true;
-        },
         explanationWater: "It doesn't look like there's any water here.",
-        explanationExcreta: "",
     },
     house: {
         name: "house",
@@ -214,11 +186,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        safeExcreta: function(x, y) {
-            return false;
-        },
         explanationWater: "There's no clean water at the house!",
-        explanationExcreta: "It's better to defecate a little farther away from the house.",
     },
     rustyWater: {
         name: "rusty water fountain",
@@ -226,35 +194,15 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        safeExcreta: function(x, y) {
-            return false;
-        },
         explanationWater: "This water looks too rusty!",
-        explanationExcreta: "Probably shouldn't defecate here in the open...",
     },
-    dumpster: {
-        name: "excreta disposal facility",
-        description: "This is an excreta disposal facility.",
-        safeWater: function(x, y) {
-            return false;
-        },
-        safeExcreta: function(x, y) {
-            return true;
-        },
-        explanationWater: "It doesn't look like there's any water here.",
-        explanationExcreta: "",
-    },
-    cleanWater: {
+    well: {
         name: "drinking fountain",
         description: "This is a drinking fountain.",
         safeWater: function(x, y) {
             return true;
         },
-        safeExcreta: function(x, y) {
-            return false;
-        },
         explanationWater: "",
-        explanationExcreta: "Don't contaminate public drinking water!",
     },
 }
 
