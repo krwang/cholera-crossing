@@ -17,9 +17,12 @@ DoctorMinigame.prototype = {
       game.load.image('cat_unhealthy', 'images/doctor_minigame/vectorcat-unhealthy.png');
       game.load.image('left_arrow', 'images/doctor_minigame/left_arrow.png');
       game.load.image('right_arrow', 'images/doctor_minigame/right_arrow.png');
+      game.load.image('background', 'images/filtration_minigame/filtration_background.png');
   },
 
   create: function() {
+      
+
       this.cat1 = game.add.sprite(0, 0, 'cat_happy');
       this.cat1.x = this.x + this.width / 2;
       this.cat1.y = this.y + this.height / 2;
@@ -49,11 +52,16 @@ DoctorMinigame.prototype = {
       cat3.visible = false;
       var cat4 = new Phaser.Group(this.game, null, 'cat4', true);
       cat4.visible = false;
-    
+      
+      cat1.create(0, 0, 'background');
       cat1.add(this.cat1);
+      cat2.create(0, 0, 'background');
       cat2.add(this.cat2);
+      cat3.create(0, 0, 'background');
       cat3.add(this.cat3);
+      cat4.create(0, 0, 'background');
       cat4.add(this.cat4);
+
 
       var dialogue1 = new Dialogue([
         {text:DoctorMinigameDialogues.player_npc1_player_1, 

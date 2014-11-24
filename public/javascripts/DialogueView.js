@@ -24,6 +24,7 @@ function DialogueView(game, onDone) {
   this.leftButton = null;
   this.rightButton = null;
 
+  this.group = null;
 
   this.previousGroup = null;
 }
@@ -52,10 +53,14 @@ DialogueView.prototype.preload = function() {
  * Create sprites and other game objects
  */
 DialogueView.prototype.create = function() {
+  this.group = new Phaser.Group(this.game, null, 'dialgoueView', true);
+
   this.textBackground = this.game.add.image(this.x, this.y + this.height / 2,
                                             'text-background');
   this.textBackground.x = this.x + this.width / 2;
   this.textBackground.anchor.setTo(0.5, 0.5);
+
+  this.group.add(this.textBackground);
 
   var textStyle = {
       'font': '18px Helvetica Neue',
@@ -74,10 +79,14 @@ DialogueView.prototype.create = function() {
 
   this.game.add.existing(this.text);
 
+  this.group.add(this.text);
+
   this.leftButton = this.game.add.button(this.x, this.y + this.height / 2,
                                          'left-arrow',
                                          this.goBack.bind(this));
   this.leftButton.anchor.setTo(0, 0.5);
+
+  this.group.add(this.leftButton);
 
   this.rightButton = this.game.add.button(this.x + this.width -
                                           this.leftButton.width,
@@ -85,6 +94,8 @@ DialogueView.prototype.create = function() {
                                           'right-arrow',
                                           this.goForwards.bind(this));
   this.rightButton.anchor.setTo(0, 0.5);
+
+  this.group.add(this.rightButton);
 
   this.updateState();
 };
@@ -137,6 +148,7 @@ DialogueView.prototype.updateState = function() {
       }
       this.currentBackgroundGroup = displayGroup;
       this.currentBackgroundGroup.visible = true;
+      this.game.world.bringToTop(this.group);
     }
 
     if (this.dialogue.isPlayerChoosing()) {
