@@ -1,4 +1,4 @@
-/* global Dialogue */
+/* global Dialogue, Phaser, VillagePather */
 
 /**
  * Create a new VillageState
@@ -42,7 +42,6 @@ function VillageState(game) {
         nextState: 'waterCollection'},
        {text: 'On second thought nah', nextState: 'villageState'}]
   );
-
 }
 
 /**
@@ -59,13 +58,13 @@ VillageState.prototype.preload = function() {
   game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
   game.load.image('mayor', 'images/main/owlmayor.png');
   game.load.image('hospital_room', 'images/doctor_minigame/hospital_room.png');
+
 };
 
 /**
  * Create sprites and other game objects
  */
 VillageState.prototype.create = function() {
-  console.log(game.playerData);
   var self = this;
 
   var doctorGroup = new Phaser.Group(this.game, null, 'doctorGroup', true);
@@ -78,6 +77,7 @@ VillageState.prototype.create = function() {
   this.doctor.x = this.x + this.width / 2 + 210;
   this.doctor.y = this.y + 150;
   this.doctor.scale.x = -0.5;
+
   this.doctor.scale.y = 0.5;
 
   
@@ -112,33 +112,37 @@ VillageState.prototype.create = function() {
 
   this.game.add.tileSprite(0, 0, 1600, 1000, 'map');
 
-  this.game.world.setBounds(0, 0, 1600, 1000);
-  this.game.physics.startSystem(Phaser.Physics.P2JS);
-
   this.game.add.button(125, 125, 'mg1', function() {
-    this.game.playerData.dialogue = self.waterPurificationDialogue;
-    this.game.state.start('dialogueState');
+    self.villagePather.playPath('waterPurification', false,
+      function() {
+        // On complete play dialogue
+        self.game.playerData.dialogue = self.waterPurificationDialogue;
+        self.game.state.start('dialogueState');
+      }
+    );
   });
 
-  var mg2 = this.game.add.button(325, 125, 'mg2', function() {
-    this.game.playerData.dialogue = self.waterCollectionDialogue;
-    this.game.state.start('dialogueState');
+  this.game.add.button(325, 125, 'mg2', function() {
+    self.villagePather.playPath('waterCollection', false,
+      function() {
+        self.game.playerData.dialogue = self.waterCollectionDialogue;
+        self.game.state.start('dialogueState');
+      }
+    );
   });
-  // mg2.scale.setTo(0.1, 0.1);
 
   this.game.add.button(525, 125, 'mg3', function() {
-    this.game.playerData.dialogue = self.doctorMinigameDialogue;
-    this.game.state.start('dialogueState');
+    self.villagePather.playPath('doctorMinigame', false,
+      function() {
+        self.game.playerData.dialogue = self.doctorMinigameDialogue;
+        self.game.state.start('dialogueState');
+      }
+    );
   });
 
   mayor = this.game.add.sprite(300, 300, 'mayor');
   mayor.scale.setTo(0.2, 0.2);
 
-  player = this.game.add.sprite(400, 300, 'player');
-  player.scale.setTo(0.2, 0.2);
-  this.game.physics.p2.enable(player);
-  cursors = this.game.input.keyboard.createCursorKeys();
-  
   // taskbar
   taskbar = this.game.add.sprite(0, 500, 'taskbar');
   taskbar.fixedToCamera = true;
@@ -149,34 +153,15 @@ VillageState.prototype.create = function() {
     wordWrapWidth: 750,
   });
   taskbarText.fixedToCamera = true;
+
+  this.playerSprite = this.game.add.sprite(400, 300, 'player');
+  this.playerSprite.scale.setTo(0.2, 0.2);
+
+  this.villagePather = new VillagePather(this.game, this.playerSprite);
 };
 
 /**
  * Update the Village
  */
 VillageState.prototype.update = function() {
-
-  // reposition camera
-  if (player.x >= 800 && this.game.camera.x < 800) {
-    this.game.camera.x += 20;
-  } else if (player.x < 800 && this.game.camera.x > 0) {
-    this.game.camera.x -= 20;
-  }
-  if (player.y <= 400 && this.game.camera.y > 0) {
-    this.game.camera.y -= 20;
-  } else if (player.y >= 600 && this.game.camera.y < 400) {
-    this.game.camera.y += 20;
-  }
-
-  // move player
-  player.body.setZeroVelocity();
-  if (cursors.up.isDown) {
-      player.body.moveUp(100);
-  } else if (cursors.down.isDown) {
-      player.body.moveDown(100);
-  } if (cursors.left.isDown) {
-      player.body.moveLeft(100);
-  } else if (cursors.right.isDown) {
-      player.body.moveRight(100);
-  }
 };

@@ -12,8 +12,7 @@ var gameStates = {
   waterPurification: PurificationMinigame,
   doctorMinigame: DoctorMinigame,
   start: start,
-  end: end,
-  main: main,
+  end: end
 };
 
 /**
