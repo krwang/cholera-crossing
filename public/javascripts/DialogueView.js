@@ -26,6 +26,7 @@ function DialogueView(game, onDone) {
 
   this.group = null;
   this.previousGroup = null;
+
 }
 
 /**
@@ -42,20 +43,21 @@ DialogueView.prototype.preload = function() {
                        'images/dialogue/player-left-arrow.png');
   this.game.load.image('right-arrow',
                        'images/dialogue/right-arrow.png');
-
-  this.dialogue = this.game.playerData.dialogue;
-  this.lastDialogue = null;
-  if (!this.dialogue) {
-    throw new Error('DialogueView must be provided a dialogue');
-  }
-  this.dialogue.reset();
 };
 
 /**
  * Create sprites and other game objects
  */
 DialogueView.prototype.create = function() {
-  this.group = new Phaser.Group(this.game, null, 'dialgoueView', true);
+  this.preload();
+  this.dialogue = this.game.playerData.dialogue;
+  this.lastDialogue = null;
+  if (!this.dialogue) {
+    throw new Error('DialogueView must be provided a dialogue');
+  }
+  this.dialogue.reset();
+
+  this.group = new Phaser.Group(this.game, null, 'dialogueView', true);
 
   this.textBackground = this.game.add.image(this.x, this.y + this.height / 2,
                                             'text-background');
@@ -184,6 +186,9 @@ DialogueView.prototype.updateState = function() {
     if (this.onDone) {
       this.group.setAllChildren('visible', false);
       this.group.setAll('visible', false);
+      if (this.currentBackgroundGroup) {
+        this.currentBackgroundGroup.visible = false;
+      }
       this.onDone({
         nextState: this.nextState
       });
@@ -232,17 +237,24 @@ DialogueView.prototype.displayPlayerChoices = function() {
  * Update the Dialogue
  */
 DialogueView.prototype.update = function() {
-  if (this.text.isDone()) {
-    var mouseDown = this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON &&
-                    this.game.input.x > this.textBackground.x -
-                                        this.textBackground.width / 2 &&
-                    this.game.input.x < this.textBackground.x +
-                                        this.textBackground.width / 2;
-    if (mouseDown ||
-        this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
-        this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
-        this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
-        this.goForwards();
-    }
-  }
+  // this code allows advancing the text using keyboard input/ clicking on the
+  // main dialogue box. it also causes a bug with text skipping if any of these buttons
+  // are pressed when clicking on the actual arrow button. for this module to work 
+  // independently of the dialogueState, this would have to be inserted in the update of
+  // whatever state it is being used in, so for now is just commented out to prevent
+  // different behavior in different use cases
+
+  // if (this.text.isDone()) {
+  //   var mouseDown = this.game.input.mouse.button !== Phaser.Mouse.NO_BUTTON &&
+  //                   this.game.input.x > this.textBackground.x -
+  //                                       this.textBackground.width / 2 &&
+  //                   this.game.input.x < this.textBackground.x +
+  //                                       this.textBackground.width / 2;
+  //   if (mouseDown ||
+  //       this.game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR) ||
+  //       this.game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT) ||
+  //       this.game.input.keyboard.justPressed(Phaser.Keyboard.B)) {
+  //       this.goForwards();
+  //   }
+  // }
 };

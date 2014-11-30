@@ -58,6 +58,7 @@ VillageState.prototype.preload = function() {
   game.load.image('player', 'images/bunnykid.png');
   game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
   game.load.image('mayor', 'images/main/owlmayor.png');
+  game.load.image('hospital_room', 'images/doctor_minigame/hospital_room.png');
 };
 
 /**
@@ -67,16 +68,20 @@ VillageState.prototype.create = function() {
   console.log(game.playerData);
   var self = this;
 
-  this.doctor = game.add.sprite(0, 0, 'giraffe_doctor');
-  this.doctor.x = this.x + this.width / 2;
-  this.doctor.y = this.y + 100;
-  this.doctor.scale.x = 0.5;
+  var doctorGroup = new Phaser.Group(this.game, null, 'doctorGroup', true);
+
+  this.hospital_room = doctorGroup.create(0, 0, 'hospital_room');
+  this.hospital_room.scale.x = 0.5;
+  this.hospital_room.scale.y = 0.5;
+
+  this.doctor = doctorGroup.create(0, 0, 'giraffe_doctor');
+  this.doctor.x = this.x + this.width / 2 + 210;
+  this.doctor.y = this.y + 150;
+  this.doctor.scale.x = -0.5;
   this.doctor.scale.y = 0.5;
 
-  var doctorGroup = new Phaser.Group(this.game, null, 'doctorGroup', true);
+  
   doctorGroup.visible = false;
-
-  doctorGroup.add(this.doctor);
 
   this.doctorMinigameDialogue = new Dialogue(
       [{text: 'Hi PLAYER, I have been getting quite a few patients lately! It must ' +
