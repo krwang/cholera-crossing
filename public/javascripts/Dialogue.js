@@ -80,6 +80,13 @@ Dialogue.prototype.getChoicesText = function() {
   });
 };
 
+/**
+ * @return {boolean} Whether the dialogue is completed
+ */
+Dialogue.prototype.isDialogueFinished = function() {
+  return ((!this.displays) ||
+           this.displayIndex >= this.displays.length);
+};
 
 /**
  * @return {boolean} Whether the dialogue expects the player choices to be

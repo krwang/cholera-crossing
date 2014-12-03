@@ -19,7 +19,7 @@ DoctorMinigame.prototype = {
       game.load.image('cat_unhealthy', 'images/doctor_minigame/vectorcat-unhealthy.png');
       game.load.image('left_arrow', 'images/doctor_minigame/left_arrow.png');
       game.load.image('right_arrow', 'images/doctor_minigame/right_arrow.png');
-      game.load.image('house_scene', 'images/filtration_minigame/filtration_background.png');
+      game.load.image('house_scene', 'images/doctor_minigame/inside_home_1.png');
       
   },
 
@@ -49,8 +49,10 @@ DoctorMinigame.prototype = {
 
       // create the background group to exist across the different dialogue stages
       var background = new Phaser.Group(this.game, null, 'background', true);
-      background.create(0, 0, 'house_scene');
-
+      this.house_scene = game.add.sprite(0, 0, 'house_scene');
+      this.house_scene.scale.x = 0.5
+      this.house_scene.scale.y = 0.5
+      background.add(this.house_scene)
       //
       var cat1 = new Phaser.Group(this.game, null, 'cat1', true);
       cat1.visible = false;
@@ -86,17 +88,44 @@ DoctorMinigame.prototype = {
         {text:DoctorMinigameDialogues.player_npc1_player_4, 
           group:cat4},
         {text:DoctorMinigameDialogues.player_npc1_npc1_4, 
-          group:cat4},
+          group:cat2},
           ]);
 
-      // assign the global dialogue
-      this.game.playerData.dialogue = dialogue1;
+      var dialogue2 = new Dialogue([
+        {text:DoctorMinigameDialogues.player_npc2_player_1, 
+          group:cat1},
+        {text:DoctorMinigameDialogues.player_npc2_npc2_1, 
+          group:cat2},
+        {text:DoctorMinigameDialogues.player_npc2_player_2, 
+          group:cat2},
+        {text:DoctorMinigameDialogues.player_npc2_npc2_2, 
+          group:cat2},
+        {text:DoctorMinigameDialogues.player_npc2_player_3, 
+          group:cat2},
+        {text:DoctorMinigameDialogues.player_npc2_npc2_3, 
+          group:cat3},
+        {text:DoctorMinigameDialogues.player_npc2_player_4, 
+          group:cat4},
+        {text:DoctorMinigameDialogues.player_npc2_npc2_4, 
+          group:cat2},
+          ]);
+
+      function startFirstDialogue(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = dialogue1;
+
+        // show the dialogue view on screen
+        result.dialogueView.create();
+      }
+
+      function startSecondDialogue(result) {
+        result.dialogueView.game.playerData.dialogue = dialogue2;
+        result.dialogueView.create();
+      }
 
       // create the dialogue view
-      this.dialogueView = new DialogueView(this.game, function(result) {
-        this.game.state.start(result.nextState);
-      });
-      this.dialogueView.create();
+      this.dialogueView = new DialogueView(this.game, startSecondDialogue);
+      startFirstDialogue({dialogueView: this.dialogueView});
 
       /* storyboard structure, still here just incase it is useful later
       // var second = new Phaser.Group(this.game, null, 'second', true);

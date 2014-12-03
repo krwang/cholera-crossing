@@ -169,28 +169,49 @@ DialogueView.prototype.updateState = function() {
       this.game.world.bringToTop(this.group);
     }
 
+
     if (this.dialogue.isPlayerChoosing()) {
       this.updateVisibility(true);
       this.displayPlayerChoices();
     } else {
-      this.updateVisibility(false);
 
-      this.text.hiddenText = this.dialogue.getDisplayText();
-      this.text.resetProgress();
-      if (this.choicesGroup) {
-        this.choicesGroup.destroy();
-        this.choicesGroup = null;
+      if (!this.dialogue.isDialogueFinished()){
+
+        this.updateVisibility(false);
+
+        this.text.hiddenText = this.dialogue.getDisplayText();
+        this.text.resetProgress();
+        if (this.choicesGroup) {
+          this.choicesGroup.destroy();
+          this.choicesGroup = null;
+        }
+      } else {
+        if (this.onDone) {
+          console.log('here');
+          this.group.setAllChildren('visible', false);
+          this.group.setAll('visible', false);
+          if (this.currentBackgroundGroup) {
+            this.currentBackgroundGroup.visible = false;
+          }
+          this.onDone({
+            nextState: this.nextState,
+            dialogueView: this
+          });
+        }
+        this.game.playerData.dialogue = null;
       }
     }
   } else {
     if (this.onDone) {
+      console.log('here');
       this.group.setAllChildren('visible', false);
       this.group.setAll('visible', false);
       if (this.currentBackgroundGroup) {
         this.currentBackgroundGroup.visible = false;
       }
       this.onDone({
-        nextState: this.nextState
+        nextState: this.nextState,
+        dialogueView: this
       });
     }
     this.game.playerData.dialogue = null;
