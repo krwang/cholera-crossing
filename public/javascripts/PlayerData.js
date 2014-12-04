@@ -7,7 +7,15 @@
  */
 function PlayerData() {
   this.location = null;
-  this.completedGames = [];
-  this.inventory = [];
+  this.completedGames = {
+    tablets: false,
+    list: false,
+    bottle: false,
+  };
+  this.inventory = {
+    matches: false,
+    paper: false,
+    waterbucket: false,
+  };
   this.dialogue = null;
 }
