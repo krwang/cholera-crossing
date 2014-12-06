@@ -27,11 +27,6 @@ function VillageState(game) {
   //     ["Hi! You look like a cool cat. Can you help me out?"],
   //     [{text: "Fine, whatever", dialogue: willHelpDialogue}]
   // );
-  this.waterPurificationDialogue = new Dialogue(
-      ['Doop doop purify water conversation goes here'],
-      [{text: 'YES I WILL PURIFY', nextState: 'waterPurification'},
-       {text: 'On second thought nah', nextState: 'villageState'}]
-  );
 }
 
 /**
@@ -64,6 +59,10 @@ VillageState.prototype.preload = function() {
   game.load.image('flamingo', 'images/town/flamingo.png');
   game.load.image('monkey', 'images/town/monkey.png');
   game.load.image('monkeybucket', 'images/town/monkeybucket.png');
+
+  game.load.image('filtration_house', 'images/filtration_minigame/filtration_background.png');
+  game.load.image('boiling_pot', 'images/filtration_minigame/boiling_pot.png');
+  game.load.image('mom', 'images/filtration_minigame/catmom.png');
 
   game.load.image('paper', 'images/town/paper.png');
   game.load.image('matches', 'images/town/matches.png');
@@ -133,6 +132,18 @@ VillageState.prototype.create = function() {
        ],
       [{text: 'Yes, I\'m definitely up for it!',
         nextState: 'waterCollection'},
+       {text: 'On second thought nah', nextState: 'villageState'}]
+  );
+
+  var purificationGroup = new Phaser.Group(this.game, null, 'purificationGroup', true);
+  purificationGroup.create(0, 0, 'filtration_house');
+  purificationGroup.create(25, 200, 'mom');
+  purificationGroup.create(50, 400, 'boiling_pot');
+  purificationGroup.visible = false;
+
+  this.waterPurificationDialogue = new Dialogue(
+      [{text: 'Doop doop purify water conversation goes here', group: purificationGroup}],
+      [{text: 'YES I WILL PURIFY', nextState: 'waterPurification'},
        {text: 'On second thought nah', nextState: 'villageState'}]
   );
 
