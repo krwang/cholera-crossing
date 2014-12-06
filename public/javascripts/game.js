@@ -27,3 +27,9 @@ Object.keys(gameStates).forEach(function(stateName) {
 });
 
 game.state.start('start');
+
+WebFontConfig = {
+    google: {
+      families: ['Gloria+Hallelujah::latin']
+    }
+};

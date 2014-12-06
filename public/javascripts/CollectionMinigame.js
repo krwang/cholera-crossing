@@ -2,6 +2,7 @@ var WaterCollection = (function() {
 
 var stage = function(game) {
     this.game = game;
+    this.mainGroup
 };
 
 stage.prototype = {
@@ -9,12 +10,19 @@ stage.prototype = {
     preload: function() {
         game.load.image('land', 'images/collection_minigame/land.png');
         game.load.image('river', 'images/collection_minigame/river.png');
-        game.load.image('lake', 'images/collection_minigame/lake.png');
+        game.load.image('river_scene', 'images/collection_minigame/river_scene.png');
+        game.load.image('lake', 'images/town/lake.png');
+        game.load.image('lake_scene', 'images/collection_minigame/lake_scene.png');
         game.load.image('latrines', 'images/collection_minigame/latrines.png');
-        game.load.image('house', 'images/collection_minigame/house.png');
+        game.load.image('latrines_scene', 'images/collection_minigame/latrines_scene.png');
+        game.load.image('house', 'images/town/house.png');
+        game.load.image('house2', 'images/town/house2.png');
+        game.load.image('house_scene', 'images/filtration_minigame/filtration_background.png');
         game.load.image('waterbucket', 'images/collection_minigame/waterbucket.png');
-        game.load.image('rustyWater', 'images/collection_minigame/waterPump.png');
-        game.load.image('well', 'images/collection_minigame/well.png');
+        game.load.image('waterPump', 'images/town/waterPump.png');
+        game.load.image('waterPump_scene', 'images/collection_minigame/waterPump_scene.png');
+        game.load.image('well', 'images/town/well.png');
+        game.load.image('well_scene', 'images/collection_minigame/well_scene.png');
         game.load.image('done', 'images/collection_minigame/done.png');
         game.load.image('black', 'images/collection_minigame/black.png');
         game.load.image('white', 'images/collection_minigame/white.png');
@@ -28,10 +36,14 @@ stage.prototype = {
         
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
+        mainGroup = new Phaser.Group(this.game, null, 'mainGroup', true);
+
         river = game.add.button(100, 140, 'river', createImageModal);
         river.name = "river";
+        mainGroup.add(river);
         house = game.add.button(320, 150, 'house', createImageModal);
         house.name = "house";
+        mainGroup.add(house);
         game.add.text(325, 275, "Neighbor's House", {
             fill: "#ffffff",
             font: "12px Open Sans",
@@ -40,74 +52,54 @@ stage.prototype = {
         });
         lake = game.add.button(600, 200, 'lake', createImageModal);
         lake.name = "lake";
+        mainGroup.add(lake);
         latrines = game.add.button(400, 450, 'latrines', createImageModal);
         latrines.name = "latrines";
-        rustyWater = game.add.button(450, 300, 'rustyWater', createImageModal);
-        rustyWater.name = "rustyWater";
-        // rustyWater.scale.setTo(0.1, 0.1);
+        mainGroup.add(latrines);
+        waterPump = game.add.button(450, 300, 'waterPump', createImageModal);
+        waterPump.name = "waterPump";
+        mainGroup.add(waterPump);
         well = game.add.button(660, 500, 'well', createImageModal);
         well.name = "well";
+        mainGroup.add(well);
 
-        featureSprites = [river, house, lake, latrines, rustyWater, well];
+        featureSprites = [river, house, lake, latrines, waterPump, well];
 
         for (var i = 0; i < featureSprites.length; i++) {
             var feature = featureSprites[i];
-            var scale = getImageScale(feature);
-            feature.scale.setTo(scale, scale);
+            switch (feature.name) {
+                case "river":
+                    river.scale.setTo(0.5, 0.7);
+                    break;
+                case "lake":
+                    lake.scale.setTo(0.2, 0.2);
+                    break;
+                case "latrines":
+                    scaleTo(200, 200, latrines);
+                    break;
+                default:
+                    scaleTo(100, 100, feature);
+            }
         }
-        river.scale.setTo(0.5, 0.7);
-        lake.scale.setTo(0.2, 0.2);
-
-        var instructions = "One of your neighboring families needs your help! " + 
-        "The local doctor has seen several people from their family over the past few weeks and " + 
-        "guesses that they've come been drinking contaminated water.";
-        var instructions2 = "Help each family figure out where to collect water and where to defecate by dragging the water bucket " +
-        "and the toilet to a new location. Examine each " +
-        "location carefully!";
-
-        var start = new Phaser.Group(this.game, null, 'instructions', true);
-        start.add(new Phaser.Image(this.game, 0, 0, 'black'));
-        start.add(new Phaser.Button(this.game, 350, 500, 'done', function(button) {
-            start.visible = false;
-            start2.visible = true;
-        }));
-        start.add(new Phaser.Text(this.game, 25, 25, instructions, {
-            fill: "#ffffff",
-            font: "30px Open Sans",
-            wordWrap: true,
-            wordWrapWidth: 750,
-        }));
-        start.visible = true;
-        var start2 = new Phaser.Group(this.game, null, 'instructions2', true);
-        start2.add(new Phaser.Image(this.game, 0, 0, 'black'));
-        start2.add(new Phaser.Button(this.game, 350, 500, 'done', function(button) {
-            start2.visible = false;
-        }));
-        start2.add(new Phaser.Text(this.game, 25, 25, instructions2, {
-            fill: "#ffffff",
-            font: "30px Open Sans",
-            wordWrap: true,
-            wordWrapWidth: 750,
-        }));
-        start2.visible = false;
 
         var sidebar = game.add.sprite(0, 0, 'sidebar');
+        mainGroup.add(sidebar);
         waterbucket = game.add.sprite(10, 150, 'waterbucket');
         waterbucket.inputEnabled = true;
         waterbucket.input.enableDrag();
+        mainGroup.add(waterbucket);
         done = game.add.button(10, 25, 'done', this.checkMap);
         done.scale.setTo(0.8, 0.8);
+        mainGroup.add(done);
         var question = game.add.button(20, 450, 'question', function(button) {
             start.visible = true;
         });
         question.scale.setTo(0.03, 0.03);
+        mainGroup.add(question);
 
         // var player = game.add.sprite(0, 0, 'player');
         // player.scale.setTo(0.3, 0.3);
-        function getImageScale(image) {
-            return 100/Math.min(image.height, image.width);
-        }
-        
+
     },
     
     update: function() {
@@ -188,17 +180,17 @@ var features = {
         },
         explanationWater: "There's no clean water at the house!",
     },
-    rustyWater: {
-        name: "rusty water fountain",
-        description: "This is a water fountain. You notice some rust on the fountain.",
+    waterPump: {
+        name: "water pump",
+        description: "This is a water pump. You notice some rust.",
         safeWater: function(x, y) {
             return false;
         },
         explanationWater: "This water looks too rusty!",
     },
     well: {
-        name: "drinking fountain",
-        description: "This is a drinking fountain.",
+        name: "well",
+        description: "This is a well.",
         safeWater: function(x, y) {
             return true;
         },
@@ -207,6 +199,7 @@ var features = {
 }
 
 var createModal = function(button) {
+    mainGroup.visible = false;
     var modal = new Phaser.Group(button.game, null, 'modal', true);
     modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
     modal.add(new Phaser.Text(button.game, 25, 25, text, {
@@ -217,37 +210,36 @@ var createModal = function(button) {
     }));
     modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
         modal.destroy();
+        mainGroup.visible = true;
     }));
     modal.visible = true;
 }
 
 var createImageModal = function(button) {
-    // var image = 
+    mainGroup.visible = false;
     var featureName = button.name;
     var feature = features[featureName];
     var modal = new Phaser.Group(button.game, null, 'modal', true);
-    modal.add(new Phaser.Image(button.game, 0, 0, 'white'));
-    var image = new Phaser.Image(button.game, 25, 25, featureName);
-    var scale = getImageScale(image);
+    var image = new Phaser.Image(button.game, 0, 0, featureName + '_scene');
+    var scale = getImageScale(800, 600, image);
     image.scale.setTo(scale, scale);
     modal.add(image);
-    modal.add(new Phaser.Text(button.game, 25, 325, feature.description, {
-        fill: "#000000",
+    modal.add(new Phaser.Text(button.game, 25, 25, feature.description, {
+        fill: "#ffffff",
         font: "30px Open Sans",
         wordWrap: true,
         wordWrapWidth: 750,
     }));
     modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
+        mainGroup.visible = true;
         modal.destroy();
     }));
     modal.visible = true;
-    function getImageScale(image) {
-        return 200/Math.max(image.height, image.width);
-    }
 }
 
 
 var winModal = function(button) {
+    mainGroup.visible = false;
     var modal = new Phaser.Group(button.game, null, 'modal', true);
     modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
     modal.add(new Phaser.Text(button.game, 25, 25, "You win!", {
@@ -258,7 +250,7 @@ var winModal = function(button) {
     }));
     modal.add(new Phaser.Button(button.game, 650, 400, 'done', function() {
         modal.destroy();
-        game.playerData.completedGames.push('collection');
+        game.playerData.completedGames.tablets = true;
         game.state.start('villageState');
     }));
     modal.visible = true;
