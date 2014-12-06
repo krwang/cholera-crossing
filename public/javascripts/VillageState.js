@@ -142,9 +142,10 @@ VillageState.prototype.create = function() {
   purificationGroup.visible = false;
 
   this.waterPurificationDialogue = new Dialogue(
-      [{text: 'Doop doop purify water conversation goes here', group: purificationGroup}],
-      [{text: 'YES I WILL PURIFY', nextState: 'waterPurification'},
-       {text: 'On second thought nah', nextState: 'villageState'}]
+      [{text: 'Water was just brought to your house and your mom needs your help!', group: purificationGroup},
+       {text: 'She wants to make sure that all the water is safe for drinking.'}],
+      [{text: 'Of course I\'ll help!', nextState: 'waterPurification'},
+       {text: 'I need to take care of other things', nextState: 'villageState'}]
   );
 
   var npcBackground = new Phaser.Group(this.game, null, 'npcBackground', true);
