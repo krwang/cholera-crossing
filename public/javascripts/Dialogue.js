@@ -60,6 +60,18 @@ Dialogue.prototype.getDisplayGroup = function() {
   return null;
 };
 
+/**
+ * Get the current group's next state
+ * @return {String}
+ */
+Dialogue.prototype.getDisplayNextState = function() {
+  if (this.displayIndex < this.displays.length) {
+    var display = this.displays[this.displayIndex];
+    return display.nextState;
+  }
+  return null;
+};
+
 
 /**
  * @return {number} The amount of choices available to the player.
@@ -122,7 +134,8 @@ Dialogue.prototype.chooseChoiceIndex = function(choiceIndex) {
 
   return {
     dialogue: this.choices[choiceIndex].dialogue,
-    nextState: this.choices[choiceIndex].nextState
+    nextState: this.choices[choiceIndex].nextState,
+    group: this.choices[choiceIndex].group
   };
 };
 

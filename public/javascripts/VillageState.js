@@ -1,5 +1,11 @@
 /* global Dialogue, Phaser, VillagePather */
 
+VillageState.BuildingEnum = {
+  HOSPITAL: 'hospital',
+  HOUSE_2: 'house 2',
+  HOUSE_3: 'house 3',
+}
+
 /**
  * Create a new VillageState
  * @constructor
@@ -72,6 +78,17 @@ VillageState.prototype.preload = function() {
   game.load.image('tablets', 'images/town/paper.png');
   game.load.image('bottle', 'images/town/dirty_water.png');
   game.load.image('list', 'images/town/list.png');
+
+  game.load.image('button-background',
+                       'images/dialogue/dialogue-button-background.png');
+  game.load.image('text-background',
+                       'images/dialogue/dialogue-text-background.png');
+  game.load.image('left-arrow',
+                       'images/dialogue/left-arrow.png');
+  game.load.image('player-left-arrow',
+                       'images/dialogue/player-left-arrow.png');
+  game.load.image('right-arrow',
+                       'images/dialogue/right-arrow.png');
 };
 
 /**
@@ -79,48 +96,6 @@ VillageState.prototype.preload = function() {
  */
 VillageState.prototype.create = function() {
   var self = this;
-
-  var doctorGroup = new Phaser.Group(this.game, null, 'doctorGroup', true);
-
-  this.hospital_room = doctorGroup.create(0, 0, 'hospital_room');
-  this.hospital_room.scale.x = 0.5;
-  this.hospital_room.scale.y = 0.5;
-
-  this.doctor = doctorGroup.create(0, 0, 'giraffe_doctor');
-  this.doctor.x = this.x + this.width / 2 + 210;
-  this.doctor.y = this.y + 150;
-  this.doctor.scale.x = -0.5;
-
-  this.doctor.scale.y = 0.5;
-
-  doctorGroup.visible = false;
-
-  this.doctorMinigameDialogue = new Dialogue(
-      [{text: 'Hi PLAYER, I have been getting quite a few patients lately! It must ' +
-       'be related to this monster incident.', group: doctorGroup},
-       {text: 'Unfortunately, I couldn\'t save all of them. If they had come to me ' +
-       'earlier on, I could have given them proper treatment!', group: doctorGroup}],
-      [
-       {
-        text: 'How horrible! Is there anything I can do to help?',
-        dialogue: new Dialogue(
-          [{text: 'I have written down the symptoms that I have been seeing alot of ' +
-           'lately.', group: doctorGroup},
-           {text: 'Could you go ask your friends if they are having any of these ' +
-           'symptoms, and tell them to come to me right away if they are?', group: doctorGroup}],
-          [{
-             text: 'Yes, I\'m curious to know what is happening',
-             nextState: 'doctorMinigame'
-           },
-           {
-             text: 'No, I have other things to investigate',
-             nextState: 'villageState'
-           }
-          ]
-        )
-       }
-      ]
-  );
 
   var collectionGroup = new Phaser.Group(this.game, null, 'collectionGroup', true);
   collectionGroup.create(0, 0, 'land');
@@ -173,21 +148,31 @@ VillageState.prototype.create = function() {
   house.input.useHandCursor = true;
 
   var house2 = this.game.add.button(80, 500, 'house2', function() {
-
+    self.villagePather.playPath('doctorMinigame', false,
+      function() {
+        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_2;
+        self.game.state.start('doctorMinigame');
+      }
+    );
   });
   scaleTo(300, 300, house2);
   house2.input.useHandCursor = true;
 
   var house3 = this.game.add.button(600, 980, 'house3', function() {
-
+    self.villagePather.playPath('doctorMinigame', false,
+      function() {
+        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_3;
+        self.game.state.start('doctorMinigame');
+      }
+    );
   });
   scaleTo(300, 300, house3);
 
   var hospital = this.game.add.button(950, 50, 'hospital', function() {
     self.villagePather.playPath('doctorMinigame', false,
       function() {
-        self.game.playerData.dialogue = self.doctorMinigameDialogue;
-        self.game.state.start('dialogueState');
+        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOSPITAL;
+        self.game.state.start('doctorMinigame');
       }
     );
   });

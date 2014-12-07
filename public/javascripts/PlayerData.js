@@ -17,5 +17,7 @@ function PlayerData() {
     paper: false,
     waterbucket: false,
   };
+  this.buildingJustEntered = null;
   this.dialogue = null;
+  this.doctorMinigameState = DoctorMinigame.StateEnum.NOT_INITIATED;
 }

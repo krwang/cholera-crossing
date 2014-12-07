@@ -180,6 +180,7 @@ DialogueView.prototype.updateState = function() {
         this.updateVisibility(false);
 
         this.text.hiddenText = this.dialogue.getDisplayText();
+        this.nextState = this.dialogue.getDisplayNextState();
         this.text.resetProgress();
         if (this.choicesGroup) {
           this.choicesGroup.destroy();
@@ -187,7 +188,6 @@ DialogueView.prototype.updateState = function() {
         }
       } else {
         if (this.onDone) {
-          console.log('here');
           this.group.setAllChildren('visible', false);
           this.group.setAll('visible', false);
           if (this.currentBackgroundGroup) {
@@ -203,7 +203,6 @@ DialogueView.prototype.updateState = function() {
     }
   } else {
     if (this.onDone) {
-      console.log('here');
       this.group.setAllChildren('visible', false);
       this.group.setAll('visible', false);
       if (this.currentBackgroundGroup) {
@@ -251,6 +250,16 @@ DialogueView.prototype.displayPlayerChoices = function() {
                                        choicesText[i], chooseCallback,
                                        {choiceIndex: i});
     this.choicesGroup.add(choiceButton);
+
+    // allow choices to have a group to be displayed
+    if (this.dialogue.chooseChoiceIndex(i).group) {
+      if (this.currentBackgroundGroup) {
+        this.currentBackgroundGroup.visible = false;
+      }
+      this.currentBackgroundGroup = this.dialogue.chooseChoiceIndex(i).group;
+      this.currentBackgroundGroup.visible = true;
+      this.game.world.bringToTop(this.group);
+    }
   }
 };
 
