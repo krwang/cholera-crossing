@@ -17,12 +17,12 @@ start.prototype = {
         scaleTo(500, 400, title);
 
         var start = game.add.button(300, 450, 'start', function() {
-            game.state.start('villageState');
+            game.state.start('startDialogueState');
         });
         start.input.useHandCursor = true;
         scaleTo(200, 100, start);
     },
-    
+
     update: function() {
-    },
+    }
 };
