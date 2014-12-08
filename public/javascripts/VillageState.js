@@ -221,56 +221,41 @@ VillageState.prototype.create = function() {
   this.game.world.setBounds(0, 0, 1600, 1300);
 
   var house = this.game.add.button(450, 300, 'house', function() {
-    self.villagePather.playPath('waterPurification', false,
-      function() {
-        // On complete play dialogue
-        self.game.playerData.dialogue = self.waterPurificationDialogue;
-        self.game.state.start('dialogueState');
-      }
-    );
+    // On complete play dialogue
+    saveLocation();
+    self.game.playerData.dialogue = self.waterPurificationDialogue;
+    self.game.state.start('dialogueState');
   });
   scaleTo(300, 300, house);
   house.input.useHandCursor = true;
 
   var house2 = this.game.add.button(80, 500, 'house2', function() {
-    self.villagePather.playPath('doctorMinigame', false,
-      function() {
-        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_2;
-        self.game.state.start('doctorMinigame');
-      }
-    );
+    saveLocation();
+    self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_2;
+    self.game.state.start('doctorMinigame');
   });
   scaleTo(300, 300, house2);
   house2.input.useHandCursor = true;
 
   var house3 = this.game.add.button(600, 980, 'house3', function() {
-    self.villagePather.playPath('doctorMinigame', false,
-      function() {
-        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_3;
-        self.game.state.start('doctorMinigame');
-      }
-    );
+    saveLocation();
+    self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_3;
+    self.game.state.start('doctorMinigame');
   });
   scaleTo(300, 300, house3);
 
   var hospital = this.game.add.button(950, 50, 'hospital', function() {
-    self.villagePather.playPath('doctorMinigame', false,
-      function() {
-        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOSPITAL;
-        self.game.state.start('doctorMinigame');
-      }
-    );
+    saveLocation();
+    self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOSPITAL;
+    self.game.state.start('doctorMinigame');
   });
   scaleTo(500, 300, hospital);
   hospital.input.useHandCursor = true;
 
   var well = this.game.add.button(750, 650, 'well', function() {
-    self.villagePather.playPath('waterCollection', false,
-      function() {
-        self.game.playerData.dialogue = self.waterCollectionDialogue;
-        self.game.state.start('dialogueState');
-      }
-    );
+    saveLocation();
+    self.game.playerData.dialogue = self.waterCollectionDialogue;
+    self.game.state.start('dialogueState');
   });
   scaleTo(300, 300, well);
   well.input.useHandCursor = true;
@@ -303,12 +288,14 @@ VillageState.prototype.create = function() {
 
   if (!self.game.playerData.inventory.waterbucket) {
     var monkey = this.game.add.button(800, 430, 'monkeybucket', function() {
+      saveLocation();
       self.game.playerData.inventory.waterbucket = true;
       self.game.playerData.dialogue = self.monkeyBucketDialogue;
       self.game.state.start('dialogueState');
     });
   } else {
     var monkey = this.game.add.button(800, 430, 'monkey', function() {
+      saveLocation();
       self.game.playerData.inventory.waterbucket = true;
       self.game.playerData.dialogue = self.monkeyBucketDialogue;
       self.game.state.start('dialogueState');
@@ -318,6 +305,7 @@ VillageState.prototype.create = function() {
   monkey.input.useHandCursor = true;
 
   var flamingo = this.game.add.button(1350, 500, 'flamingo', function() {
+    saveLocation();
       self.game.playerData.inventory.paper = true;
       self.game.playerData.dialogue = self.flamingoDialogue;
       self.game.state.start('dialogueState');
@@ -404,6 +392,7 @@ VillageState.prototype.create = function() {
   homeImage.fixedToCamera = true;
 
   var helpImage = this.game.add.button(720, 525, 'help', function() {
+    saveLocation();
     game.state.start('start');
   });
   scaleTo(60, 60, helpImage);
