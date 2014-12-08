@@ -1,5 +1,5 @@
 /* global VillageState, WaterCollection, PurificationMinigame, DoctorMinigame */
-/* global Phaser, PlayerData, DialogueState */
+/* global Phaser, PlayerData, DialogueState, StartDialogueState, start, end */
 
 
 // Initialize Phaser and create a game
@@ -11,6 +11,7 @@ var gameStates = {
   waterCollection: WaterCollection,
   waterPurification: PurificationMinigame,
   doctorMinigame: DoctorMinigame,
+  startDialogueState: StartDialogueState,
   start: start,
   end: end
 };
