@@ -53,9 +53,6 @@ PurificationMinigame.prototype = {
         this.mom = game.add.sprite(25, 175, 'mom');
         this.boiler = game.add.sprite(50, 375, 'boiling_pot');
 
-        this.createNewContainer(400);
-        this.createNewContainer();
-
         this.scoreText = game.add.text(10, 5, "Your Score: " + this.score);
         this.lastScoreText = game.add.text(10, 35, "");
 
@@ -86,6 +83,14 @@ PurificationMinigame.prototype = {
         this.graphics.destroy();
         if (this.help) {
             this.help.destroy();
+        }
+
+        if (this.queue.length == 0) {
+            console.log("created");
+            this.createNewContainer(400);
+        }
+        else {
+            console.log("not created");
         }
 
         this.boil_textbox = game.add.sprite(5, 245, 'textbox100x210');
@@ -126,12 +131,20 @@ PurificationMinigame.prototype = {
         this.hitBox = new Phaser.Rectangle(325, 250, 175, 150);
         this.containersLeftText.setText("Containers Needed: " + this.containersLeft);
         this.fuelLeftText.setText("Firewood Left: " + this.firewoodLeft);
+
         this.gameStarted = true;
+        console.log("started");
+        if (this.queue.length < 2) {
+            this.createNewContainer();
+        }
+        console.log(this.queue);
     },
     
     update: function() {
         // Function called 60 times per second
         if (this.gameStarted && !this.gameEnded) {
+            console.log(this.gameStarted);
+            console.log(this.gameEnded);
             this.updateQueue(this.queue);
         }
     },
@@ -339,7 +352,7 @@ PurificationMinigame.prototype = {
     },
 
     endGame: function() {
-        this.gameEnd = true;
+        this.gameEnded = true;
         this.graphics = game.add.graphics(0, 0);
         this.graphics.beginFill(0x000000);
         this.graphics.drawRect(0, 0, this.game.width, this.game.height);
@@ -352,7 +365,8 @@ PurificationMinigame.prototype = {
     },
 
     returnToHome: function(button) {
-        this.gameEnd = false;
+        this.gameEnded = false;
+        this.gameStarted = false;
         this.game.state.start('villageState');
     },
 
