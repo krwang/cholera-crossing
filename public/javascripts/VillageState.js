@@ -332,6 +332,7 @@ VillageState.prototype.create = function() {
   scaleTo(300, 200, playerSprite);
 
   cursors = game.input.keyboard.createCursorKeys();
+  playerSprite.anchor.setTo(0.5, 0.5);
   this.game.camera.follow(playerSprite);
   this.villagePather = new VillagePather(this.game, playerSprite);
 
