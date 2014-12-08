@@ -140,11 +140,17 @@ VillageState.prototype.create = function() {
   purificationGroup.create(400, 200, 'mom');
   purificationGroup.create(50, 400, 'boiling_pot');
   purificationGroup.visible = false;
+"Your mom needs your help deciding what water is safe to drink " + 
+                   "and what water needs to be boiled before drinking. Be careful, " + 
+                   "you only have a limited amount of firewood so you won't be able " +
+                   "to boil all the water.";
 
   if (game.playerData.inventory.matches) {
     this.waterPurificationDialogue = new Dialogue(
       [{text: 'Water was just brought to your house and your mom needs your help!', group: purificationGroup},
-       {text: 'She wants to make sure that all the water is safe for drinking.'}],
+       {text: 'She wants to make sure that all the water is safe for drinking.'},
+       {text: 'Your mom needs your help deciding what water is safe to drink and what water needs to be boiled before drinking.', group: purificationGroup},
+       {text: 'Be careful, you only have a limited amount of firewood so you won\'t be able to boil all the water.', group: purificationGroup}],
       [{text: 'Of course I\'ll help!', nextState: 'waterPurification'},
        {text: 'I need to take care of other things', nextState: 'villageState'}]
     );
