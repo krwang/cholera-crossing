@@ -88,7 +88,9 @@ VillageState.prototype.preload = function() {
   game.load.image('bottle', 'images/town/dirty_water.png');
   game.load.image('list', 'images/town/list.png');
 
-  game.load.image('button-background',
+  this.game.load.image('big-button-background',
+                       'images/dialogue/dialogue-big-button-background.png');
+  this.game.load.image('button-background',
                        'images/dialogue/dialogue-button-background.png');
   game.load.image('text-background',
                        'images/dialogue/dialogue-text-background.png');
@@ -184,18 +186,30 @@ VillageState.prototype.create = function() {
   scaleTo(400, 300, player_group);
   npc_group3.visible = false;
 
-  this.flamingoDialogue = new Dialogue(
-      [{text: 'Here\'s a piece of paper!', group: npc_group2}],
-      [{text: 'Got it, thanks!', nextState: 'villageState'}]
-  );
+  if (!game.playerData.inventory.paper) {
+    this.flamingoDialogue = new Dialogue(
+      [{text: 'Hey, Kojo. Can you do me a favor? The doctor ordered paper, but I\'m ' + 
+      'currently stuck fixing a flat tire. Can you go take it to him?', group: npc_group2}],
+        [{text: 'No problem!', nextState: 'villageState'}]
+    );
+  } else {
+      this.flamingoDialogue = new Dialogue(
+      [{text: 'Thanks again for delivering the paper for me!', group: npc_group2, nextState: 'villageState'}]
+    );
+  }
 
   if (!game.playerData.inventory.waterbucket) {
-    this.monkeyBucketDialogue = new Dialogue(
-      [{text: 'Why are your running around with a bucket on your head?', group: npc_group1},
-      {text: 'I\'m pretending to be a robot!', group: npc_group1},
-      {text: 'Oh, I see. But isn\'t that dangerous? I mean, you could hurt yourself if you bump into someone.', group: npc_group1},
-      {text: 'Maybe you\'re right. I didn\'t really think of that. Actually, can you take this bucket to Korku? I borrowed it from him.', group: npc_group1}],
-      [{text: 'Sure, no problem!', nextState: 'villageState'}]
+    this.monkeyBucketDialogue = new Dialogue([],
+      [{text: 'Why are you running around with a bucket on your head?', group: npc_group1,
+        dialogue: new Dialogue(
+          [{text: 'I\'m pretending to be a robot!', group: npc_group1}],
+          [{text: 'Oh, I see. But isn\'t that dangerous? I mean, you could hurt yourself if you bump into someone.', group: npc_group1,
+          dialogue: new Dialogue(
+            [{text: 'Maybe you\'re right. I didn\'t really think of that. Actually, can you take this bucket to Korku? I borrowed it from him.', group: npc_group1}],
+            [{text: 'Sure, no problem!', nextState: 'villageState'}]
+          )}]
+        )
+      }]
     );
   } else {
     this.monkeyBucketDialogue = new Dialogue(

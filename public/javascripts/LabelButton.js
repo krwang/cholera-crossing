@@ -38,12 +38,15 @@
  */
 function LabelButton(game, x, y, key, label, callback, callbackContext,
                      overFrame, outFrame, downFrame, upFrame) {
+
   Phaser.Button.call(this, game, x, y, key, callback, callbackContext,
                      overFrame, outFrame, downFrame, upFrame);
 
   var labelStyle = {
       'font': '18px Helvetica Neue',
-      'fill': 'black'
+      'fill': 'black',
+      'wordWrap' : true,
+      'wordWrapWidth' : this.width - 24
   };
   this.label = new Phaser.Text(game, 0, 0, label, labelStyle);
 

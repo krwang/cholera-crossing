@@ -26,6 +26,9 @@ DoctorMinigame.prototype = {
       game.load.image('cat_stomachache', 'images/doctor_minigame/vectorcat-stomachache.png');
       game.load.image('cat_thirsty', 'images/doctor_minigame/vectorcat-thirsty.png');
       game.load.image('cat_unhealthy', 'images/doctor_minigame/vectorcat-unhealthy.png');
+      game.load.image('monkey_1', 'images/doctor_minigame/monkeysrs.png');
+      game.load.image('monkey_2', 'images/doctor_minigame/monkeysrs-idle.png');
+      game.load.image('monkey_sis', 'images/doctor_minigame/monkeysis.png');
       game.load.image('left_arrow', 'images/doctor_minigame/left_arrow.png');
       game.load.image('right_arrow', 'images/doctor_minigame/right_arrow.png');
       game.load.image('house_scene_1', 'images/doctor_minigame/inside_home_1.png');
@@ -39,25 +42,49 @@ DoctorMinigame.prototype = {
 
       //create the sprites and position them
       this.cat1 = game.add.sprite(0, 0, 'cat_happy');
-      this.cat1.x = this.x + this.width / 2;
+      this.cat1.x = this.x + this.width / 2 + 70;
       this.cat1.y = this.y + this.height / 2;
       this.cat1.scale.x = 0.5;
       this.cat1.scale.y = 0.5;
       this.cat2 = game.add.sprite(0, 0, 'cat_stomachache');
-      this.cat2.x = this.x + this.width / 2;
+      this.cat2.x = this.x + this.width / 2 + 70;
       this.cat2.y = this.y + this.height / 2;
       this.cat2.scale.x = 0.5;
       this.cat2.scale.y = 0.5;
       this.cat3 = game.add.sprite(0, 0, 'cat_thirsty');
-      this.cat3.x = this.x + this.width / 2;
+      this.cat3.x = this.x + this.width / 2 + 70;
       this.cat3.y = this.y + this.height / 2;
       this.cat3.scale.x = 0.5;
       this.cat3.scale.y = 0.5;
       this.cat4 = game.add.sprite(0, 0, 'cat_unhealthy');
-      this.cat4.x = this.x + this.width / 2;
+      this.cat4.x = this.x + this.width / 2 + 70;
       this.cat4.y = this.y + this.height / 2;
       this.cat4.scale.x = 0.5;
       this.cat4.scale.y = 0.5;
+
+      //create the sprites and position them
+      this.monkey1 = game.add.sprite(0, 0, 'monkey_1');
+      this.monkey1.x = this.x + this.width / 2 - 100;
+      this.monkey1.y = this.y + this.height / 2;
+      this.monkey1.scale.x = 0.5;
+      this.monkey1.scale.y = 0.5;
+      this.monkey2 = game.add.sprite(0, 0, 'monkey_2');
+      this.monkey2.x = this.x + this.width / 2 - 100;
+      this.monkey2.y = this.y + this.height / 2;
+      this.monkey2.scale.x = 0.5;
+      this.monkey2.scale.y = 0.5;
+      this.monkey3 = game.add.sprite(0, 0, 'monkey_sis');
+      this.monkey3.x = this.x + this.width / 2 + 100;
+      this.monkey3.y = this.y + this.height / 2 + 160;
+      this.monkey3.scale.x = 0.5;
+      this.monkey3.scale.y = 0.5;
+      this.monkey3.rotation = - Math.PI / 2;
+      this.monkey4 = game.add.sprite(0, 0, 'monkey_sis');
+      this.monkey4.x = this.x + this.width / 2 + 100;
+      this.monkey4.y = this.y + this.height / 2 + 160;
+      this.monkey4.scale.x = 0.5;
+      this.monkey4.scale.y = 0.5;
+      this.monkey4.rotation = - Math.PI / 2;
 
       // create the background group to exist across the different dialogue stages
       this.background = new Phaser.Group(this.game, null, 'background', true);
@@ -81,6 +108,10 @@ DoctorMinigame.prototype = {
       cat3.visible = false;
       var cat4 = new Phaser.Group(this.game, null, 'cat4', true);
       cat4.visible = false;
+      var monkey1 = new Phaser.Group(this.game, null, 'monkey1', true);
+      monkey1.visible = false;
+      var monkey2 = new Phaser.Group(this.game, null, 'monkey2', true);
+      monkey2.visible = false;
 
       //set up the groups for each dialogue stage
       cat1.add(this.cat1);
@@ -88,6 +119,10 @@ DoctorMinigame.prototype = {
       cat3.add(this.cat3);
       cat4.add(this.cat4);
 
+      monkey1.add(this.monkey1);
+      monkey2.add(this.monkey2);
+      monkey1.add(this.monkey3);
+      monkey2.add(this.monkey4);
 
       doctorGroup = new Phaser.Group(this.game, null, 'doctorGroup', true);
 
@@ -100,23 +135,37 @@ DoctorMinigame.prototype = {
       
       doctorGroup.visible = false;
 
-      var doctorMinigameDialogue = new Dialogue(
-        [{text: 'Hi PLAYER, I have been getting quite a few patients lately! It must ' +
-         'be related to this monster incident.', group: doctorGroup},
-         {text: 'Unfortunately, I couldn\'t save all of them. If they had come to me ' +
-         'earlier on, I could have given them proper treatment!', group: doctorGroup}],
-        [{text: 'How horrible! Is there anything I can do to help?',
+      var doctorPreDialogue = new Dialogue(
+        [{text: "Oh dear, I seem to have run out of paper!",
+        group: doctorGroup}],
+        [{text: "I\'ll see if I can find some for you Dr. Akwasi!",
+          nextState: DoctorMinigame.StateEnum.NOT_INITIATED
+        }]
+      );
+
+      var doctorDialogue1 = new Dialogue(
+        [{text: 'Hi Kojo, you have some paper for me? That\'s great! Now I can get back to helping my patients.', 
+          group: doctorGroup},
+         {text: 'I have been getting quite a few patients lately! It must ' +
+         'be related to this monster incident that everyone\'s been talking about.', 
+          group: doctorGroup},
+         {text: 'Sadly, I was not able to help them all. If they had only showed up ' +
+         'earlier, I could have given them proper treatment!', 
+          group: doctorGroup}],
+        [{text: 'Oh no! Is there anything I can do to help?',
           dialogue: new Dialogue(
-            [{text: 'I have written down the symptoms that I have been seeing alot of ' +
-             'lately.', group: doctorGroup},
-             {text: 'Could you go ask your friends if they are having any of these ' +
-             'symptoms, and tell them to come to me right away if they are?', group: doctorGroup}],
+            [{text: 'Hmmm... Just to be safe, Kojo, can you go and check how your friends are feeling? '
+             , group: doctorGroup}],
             [{
-               text: 'Yes, I\'m curious to know what is happening',
-               nextState: DoctorMinigame.StateEnum.INITIATED
+               text: 'Yes, I\'m curious to know what is happening.',
+               dialogue: new Dialogue(
+                [{text: 'I\'ll give you this list of symptons to look out for. ' + 
+                'If they show some or all of these symptoms, tell them to come to me right away!',
+                nextState: DoctorMinigame.StateEnum.INITIATED
+                }])
              },
              {
-               text: 'No, I have other things to investigate',
+               text: 'No, I have other things to investigate.',
                nextState: DoctorMinigame.StateEnum.NOT_INITIATED
              }
             ]
@@ -125,7 +174,6 @@ DoctorMinigame.prototype = {
         ]
       );
 
-      // create the dialogue structure
       var dialogue1 = new Dialogue([],
         [{text: DoctorMinigameDialogues.player_npc1_player_1, 
           group: cat1,
@@ -157,25 +205,25 @@ DoctorMinigame.prototype = {
 
       var dialogue2 = new Dialogue([],
         [{text:DoctorMinigameDialogues.player_npc2_player_1, 
-          group:cat1,
+          group:monkey1,
           dialogue: new Dialogue(
             [{text:DoctorMinigameDialogues.player_npc2_npc2_1, 
-            group:cat2}],
+            group:monkey1}],
             [{text:DoctorMinigameDialogues.player_npc2_player_2, 
-            group:cat2,
+            group:monkey2,
             dialogue: new Dialogue(
               [{text:DoctorMinigameDialogues.player_npc2_npc2_2, 
-              group:cat2}],
+              group:monkey2}],
               [{text:DoctorMinigameDialogues.player_npc2_player_3, 
-              group:cat2,
+              group:monkey2,
               dialogue: new Dialogue(
                 [{text:DoctorMinigameDialogues.player_npc2_npc2_3, 
-                group:cat3}],
+                group:monkey1}],
                 [{text:DoctorMinigameDialogues.player_npc2_player_4, 
-                group:cat3,
+                group:monkey1,
                 dialogue: new Dialogue(
                   [{text:DoctorMinigameDialogues.player_npc2_npc2_4, 
-                  group:cat4,
+                  group:monkey1,
                   nextState:DoctorMinigame.StateEnum.SPOKE_NPC2}]
                 )}]
               )}]
@@ -184,9 +232,24 @@ DoctorMinigame.prototype = {
         }]
       );
 
-      function startFirstDialogue(result) {
+      var doctorDialogue2 = new Dialogue(
+        [{text:DoctorMinigameDialogues.player_doctor_doctor_1, 
+          group:doctorGroup,
+          nextState: DoctorMinigame.StateEnum.FINISHED
+        }]
+      );
+
+      function startPreDoctorDialogue(result) {
         // assign the global dialogue
-        result.dialogueView.game.playerData.dialogue = doctorMinigameDialogue;
+        result.dialogueView.game.playerData.dialogue = doctorPreDialogue;
+
+        // show the dialogue view on screen
+        result.dialogueView.create();
+      }
+
+      function startFirstDoctorDialogue(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = doctorDialogue1;
 
         // show the dialogue view on screen
         result.dialogueView.create();
@@ -202,6 +265,14 @@ DoctorMinigame.prototype = {
 
       function startNPC2Dialogue(result) {
         result.dialogueView.game.playerData.dialogue = dialogue2;
+        result.dialogueView.create();
+      }
+
+      function startFinishedDoctorDialogue(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = doctorDialogue2;
+
+        // show the dialogue view on screen
         result.dialogueView.create();
       }
 
@@ -226,9 +297,16 @@ DoctorMinigame.prototype = {
       switch(this.game.playerData.doctorMinigameState) {
         case DoctorMinigame.StateEnum.NOT_INITIATED:
           if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOSPITAL) {
-            // start first doctor convo
-            this.hospital_room.bringToTop();
-            startFirstDialogue({dialogueView: this.dialogueView});
+            if (this.game.playerData.inventory.paper) {
+              // start first doctor convo
+              this.hospital_room.bringToTop();
+              startFirstDoctorDialogue({dialogueView: this.dialogueView});
+            }
+            else {
+              // tell player to find paper
+              this.hospital_room.bringToTop();
+              startPreDoctorDialogue({dialogueView: this.dialogueView});
+            }
           }
           else {
             // needs to enter hospital first, so just send back to village
@@ -295,13 +373,15 @@ DoctorMinigame.prototype = {
             returnToVillageState({dialogueView: this.dialogueView});
           }
           else {
-            // needs to talk to both NPC's first, so send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            // start final doctor dialogue
+            this.hospital_room.bringToTop();
+            startFinishedDoctorDialogue({dialogueView: this.dialogueView});
           }
           break;
         case DoctorMinigame.StateEnum.FINISHED:
-          // do nothing
-          returnToVillageState({dialogueView: this.dialogueView});
+          // start final doctor dialogue
+          this.hospital_room.bringToTop();
+          startFinishedDoctorDialogue({dialogueView: this.dialogueView});
           break;
         default:
           throw new Error("Error in doctorMinigameState");
@@ -347,7 +427,14 @@ DoctorMinigame.prototype = {
       }
     }
     else if (enumState == DoctorMinigame.StateEnum.INITIATED) {
-      game.playerData.doctorMinigameState = DoctorMinigame.StateEnum.INITIATED;
+      if (game.playerData.doctorMinigameState == DoctorMinigame.StateEnum.NOT_INITIATED) {
+        game.playerData.doctorMinigameState = enumState;
+      }
+    }
+    else if (enumState == DoctorMinigame.StateEnum.FINISHED) {
+      if (game.playerData.doctorMinigameState == DoctorMinigame.StateEnum.SPOKE_BOTH) {
+        game.playerData.doctorMinigameState = enumState;
+      }
     }
   },
 }
