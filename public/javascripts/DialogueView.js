@@ -89,12 +89,14 @@ DialogueView.prototype.create = function() {
                                          'left-arrow',
                                          this.goBack.bind(this));
   this.leftButton.anchor.setTo(0, 0.5);
+  this.leftButton.input.useHandCursor = true;
   this.group.add(this.leftButton);
 
   this.playerLeftButton = this.game.add.button(this.x, this.y + this.height / 2,
                                          'player-left-arrow',
                                          this.goBack.bind(this));
   this.playerLeftButton.anchor.setTo(0, 0.5);
+  this.playerLeftButton.input.useHandCursor = true;
   this.group.add(this.playerLeftButton);
 
   this.rightButton = this.game.add.button(this.x + this.width -
@@ -103,6 +105,7 @@ DialogueView.prototype.create = function() {
                                           'right-arrow',
                                           this.goForwards.bind(this));
   this.rightButton.anchor.setTo(0, 0.5);
+  this.rightButton.input.useHandCursor = true;
 
   this.group.add(this.rightButton);
 

@@ -18,17 +18,20 @@ stage.prototype = {
         game.load.image('house', 'images/town/house.png');
         game.load.image('house2', 'images/town/house2.png');
         game.load.image('house_scene', 'images/filtration_minigame/filtration_background.png');
-        game.load.image('waterbucket', 'images/collection_minigame/waterbucket.png');
+        game.load.image('waterbucket', 'images/town/empty_water.png');
         game.load.image('waterPump', 'images/town/waterPump.png');
         game.load.image('waterPump_scene', 'images/collection_minigame/waterPump_scene.png');
         game.load.image('well', 'images/town/well.png');
         game.load.image('well_scene', 'images/collection_minigame/well_scene.png');
         game.load.image('done', 'images/collection_minigame/done.png');
+        game.load.image('mom', 'images/filtration_minigame/catmom.png');
         game.load.image('black', 'images/collection_minigame/black.png');
         game.load.image('white', 'images/collection_minigame/white.png');
         game.load.image('player', 'images/bunnykid.png');
         game.load.image('question', 'images/collection_minigame/question.png');
         game.load.image('sidebar', 'images/collection_minigame/sidebar.png');
+        game.load.image('text-background', 'images/dialogue/dialogue-text-background.png');
+        this.game.load.image('right-arrow', 'images/dialogue/right-arrow.png')
     },
 
     create: function() {
@@ -44,12 +47,6 @@ stage.prototype = {
         house = game.add.button(320, 150, 'house', createImageModal);
         house.name = "house";
         mainGroup.add(house);
-        game.add.text(325, 275, "Neighbor's House", {
-            fill: "#ffffff",
-            font: "12px Open Sans",
-            wordWrap: true,
-            wordWrapWidth: 750,
-        });
         lake = game.add.button(600, 200, 'lake', createImageModal);
         lake.name = "lake";
         mainGroup.add(lake);
@@ -67,6 +64,7 @@ stage.prototype = {
 
         for (var i = 0; i < featureSprites.length; i++) {
             var feature = featureSprites[i];
+            feature.input.useHandCursor = true;
             switch (feature.name) {
                 case "river":
                     river.scale.setTo(0.5, 0.7);
@@ -84,22 +82,19 @@ stage.prototype = {
 
         var sidebar = game.add.sprite(0, 0, 'sidebar');
         mainGroup.add(sidebar);
-        waterbucket = game.add.sprite(10, 150, 'waterbucket');
+        waterbucket = game.add.sprite(10, 300, 'waterbucket');
         waterbucket.inputEnabled = true;
         waterbucket.input.enableDrag();
+        waterbucket.input.useHandCursor = true;
+        scaleTo(80, 80, waterbucket);
         mainGroup.add(waterbucket);
-        done = game.add.button(10, 25, 'done', this.checkMap);
-        done.scale.setTo(0.8, 0.8);
+        done = game.add.button(10, 25, 'mom', this.checkMap);
+        scaleTo(80, 200, done);
         mainGroup.add(done);
-        var question = game.add.button(20, 450, 'question', function(button) {
+        var question = game.add.button(20, 510, 'question', function(button) {
             start.visible = true;
         });
-        question.scale.setTo(0.03, 0.03);
         mainGroup.add(question);
-
-        // var player = game.add.sprite(0, 0, 'player');
-        // player.scale.setTo(0.3, 0.3);
-
     },
     
     update: function() {
@@ -118,16 +113,16 @@ stage.prototype = {
         if (features[waterSource.name].safeWater()) {
             waterDistance = calculateDistance(house, waterSource);
             if (waterDistance < 800) {
-                winModal(button);
+                winModal(button, "well");
             } else {
-                text = "The family has to walk so far. :(";
+                text = "The family has to walk too far!";
                 createModal(button);
             }
         } else {
             if (!features[waterSource.name].safeWater(waterSource.x, waterSource.y)) {
-                text += "The " + features[waterSource.name].name + " is not a safe location to collect water from. " + features[waterSource.name].explanationWater;
+                text += features[waterSource.name].explanationWater;
             }
-            createModal(button);
+            createModal(button, waterSource.name);
         }
         
         function findClosest(feature) {
@@ -154,7 +149,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        explanationWater: "It looks like there's a lot of bacteria in the lake.",
+        explanationWater: "Maybe the lake isn't the best place to get water. It looks like they are a lot of bacteria in the lake that might make your friend sick.",
     },
     river: {
         name: "river",
@@ -162,7 +157,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        explanationWater: "Careful! You don't know if the river's been contaminated with excreta upstream.",
+        explanationWater: "Oh no! The river is a bad place to collect water from. You don't know if it has been dirtied upstream. Try another place.",
     },
     latrines: {
         name: "latrines",
@@ -170,7 +165,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        explanationWater: "It doesn't look like there's any water here.",
+        explanationWater: "There is no clean water in the latrine.",
     },
     house: {
         name: "house",
@@ -178,7 +173,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        explanationWater: "There's no clean water at the house!",
+        explanationWater: "There's no water at the house.",
     },
     waterPump: {
         name: "water pump",
@@ -186,7 +181,7 @@ var features = {
         safeWater: function(x, y) {
             return false;
         },
-        explanationWater: "This water looks too rusty!",
+        explanationWater: "This water spout is rusty. The water is most likely dirty and can make your friend sick.",
     },
     well: {
         name: "well",
@@ -194,23 +189,32 @@ var features = {
         safeWater: function(x, y) {
             return true;
         },
-        explanationWater: "",
+        explanationWater: "The well is a perfect place to get water from! Thanks for helping!",
     },
 }
 
-var createModal = function(button) {
+var createModal = function(button, featureName) {
     mainGroup.visible = false;
+    var feature = features[featureName];
     var modal = new Phaser.Group(button.game, null, 'modal', true);
-    modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
-    modal.add(new Phaser.Text(button.game, 25, 25, text, {
-        fill: "#ffffff",
-        font: "30px Open Sans",
+    var image = new Phaser.Image(button.game, 0, 0, featureName + '_scene');
+    var textBackground = new Phaser.Image(button.game, 110, 506, 'text-background');
+    scaleTo(800, 600, image);
+    modal.add(image);
+    modal.add(textBackground);
+    modal.add(new Phaser.Text(button.game, 110+12, 506+12, feature.explanationWater, {
+        font: '18px Helvetica Neue',
+        fill: 'black',
         wordWrap: true,
-        wordWrapWidth: 750,
+        wordWrapWidth: textBackground.width - 24
     }));
-    modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
-        modal.destroy();
+    modal.add(new Phaser.Button(button.game, 720, 510, 'right-arrow', function(button) {
         mainGroup.visible = true;
+        modal.destroy();
+        if (feature == "well") {
+            game.playerData.completedGames.tablets = true;
+            game.state.start('villageState');
+        }
     }));
     modal.visible = true;
 }
@@ -221,16 +225,17 @@ var createImageModal = function(button) {
     var feature = features[featureName];
     var modal = new Phaser.Group(button.game, null, 'modal', true);
     var image = new Phaser.Image(button.game, 0, 0, featureName + '_scene');
-    var scale = getImageScale(800, 600, image);
-    image.scale.setTo(scale, scale);
+    var textBackground = new Phaser.Image(button.game, 110, 506, 'text-background');
+    scaleTo(800, 600, image);
     modal.add(image);
-    modal.add(new Phaser.Text(button.game, 25, 25, feature.description, {
-        fill: "#ffffff",
-        font: "30px Open Sans",
+    modal.add(textBackground);
+    modal.add(new Phaser.Text(button.game, 110+12, 506+12, feature.description, {
+        font: '18px Helvetica Neue',
+        fill: 'black',
         wordWrap: true,
-        wordWrapWidth: 750,
+        wordWrapWidth: textBackground.width - 24
     }));
-    modal.add(new Phaser.Button(button.game, 650, 400, 'done', function(button) {
+    modal.add(new Phaser.Button(button.game, 720, 510, 'right-arrow', function(button) {
         mainGroup.visible = true;
         modal.destroy();
     }));
@@ -238,17 +243,22 @@ var createImageModal = function(button) {
 }
 
 
-var winModal = function(button) {
+var winModal = function(button, featureName) {
     mainGroup.visible = false;
+    var feature = features[featureName];
     var modal = new Phaser.Group(button.game, null, 'modal', true);
-    modal.add(new Phaser.Image(button.game, 0, 0, 'black'));
-    modal.add(new Phaser.Text(button.game, 25, 25, "You win!", {
-        fill: "#ffffff",
-        font: "30px Open Sans",
+    var image = new Phaser.Image(button.game, 0, 0, featureName + '_scene');
+    var textBackground = new Phaser.Image(button.game, 110, 506, 'text-background');
+    scaleTo(800, 600, image);
+    modal.add(image);
+    modal.add(textBackground);
+    modal.add(new Phaser.Text(button.game, 110+12, 506+12, feature.explanationWater, {
+        font: '18px Helvetica Neue',
+        fill: 'black',
         wordWrap: true,
-        wordWrapWidth: 750,
+        wordWrapWidth: textBackground.width - 24
     }));
-    modal.add(new Phaser.Button(button.game, 650, 400, 'done', function() {
+    modal.add(new Phaser.Button(button.game, 720, 510, 'right-arrow', function(button) {
         modal.destroy();
         game.playerData.completedGames.tablets = true;
         game.state.start('villageState');

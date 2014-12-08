@@ -55,26 +55,36 @@ VillageState.prototype.preload = function() {
   game.load.image('lake', 'images/town/lake.png');
   game.load.image('fire', 'images/town/campfire.png');
   game.load.image('land', 'images/collection_minigame/land.png');
-  game.load.image('taskbar', 'images/main/taskbar.png');
+  game.load.image('taskbar', 'images/town/taskbar.png');
   game.load.image('player', 'images/bunnykid.png');
   game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
   game.load.image('mayor', 'images/main/owlmayor.png');
   game.load.image('hospital_room', 'images/doctor_minigame/hospital_room.png');
 
+  game.load.image('npc_bg1', 'images/town/npc_bg1.png');
+  game.load.image('npc_bg2', 'images/town/npc_bg2.png');
+  game.load.image('npc_bg3', 'images/town/npc_bg3.png');
+
   game.load.image('dog', 'images/town/dog.png');
   game.load.image('flamingo', 'images/town/flamingo.png');
   game.load.image('monkey', 'images/town/monkey.png');
   game.load.image('monkeybucket', 'images/town/monkeybucket.png');
+  game.load.image('mom', 'images/filtration_minigame/catmom.png');
 
   game.load.image('filtration_house', 'images/filtration_minigame/filtration_background.png');
   game.load.image('boiling_pot', 'images/filtration_minigame/boiling_pot.png');
   game.load.image('mom', 'images/filtration_minigame/catmom.png');
 
+  game.load.image('clue', 'images/town/clue.png');
+  game.load.image('item', 'images/town/item.png');
+  game.load.image('help', 'images/town/help.png');
+  game.load.image('home', 'images/town/home.png');
+
   game.load.image('paper', 'images/town/paper.png');
   game.load.image('matches', 'images/town/matches.png');
   game.load.image('waterbucket', 'images/town/empty_water.png');
   
-  game.load.image('tablets', 'images/town/paper.png');
+  game.load.image('tablets', 'images/town/tablets.png');
   game.load.image('bottle', 'images/town/dirty_water.png');
   game.load.image('list', 'images/town/list.png');
 
@@ -97,52 +107,115 @@ VillageState.prototype.create = function() {
   var self = this;
 
   var collectionGroup = new Phaser.Group(this.game, null, 'collectionGroup', true);
-  collectionGroup.create(0, 0, 'land');
+  var collectionBg = collectionGroup.create(0, 0, 'npc_bg1');
+  scaleTo(800, 600, collectionBg);
+  var collection_p1 = collectionGroup.create(100, 150, 'player');
+  var collection_p2 = collectionGroup.create(500, 150, 'mom');
+  scaleTo(400, 300, collection_p1);
+  scaleTo(400, 300, collection_p2);
   collectionGroup.visible = false;
 
-  this.waterCollectionDialogue = new Dialogue(
-      [{text: 'Your neighbor needs advice on where to pick up their water, can you ' +
-       'help?', group: collectionGroup},
-       {text: 'Make sure to point them to a clean source of water!', group: collectionGroup}
+  if (game.playerData.inventory.waterbucket) {
+    this.waterCollectionDialogue = new Dialogue(
+      [{text: 'Hello, Kojo. Can you help Korku collect water?', group: collectionGroup},
+       {text: 'Just drag the container to places where you can get water.', group: collectionGroup},
+       {text: 'Remember that you should collect water that is as clean as possible!', group: collectionGroup},
        ],
-      [{text: 'Yes, I\'m definitely up for it!',
+      [{text: 'Yes, I\'d love to help!',
         nextState: 'waterCollection'},
-       {text: 'On second thought nah', nextState: 'villageState'}]
-  );
+       {text: 'Sorry, I forgot I have to do something in the village', nextState: 'villageState'}]
+    );
+  } else {
+    this.waterCollectionDialogue = new Dialogue(
+      [{text: 'Where did the bucket go? I think that I saw Bodua running around with it on his head.', group: collectionGroup}],
+      [{text: 'I\'ll go look for it!',
+        nextState: 'villageState'}]
+    );
+  }
 
   var purificationGroup = new Phaser.Group(this.game, null, 'purificationGroup', true);
   purificationGroup.create(0, 0, 'filtration_house');
-  purificationGroup.create(25, 200, 'mom');
+  purificationGroup.create(400, 200, 'mom');
   purificationGroup.create(50, 400, 'boiling_pot');
   purificationGroup.visible = false;
 
-  this.waterPurificationDialogue = new Dialogue(
+  if (game.playerData.inventory.matches) {
+    this.waterPurificationDialogue = new Dialogue(
       [{text: 'Water was just brought to your house and your mom needs your help!', group: purificationGroup},
        {text: 'She wants to make sure that all the water is safe for drinking.'}],
       [{text: 'Of course I\'ll help!', nextState: 'waterPurification'},
        {text: 'I need to take care of other things', nextState: 'villageState'}]
-  );
+    );
+  } else {
+    this.waterPurificationDialogue = new Dialogue(
+      [{text: 'Hey! Kojo, did we run out of matches? I can\'t seem to find them anywhere.', group: collectionGroup}],
+      [{text: 'I\'ll go look for some!',
+        nextState: 'villageState'}]
+    );
+  }
 
-  var npcBackground = new Phaser.Group(this.game, null, 'npcBackground', true);
-  var splash = new Phaser.Image(this.game, 0, 0, 'splash');
-  scaleTo(800, 600, splash);
-  npcBackground.add(splash);
-  npcBackground.visible = false;
+  var npc_group1 = new Phaser.Group(this.game, null, 'npc_group1', true);
+  var npc_bg1 = new Phaser.Image(this.game, 0, 0, 'npc_bg1');
+  scaleTo(800, 600, npc_bg1);
+  npc_group1.add(npc_bg1);
+  var monkey_group1 = npc_group1.create(100, 150, game.playerData.inventory.waterbucket ? 'monkey' : 'monkeybucket');
+  scaleTo(400, 300, monkey_group1);
+  var player_group = npc_group1.create(500, 150, 'player');
+  scaleTo(400, 300, player_group);
+  npc_group1.visible = false;
+
+  var npc_group2 = new Phaser.Group(this.game, null, 'npc_group2', true);
+  var npc_bg2 = new Phaser.Image(this.game, 0, 0, 'npc_bg2');
+  scaleTo(800, 600, npc_bg2);
+  npc_group2.add(npc_bg2);
+  var flamingo_group2 = npc_group2.create(100, 150, 'flamingo');
+  scaleTo(400, 300, flamingo_group2);
+  var player_group = npc_group2.create(500, 150, 'player');
+  scaleTo(400, 300, player_group);
+  npc_group2.visible = false;
+
+  var npc_group3 = new Phaser.Group(this.game, null, 'npc_group3', true);
+  var npc_bg3 = new Phaser.Image(this.game, 0, 0, 'npc_bg3');
+  scaleTo(800, 600, npc_bg3);
+  npc_group3.add(npc_bg3);
+  var dog_group3 = npc_group3.create(100, 150, 'dog');
+  scaleTo(400, 300, dog_group3);
+  var player_group = npc_group3.create(600, 150, 'player');
+  scaleTo(400, 300, player_group);
+  npc_group3.visible = false;
 
   this.flamingoDialogue = new Dialogue(
-      [{text: 'Here\'s a piece of paper!', group: npcBackground}],
+      [{text: 'Here\'s a piece of paper!', group: npc_group2}],
       [{text: 'Got it, thanks!', nextState: 'villageState'}]
   );
 
-  this.monkeyBucketDialogue = new Dialogue(
-    [{text: 'Here\'s a bucket!', group: npcBackground}],
-    [{text: 'Got it, thanks!', nextState: 'villageState'}]
-  );
+  if (!game.playerData.inventory.waterbucket) {
+    this.monkeyBucketDialogue = new Dialogue(
+      [{text: 'Why are your running around with a bucket on your head?', group: npc_group1},
+      {text: 'I\'m pretending to be a robot!', group: npc_group1},
+      {text: 'Oh, I see. But isn\'t that dangerous? I mean, you could hurt yourself if you bump into someone.', group: npc_group1},
+      {text: 'Maybe you\'re right. I didn\'t really think of that. Actually, can you take this bucket to Korku? I borrowed it from him.', group: npc_group1}],
+      [{text: 'Sure, no problem!', nextState: 'villageState'}]
+    );
+  } else {
+    this.monkeyBucketDialogue = new Dialogue(
+      [{text: 'Let\'s go play later, okay?', group: npc_group1}],
+      [{text: 'Okay, I\'ll find you later.', nextState: 'villageState'}]
+    );
+  }
 
-  this.dogDialogue = new Dialogue(
-    [{text: 'Here\'s some matches!', group: npcBackground}],
-    [{text: 'Got it, thanks!', nextState: 'villageState'}]
-  );
+  if (!game.playerData.inventory.matches) {
+    this.dogDialogue = new Dialogue(
+      [{text: 'Fire is very important. We can use fire to boil water that is safe to drink and even cook our meals.', group: npc_group3},
+      {text: ' But it can also be very dangerous. You should never play with fire by yourself.', group: npc_group3},
+      {text: 'Be sure to only use these with adult supervision.', group: npc_group3}],
+      [{text: 'Got it, thanks!', nextState: 'villageState'}]
+    );
+  } else {
+    this.dogDialogue = new Dialogue(
+      [{text: 'If you don\'t know if your water is dirty, be sure to boil it. It is better to be safe than sorry.', group: npc_group3}],
+      [{text: 'Thanks for the tip!', nextState: 'villageState'}]);
+  }
 
   this.game.add.tileSprite(0, 0, 1600, 1200, 'town_map');
   this.game.world.setBounds(0, 0, 1600, 1300);
@@ -220,6 +293,7 @@ VillageState.prototype.create = function() {
   scaleTo(150, 150, fire);
 
   var dog = this.game.add.button(100, 950, 'dog', function() {
+    saveLocation();
     self.game.playerData.inventory.matches = true;
     self.game.playerData.dialogue = self.dogDialogue;
     self.game.state.start('dialogueState');
@@ -251,6 +325,16 @@ VillageState.prototype.create = function() {
   scaleTo(100, 200, flamingo);
   flamingo.input.useHandCursor = true;
 
+  var playerSpriteX = game.playerData.location ? game.playerData.location.x : 650;
+  var playerSpriteY = game.playerData.location ? game.playerData.location.y : 500;
+
+  playerSprite = this.game.add.sprite(playerSpriteX, playerSpriteY, 'player');
+  scaleTo(300, 200, playerSprite);
+
+  cursors = game.input.keyboard.createCursorKeys();
+  this.game.camera.follow(playerSprite);
+  this.villagePather = new VillagePather(this.game, playerSprite);
+
   this.up = this.game.add.sprite(350, 10, 'up');
   this.up.fixedToCamera = true;
   this.up.inputEnabled = true;
@@ -271,19 +355,24 @@ VillageState.prototype.create = function() {
   this.right.inputEnabled = true;
   this.right.input.useHandCursor = true;
 
-  // taskbar
   taskbar = this.game.add.sprite(0, 500, 'taskbar');
   taskbar.fixedToCamera = true;
 
   var inventory = game.playerData.inventory;
 
+  for (var i = 0; i < 3; i++) {
+    var x = 310 + 90*i;
+    var inventoryImage = this.game.add.sprite(x, 520, 'item');
+    scaleTo(70, 70, inventoryImage);
+    inventoryImage.fixedToCamera = true;
+  }
+
   var i = 0;
   Object.keys(inventory).forEach(function(key) {
     if (inventory[key]) {
-      var x = 210 + 100*i;
-      var inventoryImage = this.game.add.sprite(x, 510, key);
-      var scale = getImageScale(80, 80, inventoryImage);
-      inventoryImage.scale.setTo(scale, scale);
+      var x = 315 + 90*i;
+      var inventoryImage = this.game.add.sprite(x, 525, key);
+      scaleTo(60, 60, inventoryImage);
       inventoryImage.fixedToCamera = true;
       i++;
     }
@@ -291,35 +380,68 @@ VillageState.prototype.create = function() {
 
   var completedGames = game.playerData.completedGames;
 
-  var i = 0;
+  for (var j = 0; j < 3; j++) {
+    var x = 20 + 90*j;
+    var clueImage = this.game.add.sprite(x, 520, 'clue');
+    scaleTo(70, 70, clueImage);
+    clueImage.fixedToCamera = true;
+  }
+
+  var j = 0;
   Object.keys(completedGames).forEach(function(key) {
     if (completedGames[key]) {
-      var x = 10 + 100*i;
-      var clueImage = this.game.add.sprite(x, 510, key);
-      var scale = getImageScale(80, 80, clueImage);
-      clueImage.scale.setTo(scale, scale);
+      var x = 25 + 90*j;
+      var clueImage = this.game.add.sprite(x, 525, key);
+      scaleTo(60, 60, clueImage);
       clueImage.fixedToCamera = true;
-      i++;
+      j++;
     }
   });
 
-  this.playerSprite = this.game.add.sprite(400, 300, 'player');
-  this.playerSprite.scale.setTo(0.2, 0.2);
+  var homeImage = this.game.add.sprite(630, 525, 'home');
+  scaleTo(60, 60, homeImage);
+  homeImage.fixedToCamera = true;
 
-  this.villagePather = new VillagePather(this.game, this.playerSprite);
+  var helpImage = this.game.add.button(720, 525, 'help', function() {
+    game.state.start('start');
+  });
+  scaleTo(60, 60, helpImage);
+  helpImage.fixedToCamera = true;
+
+  function saveLocation() {
+    game.playerData.location = {
+      x: playerSprite.x,
+      y: playerSprite.y,
+    }
+  }
 };
 
 /**
  * Update the Village
  */
 VillageState.prototype.update = function() {
+  if (cursors.up.isDown) {
+    playerSprite.y -= 4;
+  }
+  if (cursors.down.isDown) {
+    playerSprite.y += 4;
+  }
+  if (cursors.left.isDown) {
+    playerSprite.x -= 4;
+  }
+  if (cursors.right.isDown) {
+    playerSprite.x += 4;
+  }
   if (this.up.input.pointerOver()) {
     this.game.camera.y -= 4;
-  } else if (this.down.input.pointerOver()) {
+  }
+  if (this.down.input.pointerOver()) {
     this.game.camera.y += 4;
-  } else if (this.left.input.pointerOver()) {
+  }
+  if (this.left.input.pointerOver()) {
     this.game.camera.x -= 4;
-  } else if (this.right.input.pointerOver()) {
+  }
+  if (this.right.input.pointerOver()) {
     this.game.camera.x += 4;
   }
 };
