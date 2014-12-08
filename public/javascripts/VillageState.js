@@ -423,15 +423,15 @@ VillageState.prototype.update = function() {
     playerSprite.x += 4;
   }
   if (this.up.input.pointerOver()) {
-    this.game.camera.y -= 4;
+    playerSprite.y -= 4;
   }
   if (this.down.input.pointerOver()) {
-    this.game.camera.y += 4;
+    playerSprite.y += 4;
   }
   if (this.left.input.pointerOver()) {
-    this.game.camera.x -= 4;
+    playerSprite.x -= 4;
   }
   if (this.right.input.pointerOver()) {
-    this.game.camera.x += 4;
+    playerSprite.x += 4;
   }
 };
