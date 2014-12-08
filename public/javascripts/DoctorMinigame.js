@@ -35,7 +35,8 @@ DoctorMinigame.prototype = {
       game.load.image('house_scene_2', 'images/doctor_minigame/inside_home_2.png');
       game.load.image('hospital_room', 'images/doctor_minigame/hospital_room.png');
       game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
- 
+      game.load.image('symptoms_button', 'images/filtration_minigame/help_button.png');
+      game.load.image('symptoms_list', 'images/doctor_minigame/symptomsList.png');
   },
 
   create: function() {
@@ -134,6 +135,35 @@ DoctorMinigame.prototype = {
       this.doctor.scale.y = 0.5;
       
       doctorGroup.visible = false;
+
+      this.symptomsGroup = new Phaser.Group(this.game, null, 'symptomsGroup', true);
+
+      if (this.game.playerData.doctorMinigameState != DoctorMinigame.StateEnum.NOT_INITIATED) {
+        //create symptoms list to be shown
+        console.log('made button')
+        this.symptomsListButton = game.add.button(726, 5, "symptoms_button", showSymptoms, this);
+        this.symptomsGroup.add(this.symptomsListButton);
+        this.symptomsGroup.bringToTop(this.symptomsListButton);
+        this.symptomsGroup.visible = true;
+      }
+
+      function showSymptoms(button){
+        button.destroy();
+        this.symptomsListButton = game.add.button(726, 5, "symptoms_button", hideSymptoms, this);
+        this.symptomsGroup.add(this.symptomsListButton);
+        this.symptomsGroup.bringToTop(this.symptomsListButton);
+        this.symptomsList = game.add.sprite(0, 0, "symptoms_list");
+        this.symptomsGroup.add(this.symptomsList);
+        this.symptomsGroup.bringToTop(this.symptomsList);
+      }
+
+      function hideSymptoms(button){
+        this.symptomsList.destroy();
+        button.destroy();
+        this.symptomsListButton = game.add.button(726, 5, "symptoms_button", showSymptoms, this);
+        this.symptomsGroup.add(this.symptomsListButton);
+        this.symptomsGroup.bringToTop(this.symptomsListButton);
+      }
 
       var doctorPreDialogue = new Dialogue(
         [{text: "Oh dear, I seem to have run out of paper!",
@@ -279,6 +309,7 @@ DoctorMinigame.prototype = {
       var returnToVillageState = (function(state) {
         return function(result) {
           state.background.visible = false;
+          state.symptomsGroup.visible = false;
 
           // update the player data for this convo
           // nextState is normally used as a literal next state for the game to start,
@@ -318,11 +349,13 @@ DoctorMinigame.prototype = {
           if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_2) {
             // start first npc convo
             this.house_scene_1.bringToTop();
+            this.symptomsListButton.bringToTop();
             startNPC1Dialogue({dialogueView: this.dialogueView});
           }
           else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
             // start second npc convo
             this.house_scene_2.bringToTop();
+            this.symptomsListButton.bringToTop();
             startNPC2Dialogue({dialogueView: this.dialogueView});
           }
           else {
@@ -429,6 +462,8 @@ DoctorMinigame.prototype = {
     else if (enumState == DoctorMinigame.StateEnum.INITIATED) {
       if (game.playerData.doctorMinigameState == DoctorMinigame.StateEnum.NOT_INITIATED) {
         game.playerData.doctorMinigameState = enumState;
+        game.playerData.inventory.paper = false;
+        game.playerData.completedGames.list = true;
       }
     }
     else if (enumState == DoctorMinigame.StateEnum.FINISHED) {

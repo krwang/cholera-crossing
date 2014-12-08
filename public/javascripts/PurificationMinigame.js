@@ -37,6 +37,8 @@ PurificationMinigame.prototype = {
 
         game.load.image('helpButton', 'images/filtration_minigame/help_button.png');
         game.load.image('startButton', 'images/filtration_minigame/start_button.png');
+        game.load.image('text-background', 'images/dialogue/dialogue-text-background.png');
+        game.load.image('right-arrow', 'images/dialogue/right-arrow.png');
     },
 
     create: function() { 
@@ -63,34 +65,17 @@ PurificationMinigame.prototype = {
         this.containersLeftText = game.add.text(25, 520, "");
         this.fuelLeftText = game.add.text(25, 550, "");
 
-        this.graphics = game.add.graphics(0, 0);
-        this.graphics.beginFill(0x000000);
-        this.graphics.drawRect(0, 0, this.game.width, this.game.height);
-        this.graphics.endFill();
-
-        this.startButton = game.add.button(350, 400, 'startButton', this.showHelpText, this);
-
-        this.instructionText = game.add.text(50, 50, instructions);
-        this.instructionText.fill = 'white';
-        this.instructionText.wordWrap = true;
-        this.instructionText.wordWrapWidth = 700;
+        this.showHelpText();
     },
 
-    showHelpText: function(button) {
+    showHelpText: function() {
         this.gameStarted = false;
-        button.destroy();
-        this.instructionText.destroy();
-        this.graphics.destroy();
         if (this.help) {
             this.help.destroy();
         }
 
         if (this.queue.length == 0) {
-            console.log("created");
             this.createNewContainer(400);
-        }
-        else {
-            console.log("not created");
         }
 
         this.boil_textbox = game.add.sprite(5, 245, 'textbox100x210');
@@ -112,6 +97,7 @@ PurificationMinigame.prototype = {
         this.hover_text.wordWrapWidth = 250;
 
         this.startButton = game.add.button(350, 125, 'startButton', this.startGame, this);
+        this.startButton.input.useHandCursor = true;
     },
 
     startGame: function(button) {
@@ -133,18 +119,14 @@ PurificationMinigame.prototype = {
         this.fuelLeftText.setText("Firewood Left: " + this.firewoodLeft);
 
         this.gameStarted = true;
-        console.log("started");
         if (this.queue.length < 2) {
             this.createNewContainer();
         }
-        console.log(this.queue);
     },
     
     update: function() {
         // Function called 60 times per second
         if (this.gameStarted && !this.gameEnded) {
-            console.log(this.gameStarted);
-            console.log(this.gameEnded);
             this.updateQueue(this.queue);
         }
     },
@@ -352,22 +334,29 @@ PurificationMinigame.prototype = {
     },
 
     endGame: function() {
+        var thisGame = this;
         this.gameEnded = true;
-        this.graphics = game.add.graphics(0, 0);
-        this.graphics.beginFill(0x000000);
-        this.graphics.drawRect(0, 0, this.game.width, this.game.height);
-        this.graphics.endFill();
 
-        this.endGameText = game.add.text(50, 100, "Thanks for your help bottling water! Your score: " + this.score);
-        this.endGameText.fill = 'white';
+        var background = this.game.add.sprite(0, 0, 'background');
+        scaleTo(800, 600, background);
 
-        this.endButton = game.add.button(300, 400, 'startButton', this.returnToHome, this);
+        var mom = game.add.sprite(25, 175, 'mom');
+        var textBackground = this.game.add.sprite(110, 506, 'text-background');
+        this.game.add.text(110+12, 506+12, 'Thanks for your help bottling water!', {
+            font: '18px Helvetica Neue',
+            fill: 'black',
+            wordWrap: true,
+            wordWrapWidth: textBackground.width - 24
+        });
+        this.game.add.button(720, 510, 'right-arrow', this.returnToHome);    
     },
 
-    returnToHome: function(button) {
+    returnToHome: function() {
         this.gameEnded = false;
         this.gameStarted = false;
+        game.playerData.completedGames.bottle = true;
         this.game.state.start('villageState');
+
     },
 
 }

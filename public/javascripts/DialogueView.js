@@ -34,7 +34,7 @@ function DialogueView(game, onDone) {
  */
 DialogueView.prototype.preload = function() {
   this.game.load.image('big-button-background',
-                       'images/dialogue/dialogue-big-button-background.png');
+                     'images/dialogue/dialogue-big-button-background.png');
   this.game.load.image('button-background',
                        'images/dialogue/dialogue-button-background.png');
   this.game.load.image('text-background',
@@ -251,7 +251,7 @@ DialogueView.prototype.displayPlayerChoices = function() {
     var y = this.y + this.height / 2 - buttonHeight / 2 +
             (i + 0.5) * (this.buttonHeight + this.buttonPadding);
     // This will probably leak an insignificant amount of memory
-    var choiceButton = new LabelButton(this.game, x, y, (choicesText[i].length > 70) ? 
+    var choiceButton = new LabelButton(this.game, x, y, (choicesText[i].length > 65) ? 
                                         'big-button-background' : 'button-background',
                                        choicesText[i], chooseCallback,
                                        {choiceIndex: i});
