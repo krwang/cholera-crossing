@@ -18,6 +18,8 @@ PurificationMinigame.prototype = {
    preload: function() { 
         // Function called first to load all the assets
         game.load.image('background', 'images/filtration_minigame/filtration_background.png');
+        game.load.image('toolbar_top', 'images/filtration_minigame/toolbar_top.png');
+        game.load.image('toolbar_bottom', 'images/filtration_minigame/toolbar_bottom.png');
         
         game.load.image('arrow_left', 'images/filtration_minigame/arrow_left.png');
         game.load.image('arrow_down', 'images/filtration_minigame/arrow_down.png');
@@ -39,19 +41,30 @@ PurificationMinigame.prototype = {
 
     create: function() { 
         // Function called after 'preload' to setup the game
-        this.background = game.add.sprite(0, 0, 'background');
+        this.score = 0;
+        this.firewoodLeft = 8;
+        this.containersLeft = 20;
+        this.queue = [];
 
-        this.mom = game.add.sprite(25, 200, 'mom');
-        this.boiler = game.add.sprite(50, 400, 'boiling_pot');
+        this.background = game.add.sprite(0, 0, 'background');
+        this.toolbar_top = game.add.sprite(0, 0, 'toolbar_top');
+        this.toolbar_bottom = game.add.sprite(0, 500, 'toolbar_bottom');
+
+        this.mom = game.add.sprite(25, 175, 'mom');
+        this.boiler = game.add.sprite(50, 375, 'boiling_pot');
 
         this.createNewContainer(400);
         this.createNewContainer();
 
-        this.scoreText = game.add.text(10, 10, "Your Score: " + this.score);
-        this.containerScoreText = game.add.text(450, 275, "");
-        this.tempText = game.add.text(450, 500, "");
-        this.sourceText = game.add.text(450, 530, "");
-        this.purityText = game.add.text(450, 560, "");
+        this.scoreText = game.add.text(10, 5, "Your Score: " + this.score);
+        this.lastScoreText = game.add.text(10, 35, "");
+
+        this.tempText = game.add.text(450, 510, "");
+        this.sourceText = game.add.text(450, 540, "");
+        this.purityText = game.add.text(450, 570, "");
+
+        this.containersLeftText = game.add.text(25, 520, "");
+        this.fuelLeftText = game.add.text(25, 550, "");
 
         this.graphics = game.add.graphics(0, 0);
         this.graphics.beginFill(0x000000);
@@ -75,9 +88,9 @@ PurificationMinigame.prototype = {
             this.help.destroy();
         }
 
-        this.boil_textbox = game.add.sprite(5, 270, 'textbox100x210');
-        this.boil_arrow = game.add.sprite(90, 375, 'arrow_down');
-        this.boil_text = game.add.text(10, 275, "Drag containers here to boil the water ");
+        this.boil_textbox = game.add.sprite(5, 245, 'textbox100x210');
+        this.boil_arrow = game.add.sprite(90, 350, 'arrow_down');
+        this.boil_text = game.add.text(10, 250, "Drag containers here to boil the water ");
         this.boil_text.wordWrap = true;
         this.boil_text.wordWrapWidth = 250;
 
@@ -108,11 +121,11 @@ PurificationMinigame.prototype = {
         this.hover_arrow.destroy();
         this.hover_text.destroy();
         
-        this.help = game.add.button(726, 10, "helpButton", this.showHelpText, this);
+        this.help = game.add.button(726, 5, "helpButton", this.showHelpText, this);
 
         this.hitBox = new Phaser.Rectangle(325, 250, 175, 150);
-        this.containersLeftText = game.add.text(25, 520, "Containers Needed: " + this.containersLeft);
-        this.fuelLeftText = game.add.text(25, 550, "Firewood Left: " + this.firewoodLeft);
+        this.containersLeftText.setText("Containers Needed: " + this.containersLeft);
+        this.fuelLeftText.setText("Firewood Left: " + this.firewoodLeft);
         this.gameStarted = true;
     },
     
@@ -267,6 +280,7 @@ PurificationMinigame.prototype = {
                 this.containersLeft -= 1;
                 this.fuelLeftText.setText("Firewood Left: " + this.firewoodLeft);
                 this.containersLeftText.setText("Containers Needed: " + this.containersLeft);
+                this.lastScoreText.setText("Last move: 50");
                 this.score += 50;
                 this.scoreText.setText("Your Score: " + this.score);
                 if (this.containersLeft > 0) {
@@ -320,7 +334,7 @@ PurificationMinigame.prototype = {
         var dirtiness = container.dirtiness / 100;
         var squared = Math.pow(dirtiness, 2);
         var score = Math.floor((2 - squared) * 50);
-        this.containerScoreText.setText(score);
+        this.lastScoreText.setText("Last move: " + score);
         return score;
     },
 
@@ -331,7 +345,7 @@ PurificationMinigame.prototype = {
         this.graphics.drawRect(0, 0, this.game.width, this.game.height);
         this.graphics.endFill();
 
-        this.endGameText = game.add.text(100, 100, "Thanks for your help bottling water! Your score: " + this.score);
+        this.endGameText = game.add.text(50, 100, "Thanks for your help bottling water! Your score: " + this.score);
         this.endGameText.fill = 'white';
 
         this.endButton = game.add.button(300, 400, 'startButton', this.returnToHome, this);
