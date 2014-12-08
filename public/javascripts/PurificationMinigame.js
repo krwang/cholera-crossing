@@ -18,6 +18,13 @@ PurificationMinigame.prototype = {
    preload: function() { 
         // Function called first to load all the assets
         game.load.image('background', 'images/filtration_minigame/filtration_background.png');
+        
+        game.load.image('arrow_left', 'images/filtration_minigame/arrow_left.png');
+        game.load.image('arrow_down', 'images/filtration_minigame/arrow_down.png');
+
+        game.load.image('textbox100x210', 'images/filtration_minigame/textbox100x210.png');
+        game.load.image('textbox125x250', 'images/filtration_minigame/textbox125x250.png');
+        game.load.image('textbox100x225', 'images/filtration_minigame/textbox100x225.png');
 
         game.load.image('bottle', 'images/filtration_minigame/bottle_blue.png');
         game.load.image('bowl', 'images/filtration_minigame/bowl.png');
@@ -68,25 +75,37 @@ PurificationMinigame.prototype = {
             this.help.destroy();
         }
 
-        this.boil_text = game.add.text(10, 400, "Drag containers here to boil the water ");
+        this.boil_textbox = game.add.sprite(5, 270, 'textbox100x210');
+        this.boil_arrow = game.add.sprite(90, 375, 'arrow_down');
+        this.boil_text = game.add.text(10, 275, "Drag containers here to boil the water ");
         this.boil_text.wordWrap = true;
         this.boil_text.wordWrapWidth = 250;
 
-        this.direct_text = game.add.text(300, 250, "Drag containers here if it is safe to drink without boiling");
+        this.direct_textbox = game.add.sprite(490, 250, 'textbox125x250');
+        this.direct_arrow = game.add.sprite(435, 275, 'arrow_left');
+        this.direct_text = game.add.text(500, 250, "Drag containers here if it is safe to drink without boiling");
         this.direct_text.wordWrap = true;
         this.direct_text.wordWrapWidth = 250;
 
-        this.hover_text = game.add.text(500, 410, "Hover over the containers to see details");
+        this.hover_textbox = game.add.sprite(547, 395, 'textbox100x225');
+        this.hover_arrow = game.add.sprite(490, 425, 'arrow_left');
+        this.hover_text = game.add.text(550, 400, "Hover over the containers to see details");
         this.hover_text.wordWrap = true;
-        this.hover_text.wordWrapWidth = 300;
+        this.hover_text.wordWrapWidth = 250;
 
         this.startButton = game.add.button(350, 125, 'startButton', this.startGame, this);
     },
 
     startGame: function(button) {
         button.destroy();
+        this.boil_textbox.destroy();
         this.boil_text.destroy();
+        this.boil_arrow.destroy();
+        this.direct_textbox.destroy();
+        this.direct_arrow.destroy();
         this.direct_text.destroy();
+        this.hover_textbox.destroy();
+        this.hover_arrow.destroy();
         this.hover_text.destroy();
         
         this.help = game.add.button(726, 10, "helpButton", this.showHelpText, this);
