@@ -112,9 +112,10 @@ VillageState.prototype.create = function() {
   var collectionBg = collectionGroup.create(0, 0, 'npc_bg1');
   scaleTo(800, 600, collectionBg);
   var collection_p1 = collectionGroup.create(100, 150, 'player');
-  var collection_p2 = collectionGroup.create(500, 150, 'mom');
-  scaleTo(400, 300, collection_p1);
-  scaleTo(400, 300, collection_p2);
+  var collection_p2 = collectionGroup.create(600, 150, 'mom');
+  scaleTo(150, 300, collection_p1);
+  scaleTo(150, 300, collection_p2);
+  collection_p2.scale.x *= -1;
   collectionGroup.visible = false;
 
   if (game.playerData.inventory.waterbucket) {
@@ -176,9 +177,9 @@ VillageState.prototype.create = function() {
   var npc_bg2 = new Phaser.Image(this.game, 0, 0, 'npc_bg2');
   scaleTo(800, 600, npc_bg2);
   npc_group2.add(npc_bg2);
-  var flamingo_group2 = npc_group2.create(100, 150, 'flamingo');
+  var flamingo_group2 = npc_group2.create(500, 150, 'flamingo');
   scaleTo(400, 300, flamingo_group2);
-  var player_group = npc_group2.create(500, 150, 'player');
+  var player_group = npc_group2.create(100, 150, 'player');
   scaleTo(400, 300, player_group);
   npc_group2.visible = false;
 

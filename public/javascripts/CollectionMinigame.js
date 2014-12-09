@@ -17,21 +17,22 @@ stage.prototype = {
         game.load.image('latrines_scene', 'images/collection_minigame/latrines_scene.png');
         game.load.image('house', 'images/town/house.png');
         game.load.image('house2', 'images/town/house2.png');
-        game.load.image('house_scene', 'images/filtration_minigame/filtration_background.png');
+        game.load.image('house_scene', 'images/collection_minigame/house_scene.png');
         game.load.image('waterbucket', 'images/town/empty_water.png');
         game.load.image('waterPump', 'images/town/waterPump.png');
         game.load.image('waterPump_scene', 'images/collection_minigame/waterPump_scene.png');
         game.load.image('well', 'images/town/well.png');
         game.load.image('well_scene', 'images/collection_minigame/well_scene.png');
         game.load.image('done', 'images/collection_minigame/done.png');
-        game.load.image('mom', 'images/filtration_minigame/catmom.png');
+        game.load.image('dog', 'images/town/dog.png');
         game.load.image('black', 'images/collection_minigame/black.png');
         game.load.image('white', 'images/collection_minigame/white.png');
         game.load.image('player', 'images/bunnykid.png');
-        game.load.image('question', 'images/collection_minigame/question.png');
+        game.load.image('home', 'images/town/home.png');
         game.load.image('sidebar', 'images/collection_minigame/sidebar.png');
         game.load.image('text-background', 'images/dialogue/dialogue-text-background.png');
-        this.game.load.image('right-arrow', 'images/dialogue/right-arrow.png')
+        game.load.image('right-arrow', 'images/dialogue/right-arrow.png');
+        game.load.image('speech_bubble', 'images/collection_minigame/speech_bubble.png');
     },
 
     create: function() {
@@ -88,12 +89,27 @@ stage.prototype = {
         waterbucket.input.useHandCursor = true;
         scaleTo(80, 80, waterbucket);
         mainGroup.add(waterbucket);
-        done = game.add.button(10, 25, 'mom', this.checkMap);
-        scaleTo(80, 200, done);
+        done = game.add.button(20, 30, 'dog', this.checkMap);
+        scaleTo(80, 180, done);
         mainGroup.add(done);
-        var question = game.add.button(20, 510, 'question', function(button) {
-            start.visible = true;
+        done.input.useHandCursor = true;
+        var speech_bubble = game.add.button(65, 10, 'speech_bubble', this.checkMap);
+        speech_bubble.input.useHandCursor = true;
+        scaleTo(110, 110, speech_bubble);
+        mainGroup.add(speech_bubble);
+        var text = game.add.text(70, 15, "Drag the bowl and click me when you're done!", {
+            fill: "#000",
+            font: "12px Helvetica Neue",
+            wordWrap: true,
+            wordWrapWidth: 100,
+            align: "center"
         });
+        mainGroup.add(text);
+        var question = game.add.button(20, 510, 'home', function(button) {
+            mainGroup.destroy();
+            game.state.start('villageState');
+        });
+        question.input.useHandCursor = true;
         mainGroup.add(question);
     },
     
@@ -110,7 +126,9 @@ stage.prototype = {
     checkMap: function(button) {
         waterSource = findClosest(waterbucket);
         text = "";
-        if (features[waterSource.name].safeWater()) {
+        if (!waterSource) {
+            
+        } else if (features[waterSource.name].safeWater()) {
             waterDistance = calculateDistance(house, waterSource);
             if (waterDistance < 800) {
                 winModal(button, "well");
@@ -126,8 +144,10 @@ stage.prototype = {
         }
         
         function findClosest(feature) {
-            if (feature.x < 325) {
+            if (feature.x < 325 && feature.x > 100) {
                 return river;
+            } else if (feature.x <= 100) {
+                return null;
             }
             shortestDistance = 1000;
             closestFeature = null;
@@ -242,7 +262,6 @@ var createImageModal = function(button) {
     modal.visible = true;
 }
 
-
 var winModal = function(button, featureName) {
     mainGroup.visible = false;
     var feature = features[featureName];
@@ -252,6 +271,9 @@ var winModal = function(button, featureName) {
     scaleTo(800, 600, image);
     modal.add(image);
     modal.add(textBackground);
+    var dog = modal.create(50, 200, 'dog');
+    scaleTo(150, 300, dog);
+    modal.add(dog);
     modal.add(new Phaser.Text(button.game, 110+12, 506+12, feature.explanationWater, {
         font: '18px Helvetica Neue',
         fill: 'black',
