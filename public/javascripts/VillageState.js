@@ -49,7 +49,7 @@ VillageState.prototype.preload = function() {
   game.load.image('house2', 'images/town/house2.png');
   game.load.image('house3', 'images/town/house3.png');
   game.load.image('hospital', 'images/town/hospital.png');
-  game.load.image('post_office', 'images/town/post_office.png');
+  game.load.image('mayor_office', 'images/town/mayor_office.png');
   game.load.image('splash', 'images/main/splash.png');
   game.load.image('well', 'images/town/well.png');
   game.load.image('lake', 'images/town/lake.png');
@@ -286,11 +286,12 @@ VillageState.prototype.create = function() {
   scaleTo(500, 300, lake);
   lake.input.useHandCursor = true;
 
-  var post_office = this.game.add.button(1250, 400, 'post_office', function() {
-
+  var mayor_office = this.game.add.button(1250, 400, 'mayor_office', function() {
+    saveLocation();
+    self.game.state.start('mayorDialogueState');
   });
-  scaleTo(300, 300, post_office);
-  post_office.input.useHandCursor = true;
+  scaleTo(300, 300, mayor_office);
+  mayor_office.input.useHandCursor = true;
 
   var fire = this.game.add.button(150, 980, 'fire', function() {
 
