@@ -447,28 +447,16 @@ VillageState.prototype.create = function() {
  * Update the Village
  */
 VillageState.prototype.update = function() {
-  if (cursors.up.isDown) {
+  if ((cursors.up.isDown || this.up.input.pointerOver()) && playerSprite.y > playerSprite.height/2) {
     playerSprite.y -= 4;
   }
-  if (cursors.down.isDown) {
+  if ((cursors.down.isDown || this.down.input.pointerOver()) && playerSprite.y < 1200 - playerSprite.height/2) {
     playerSprite.y += 4;
   }
-  if (cursors.left.isDown) {
+  if ((cursors.left.isDown || this.left.input.pointerOver()) && playerSprite.x > playerSprite.width/2) {
     playerSprite.x -= 4;
   }
-  if (cursors.right.isDown) {
-    playerSprite.x += 4;
-  }
-  if (this.up.input.pointerOver()) {
-    playerSprite.y -= 4;
-  }
-  if (this.down.input.pointerOver()) {
-    playerSprite.y += 4;
-  }
-  if (this.left.input.pointerOver()) {
-    playerSprite.x -= 4;
-  }
-  if (this.right.input.pointerOver()) {
+  if ((cursors.right.isDown || this.right.input.pointerOver()) && playerSprite.x < 1600 - playerSprite.width/2) {
     playerSprite.x += 4;
   }
 };
