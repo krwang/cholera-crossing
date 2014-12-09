@@ -64,6 +64,7 @@ VillageState.prototype.preload = function() {
   game.load.image('npc_bg1', 'images/town/npc_bg1.png');
   game.load.image('npc_bg2', 'images/town/npc_bg2.png');
   game.load.image('npc_bg3', 'images/town/npc_bg3.png');
+  game.load.image('caged_monster', 'images/start_dialogue/mayor_office_monster_caged_background.png');
 
   game.load.image('dog', 'images/town/dog.png');
   game.load.image('flamingo', 'images/town/flamingo.png');
@@ -413,12 +414,26 @@ VillageState.prototype.create = function() {
   scaleTo(60, 60, homeImage);
   homeImage.fixedToCamera = true;
 
+  var help_group = new Phaser.Group(this.game, null, 'help_group', true);
+  var help_bg = new Phaser.Image(this.game, 0, 0, 'caged_monster');
+  scaleTo(800, 600, help_bg);
+  help_group.add(help_bg);
+  help_group.visible = false;
+
+  this.helpDialogue = new Dialogue(
+    [{text: 'Travel around the village and see if you can gather evidence that Sal is innocent.', group: help_group}],
+    [{text: 'Okay, I\'m on it!',
+        nextState: 'villageState'}]
+  );
+
   var helpImage = this.game.add.button(720, 525, 'help', function() {
     saveLocation();
-    game.state.start('start');
+    self.game.playerData.dialogue = self.helpDialogue;
+    self.game.state.start('dialogueState');
   });
   scaleTo(60, 60, helpImage);
   helpImage.fixedToCamera = true;
+  helpImage.input.useHandCursor = true;
 
   function saveLocation() {
     game.playerData.location = {
