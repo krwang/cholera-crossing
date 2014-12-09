@@ -39,6 +39,8 @@ function VillageState(game) {
  * Pre-load any assets required by the game
  */
 VillageState.prototype.preload = function() {
+  game.load.audio('day-by-day', 'music/day-by-day.wav');
+
   game.load.image('up', 'images/dialogue/up-arrow.png');
   game.load.image('down', 'images/dialogue/down-arrow.png');
   game.load.image('left', 'images/dialogue/left-arrow.png');
@@ -108,6 +110,16 @@ VillageState.prototype.preload = function() {
  */
 VillageState.prototype.create = function() {
   var self = this;
+
+  if (!game.music) {
+    game.music = game.add.audio('day-by-day', 0.5, true);
+    game.music.play();
+  }
+  if (game.music.key != 'day-by-day') {
+    game.music.stop();
+    game.music = game.add.audio('day-by-day', 0.5, true);
+    game.music.play();
+  }
 
   var collectionGroup = new Phaser.Group(this.game, null, 'collectionGroup', true);
   var collectionBg = collectionGroup.create(0, 0, 'npc_bg1');

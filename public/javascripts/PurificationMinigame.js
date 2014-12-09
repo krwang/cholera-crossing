@@ -16,24 +16,21 @@ PurificationMinigame.prototype = {
 
    preload: function() { 
         // Function called first to load all the assets
+        game.load.audio('fashion-life', 'music/fashion-life.wav');
+
         game.load.image('background', 'images/filtration_minigame/filtration_background.png');
         game.load.image('toolbar_top', 'images/filtration_minigame/toolbar_top.png');
         game.load.image('toolbar_bottom', 'images/filtration_minigame/toolbar_bottom.png');
-        
         game.load.image('arrow_left', 'images/filtration_minigame/arrow_left.png');
         game.load.image('arrow_down', 'images/filtration_minigame/arrow_down.png');
-
         game.load.image('textbox100x210', 'images/filtration_minigame/textbox100x210.png');
         game.load.image('textbox125x250', 'images/filtration_minigame/textbox125x250.png');
         game.load.image('textbox100x225', 'images/filtration_minigame/textbox100x225.png');
-
-        game.load.image('bottle', 'images/filtration_minigame/bottle_blue.png');
         game.load.image('bowl', 'images/filtration_minigame/bowl.png');
         game.load.image('tank', 'images/filtration_minigame/tank.png');
         game.load.image('bucket', 'images/filtration_minigame/bucket.png');
         game.load.image('boiling_pot', 'images/filtration_minigame/boiling_pot.png');
         game.load.image('mom', 'images/filtration_minigame/catmom.png');
-
         game.load.image('helpButton', 'images/filtration_minigame/help_button.png');
         game.load.image('startButton', 'images/filtration_minigame/start_button.png');
         game.load.image('text-background', 'images/dialogue/dialogue-text-background.png');
@@ -44,7 +41,7 @@ PurificationMinigame.prototype = {
         // Function called after 'preload' to setup the game
         this.score = 0;
         this.firewoodLeft = 8;
-        this.containersLeft = 20;
+        this.containersLeft = 2;
         this.queue = [];
 
         this.background = game.add.sprite(0, 0, 'background');
@@ -65,6 +62,12 @@ PurificationMinigame.prototype = {
         this.fuelLeftText = game.add.text(25, 550, "");
 
         this.showHelpText();
+
+        if (this.game.music) {
+            this.game.music.stop();
+        }
+        this.game.music = game.add.audio('fashion-life', 0.5, true);
+        this.game.music.play();
     },
 
     showHelpText: function() {

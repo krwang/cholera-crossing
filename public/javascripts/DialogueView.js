@@ -33,6 +33,9 @@ function DialogueView(game, onDone) {
  * Pre-load any assets required by the dialogue
  */
 DialogueView.prototype.preload = function() {
+  this.game.load.audio('next-textbox', 'music/next-textbox.mp3');
+  this.game.load.audio('ok-sound', 'music/OK-effect.wav');
+
   this.game.load.image('big-button-background',
                      'images/dialogue/dialogue-big-button-background.png');
   this.game.load.image('button-background',
@@ -121,20 +124,23 @@ DialogueView.prototype.goForwards = function() {
   if (this.dialogue.canNext()) {
     this.dialogue.next();
     this.updateState();
+    playDialogueSound('next');
   }
 };
 
 /**
- * Go forward one step if possible
+ * Go backward one step if possible
  */
 DialogueView.prototype.goBack = function() {
   if (this.choicesGroup) {
     this.choicesGroup.destroy();
+    playDialogueSound('next');
   }
 
   if (this.dialogue.displayIndex > 0) {
     this.dialogue.displayIndex -= 1;
     this.updateState();
+    playDialogueSound('next');
   } else {
     if (!this.lastDialogue) {
       return;
@@ -143,6 +149,7 @@ DialogueView.prototype.goBack = function() {
     this.lastDialogue = null;
     this.dialogue.displayIndex = this.dialogue.displays.length - 1;
     this.updateState();
+    playDialogueSound('next');
   }
 };
 
@@ -241,6 +248,7 @@ DialogueView.prototype.displayPlayerChoices = function() {
     dialogueView.lastDialogue = dialogueView.dialogue;
     dialogueView.dialogue = choiceResult.dialogue;
     dialogueView.updateState();
+    playDialogueSound('ok');
   }
 
   var buttonHeight = (this.buttonHeight + this.buttonPadding) *
@@ -267,6 +275,17 @@ DialogueView.prototype.displayPlayerChoices = function() {
       this.game.world.bringToTop(this.group);
     }
   }
+};
+
+var playDialogueSound = function(key) {
+    var music;
+    if (key == 'ok') {
+      music = game.add.audio('ok-sound', 1, false);
+    }
+    else {
+      var music = game.add.audio('next-textbox', 1, false);
+    }
+    music.play();
 };
 
 /**
