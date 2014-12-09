@@ -8,9 +8,9 @@
 function PlayerData() {
   this.location = null;
   this.completedGames = {
-    tablets: false,
-    list: false,
-    bottle: false,
+    tablets: false, // water collection
+    list: false,    // Doctor minigame
+    bottle: false,  // water purification
   };
   this.inventory = {
     matches: false,
