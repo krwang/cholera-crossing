@@ -49,7 +49,7 @@ VillageState.prototype.preload = function() {
   game.load.image('house2', 'images/town/house2.png');
   game.load.image('house3', 'images/town/house3.png');
   game.load.image('hospital', 'images/town/hospital.png');
-  game.load.image('post_office', 'images/town/post_office.png');
+  game.load.image('mayor_office', 'images/town/mayor_office.png');
   game.load.image('splash', 'images/main/splash.png');
   game.load.image('well', 'images/town/well.png');
   game.load.image('lake', 'images/town/lake.png');
@@ -64,6 +64,7 @@ VillageState.prototype.preload = function() {
   game.load.image('npc_bg1', 'images/town/npc_bg1.png');
   game.load.image('npc_bg2', 'images/town/npc_bg2.png');
   game.load.image('npc_bg3', 'images/town/npc_bg3.png');
+  game.load.image('caged_monster', 'images/start_dialogue/mayor_office_monster_caged_background.png');
 
   game.load.image('dog', 'images/town/dog.png');
   game.load.image('flamingo', 'images/town/flamingo.png');
@@ -112,9 +113,10 @@ VillageState.prototype.create = function() {
   var collectionBg = collectionGroup.create(0, 0, 'npc_bg1');
   scaleTo(800, 600, collectionBg);
   var collection_p1 = collectionGroup.create(100, 150, 'player');
-  var collection_p2 = collectionGroup.create(500, 150, 'mom');
-  scaleTo(400, 300, collection_p1);
-  scaleTo(400, 300, collection_p2);
+  var collection_p2 = collectionGroup.create(600, 150, 'mom');
+  scaleTo(150, 300, collection_p1);
+  scaleTo(150, 300, collection_p2);
+  collection_p2.scale.x *= -1;
   collectionGroup.visible = false;
 
   if (game.playerData.inventory.waterbucket) {
@@ -176,9 +178,9 @@ VillageState.prototype.create = function() {
   var npc_bg2 = new Phaser.Image(this.game, 0, 0, 'npc_bg2');
   scaleTo(800, 600, npc_bg2);
   npc_group2.add(npc_bg2);
-  var flamingo_group2 = npc_group2.create(100, 150, 'flamingo');
+  var flamingo_group2 = npc_group2.create(500, 150, 'flamingo');
   scaleTo(400, 300, flamingo_group2);
-  var player_group = npc_group2.create(500, 150, 'player');
+  var player_group = npc_group2.create(100, 150, 'player');
   scaleTo(400, 300, player_group);
   npc_group2.visible = false;
 
@@ -286,11 +288,12 @@ VillageState.prototype.create = function() {
   scaleTo(500, 300, lake);
   lake.input.useHandCursor = true;
 
-  var post_office = this.game.add.button(1250, 400, 'post_office', function() {
-
+  var mayor_office = this.game.add.button(1250, 400, 'mayor_office', function() {
+    saveLocation();
+    self.game.state.start('mayorDialogueState');
   });
-  scaleTo(300, 300, post_office);
-  post_office.input.useHandCursor = true;
+  scaleTo(300, 300, mayor_office);
+  mayor_office.input.useHandCursor = true;
 
   var fire = this.game.add.button(150, 980, 'fire', function() {
 
@@ -411,12 +414,26 @@ VillageState.prototype.create = function() {
   scaleTo(60, 60, homeImage);
   homeImage.fixedToCamera = true;
 
+  var help_group = new Phaser.Group(this.game, null, 'help_group', true);
+  var help_bg = new Phaser.Image(this.game, 0, 0, 'caged_monster');
+  scaleTo(800, 600, help_bg);
+  help_group.add(help_bg);
+  help_group.visible = false;
+
+  this.helpDialogue = new Dialogue(
+    [{text: 'Travel around the village and see if you can gather evidence that Sal is innocent.', group: help_group}],
+    [{text: 'Okay, I\'m on it!',
+        nextState: 'villageState'}]
+  );
+
   var helpImage = this.game.add.button(720, 525, 'help', function() {
     saveLocation();
-    game.state.start('start');
+    self.game.playerData.dialogue = self.helpDialogue;
+    self.game.state.start('dialogueState');
   });
   scaleTo(60, 60, helpImage);
   helpImage.fixedToCamera = true;
+  helpImage.input.useHandCursor = true;
 
   function saveLocation() {
     game.playerData.location = {
@@ -430,28 +447,16 @@ VillageState.prototype.create = function() {
  * Update the Village
  */
 VillageState.prototype.update = function() {
-  if (cursors.up.isDown) {
+  if ((cursors.up.isDown || this.up.input.pointerOver()) && playerSprite.y > playerSprite.height/2) {
     playerSprite.y -= 4;
   }
-  if (cursors.down.isDown) {
+  if ((cursors.down.isDown || this.down.input.pointerOver()) && playerSprite.y < 1200 - playerSprite.height/2) {
     playerSprite.y += 4;
   }
-  if (cursors.left.isDown) {
+  if ((cursors.left.isDown || this.left.input.pointerOver()) && playerSprite.x > playerSprite.width/2) {
     playerSprite.x -= 4;
   }
-  if (cursors.right.isDown) {
-    playerSprite.x += 4;
-  }
-  if (this.up.input.pointerOver()) {
-    playerSprite.y -= 4;
-  }
-  if (this.down.input.pointerOver()) {
-    playerSprite.y += 4;
-  }
-  if (this.left.input.pointerOver()) {
-    playerSprite.x -= 4;
-  }
-  if (this.right.input.pointerOver()) {
+  if ((cursors.right.isDown || this.right.input.pointerOver()) && playerSprite.x < 1600 - playerSprite.width/2) {
     playerSprite.x += 4;
   }
 };

@@ -55,9 +55,6 @@ PurificationMinigame.prototype = {
         this.mom = game.add.sprite(25, 175, 'mom');
         this.boiler = game.add.sprite(50, 375, 'boiling_pot');
 
-        this.createNewContainer(400);
-        this.createNewContainer();
-
         this.scoreText = game.add.text(10, 5, "Your Score: " + this.score);
         this.lastScoreText = game.add.text(10, 35, "");
 
@@ -69,25 +66,16 @@ PurificationMinigame.prototype = {
         this.fuelLeftText = game.add.text(25, 550, "");
 
         this.showHelpText();
-        // this.graphics = game.add.graphics(0, 0);
-        // this.graphics.beginFill(0x000000);
-        // this.graphics.drawRect(0, 0, this.game.width, this.game.height);
-        // this.graphics.endFill();
-
-        // this.startButton = game.add.button(350, 400, 'startButton', this.showHelpText, this);
-
-        // this.instructionText = game.add.text(50, 50, instructions);
-        // this.instructionText.fill = 'white';
-        // this.instructionText.wordWrap = true;
-        // this.instructionText.wordWrapWidth = 700;
     },
 
     showHelpText: function() {
         this.gameStarted = false;
-        // this.instructionText.destroy();
-        // this.graphics.destroy();
         if (this.help) {
             this.help.destroy();
+        }
+
+        if (this.queue.length == 0) {
+            this.createNewContainer(400);
         }
 
         this.boil_textbox = game.add.sprite(5, 245, 'textbox100x210');
@@ -129,7 +117,11 @@ PurificationMinigame.prototype = {
         this.hitBox = new Phaser.Rectangle(325, 250, 175, 150);
         this.containersLeftText.setText("Containers Needed: " + this.containersLeft);
         this.fuelLeftText.setText("Firewood Left: " + this.firewoodLeft);
+
         this.gameStarted = true;
+        if (this.queue.length < 2) {
+            this.createNewContainer();
+        }
     },
     
     update: function() {
@@ -343,14 +335,7 @@ PurificationMinigame.prototype = {
 
     endGame: function() {
         var thisGame = this;
-        this.gameEnd = true;
-        // this.graphics = game.add.graphics(0, 0);
-        // this.graphics.beginFill(0x000000);
-        // this.graphics.drawRect(0, 0, this.game.width, this.game.height);
-        // this.graphics.endFill();
-
-        // this.endGameText = game.add.text(50, 100, "Thanks for your help bottling water! Your score: " + this.score);
-        // this.endGameText.fill = 'white';
+        this.gameEnded = true;
 
         var background = this.game.add.sprite(0, 0, 'background');
         scaleTo(800, 600, background);
@@ -363,13 +348,12 @@ PurificationMinigame.prototype = {
             wordWrap: true,
             wordWrapWidth: textBackground.width - 24
         });
-        this.game.add.button(720, 510, 'right-arrow', this.returnToHome);
-
-        // this.endButton = game.add.button(300, 400, 'startButton', this.returnToHome, this);
+        this.game.add.button(720, 510, 'right-arrow', this.returnToHome);    
     },
 
     returnToHome: function() {
-        this.gameEnd = false;
+        this.gameEnded = false;
+        this.gameStarted = false;
         game.playerData.completedGames.bottle = true;
         this.game.state.start('villageState');
 
