@@ -5,7 +5,6 @@ var PurificationMinigame = function(game) {
     this.containersLeft = 20;
     this.score = 0;
     this.gameStarted = false;
-    this.gameEnded = false;
 };
 
 var instructions = "Your mom needs your help deciding what water is safe to drink " + 
@@ -80,7 +79,7 @@ PurificationMinigame.prototype = {
 
         this.boil_textbox = game.add.sprite(5, 245, 'textbox100x210');
         this.boil_arrow = game.add.sprite(90, 350, 'arrow_down');
-        this.boil_text = game.add.text(10, 250, "Drag containers here to boil the water ");
+        this.boil_text = game.add.text(10, 250, "Drag containers here to boil the water");
         this.boil_text.wordWrap = true;
         this.boil_text.wordWrapWidth = 250;
 
@@ -126,7 +125,7 @@ PurificationMinigame.prototype = {
     
     update: function() {
         // Function called 60 times per second
-        if (this.gameStarted && !this.gameEnded) {
+        if (this.gameStarted) {
             this.updateQueue(this.queue);
         }
     },
@@ -269,7 +268,7 @@ PurificationMinigame.prototype = {
             container.y = 400;
         }
         else {
-            if (Phaser.Rectangle.intersects(container.getBounds(), this.boiler.getBounds())) {
+            if (this.firewoodLeft > 0 && Phaser.Rectangle.intersects(container.getBounds(), this.boiler.getBounds())) {
                 container.destroy();
                 this.firewoodLeft -= 1;
                 this.containersLeft -= 1;
@@ -319,7 +318,6 @@ PurificationMinigame.prototype = {
 
             if (this.containersLeft == 0) {
                 this.endGame();
-                this.gameEnded = true;
             }
         }
 
@@ -335,7 +333,7 @@ PurificationMinigame.prototype = {
 
     endGame: function() {
         var thisGame = this;
-        this.gameEnded = true;
+        this.gameStarted = false;
 
         var background = this.game.add.sprite(0, 0, 'background');
         scaleTo(800, 600, background);
@@ -352,8 +350,6 @@ PurificationMinigame.prototype = {
     },
 
     returnToHome: function() {
-        this.gameEnded = false;
-        this.gameStarted = false;
         game.playerData.completedGames.bottle = true;
         this.game.state.start('villageState');
 
