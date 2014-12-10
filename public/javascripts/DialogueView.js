@@ -123,10 +123,16 @@ DialogueView.prototype.create = function() {
  * Go forward one step if possible
  */
 DialogueView.prototype.goForwards = function() {
-  if (this.dialogue.canNext()) {
-    this.dialogue.next();
-    this.updateState();
-    playDialogueSound('next');
+  if (this.text.isDone()) {
+    if (this.dialogue.canNext()) {
+        this.dialogue.next();
+        this.updateState();
+        playDialogueSound('next');
+    }
+  } else {
+    // It's OVER 9000
+    this.text.displayProgress = 9001;
+    this.text.advanceText();
   }
 };
 
