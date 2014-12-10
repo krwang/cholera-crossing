@@ -313,6 +313,30 @@ DoctorMinigame.prototype = {
         result.dialogueView.create();
       }
 
+      function startIdleDialogue(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = new Dialogue(
+          [{text: "It looks like no one's home!"}]
+        );
+
+        // show the dialogue view on screen
+        result.dialogueView.create();
+
+      }
+
+      function startIdleHospital(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = new Dialogue(
+          [{text: "Have you spoken to all of your friends yet?",
+            group: doctorGroup}]
+        );
+
+        // show the dialogue view on screen
+        result.dialogueView.create();
+
+      }
+
+
       var returnToVillageState = (function(state) {
         return function(result) {
           state.background.visible = false;
@@ -346,9 +370,15 @@ DoctorMinigame.prototype = {
               startPreDoctorDialogue({dialogueView: this.dialogueView});
             }
           }
+          else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
+            // start idle
+            this.house_scene_2.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
+          }
           else {
-            // needs to enter hospital first, so just send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            // start idle
+            this.house_scene_1.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
           }
           break;
 
@@ -367,14 +397,16 @@ DoctorMinigame.prototype = {
           }
           else {
             // needs to talk to both NPC's first, so send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.hospital_room.bringToTop();
+            startIdleHospital({dialogueView: this.dialogueView});
           }
           break;
 
         case DoctorMinigame.StateEnum.SPOKE_NPC1:
           if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_2) {
             // already spoke to NPC1, send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.house_scene_1.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
           }
           else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
             // start second npc convo
@@ -383,7 +415,8 @@ DoctorMinigame.prototype = {
           }
           else {
             // needs to talk to both NPC's first, so send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.hospital_room.bringToTop();
+            startIdleHospital({dialogueView: this.dialogueView});
           }
           break;
 
@@ -395,22 +428,26 @@ DoctorMinigame.prototype = {
           }
           else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
             // already spoke to NPC2, send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.house_scene_2.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
           }
           else {
             // needs to talk to both NPC's first, so send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.hospital_room.bringToTop();
+            startIdleHospital({dialogueView: this.dialogueView});
           }
           break;
 
         case DoctorMinigame.StateEnum.SPOKE_BOTH:
           if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_2) {
             // already spoke to NPC1, send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.house_scene_1.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
           }
           else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
             // already spoke to NPC2, send back to village
-            returnToVillageState({dialogueView: this.dialogueView});
+            this.house_scene_2.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
           }
           else {
             // start final doctor dialogue
@@ -419,9 +456,21 @@ DoctorMinigame.prototype = {
           }
           break;
         case DoctorMinigame.StateEnum.FINISHED:
-          // start final doctor dialogue
-          this.hospital_room.bringToTop();
-          startFinishedDoctorDialogue({dialogueView: this.dialogueView});
+          if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_2) {
+            // already spoke to NPC1, send back to village
+            this.house_scene_1.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
+          }
+          else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
+            // already spoke to NPC2, send back to village
+            this.house_scene_2.bringToTop();
+            startIdleDialogue({dialogueView: this.dialogueView});
+          }
+          else {
+            // start final doctor dialogue
+            this.hospital_room.bringToTop();
+            startFinishedDoctorDialogue({dialogueView: this.dialogueView});
+          }
           break;
         default:
           throw new Error("Error in doctorMinigameState");
