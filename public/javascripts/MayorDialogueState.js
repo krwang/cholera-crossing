@@ -75,61 +75,62 @@ MayorDialogueState.prototype.createDialogue = function() {
       break;
     default:
       var finalDialogue = new Dialogue([{
-        text: 'Is that all the evidence you have?'
+        text: 'I\'m afraid that\'s not enough evidence.'
       }],
       [{
-        text: 'I guess I will come back with more information.',
+        text: 'I guess I\'ll come back with more information next time.',
         nextState: 'villageState'
       }]);
       break;
   }
   
+  var finalChoices = [{text: "That's all I have.", dialogue: finalDialogue}];
+
   switch (completedGames.tablets) {
-    case true:
-      var nextDialogue3 = finalDialogue;
-      break;
     case false:
-      var nextDialogue3 = new Dialogue([{
-        text: 'While I was collecting water with my friend, ' +
-            'I realized that a lot of the places that ' +
-            'people were collecting water from were dirty!',
-        dialogue: finalDialogue
-      }]);
+      var nextChoices3 = finalChoices;
+      break;
+    case true:
+      var nextChoices3 = [{
+        text: 'I helped boil and clean water. A lot of people ' +
+            'didn\'t boil their water, even if it was dirty. ' +
+            'It\'s the water that is making people sick.',
+        dialogue: new Dialogue([{text: "Anything else?"}], finalChoices)
+      }];
       break;
   }
 
   switch (completedGames.bottle) {
     case false:
-      var nextDialogue2 = nextDialogue3;
+      var nextChoices2 = nextChoices3;
       break;
     case true:
-      var nextDialogue2 = new Dialogue([{
+      var nextChoices2 = [{
         text: 'While I was collecting water with my friend, ' +
             'I realized that a lot of the places that ' +
             'people were collecting water from were dirty!',
-        dialogue: nextDialogue3
-      }]);
+        dialogue: new Dialogue([{text: "I'm following, go on."}], nextChoices3)
+      }];
       break;
   }
 
   switch (completedGames.list) {
     case false:
-      var nextDialogue = nextDialogue2;
+      var nextChoices = nextChoices2;
       break;
     case true:
-      var nextDialogue = new Dialogue([{
+      var nextChoices = [{
         text: 'From helping out the doctor I learned that ' +
               'some people got sick because they drank river water.',
-        dialogue: nextDialogue2
-      }]);
+        dialogue: new Dialogue([{text: "Ok, continue."}], nextChoices2)
+      }];
       break;
   }
 
   var doctorProceedDialogue = new Dialogue(
     [{
       text: 'Alright, proceed.',
-      dialogue: nextDialogue
-    }]
+    }], nextChoices
   );
 
   switch (numCompleted) {
