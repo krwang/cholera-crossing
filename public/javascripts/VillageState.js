@@ -437,7 +437,7 @@ VillageState.prototype.create = function() {
   );
 
   var helpImage = this.game.add.button(720, 520, 'help', function() {
-    self.saveLocation(playerSprite);
+    self.saveLocation(mayor_office.body);
     self.game.playerData.dialogue = self.helpDialogue;
     self.game.state.start('dialogueState');
   });
