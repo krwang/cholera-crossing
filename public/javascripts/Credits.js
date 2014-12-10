@@ -9,7 +9,7 @@ Credits.prototype.preload = function() {
   this.game.load.image('splash', 'images/main/splash.png');
   this.game.load.image('white', 'images/main/white.png');
   this.game.load.image('credits', 'images/main/credits.png');
-  this.game.load.image('restart', 'images/filtration_minigame/start_button.png');
+  this.game.load.image('restart', 'images/main/play_again.png');
 };
 
 Credits.prototype.create = function() {
