@@ -269,6 +269,7 @@ PurificationMinigame.prototype = {
         if (!this.gameStarted) {
             container.x = container.original_x;
             container.y = 400;
+            this.queue.push(container);
         }
         else {
             if (this.firewoodLeft > 0 && Phaser.Rectangle.intersects(container.getBounds(), this.boiler.getBounds())) {
