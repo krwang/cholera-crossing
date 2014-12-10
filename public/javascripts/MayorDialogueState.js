@@ -68,7 +68,7 @@ MayorDialogueState.prototype.createDialogue = function() {
       }],
       [{
         text: 'You\'re welcome, friend.',
-        nextState: 'winState'
+        nextState: 'end'
       }]
   );
 
