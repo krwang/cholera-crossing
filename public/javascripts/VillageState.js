@@ -58,7 +58,7 @@ VillageState.prototype.preload = function() {
   game.load.image('fire', 'images/town/campfire.png');
   game.load.image('land', 'images/collection_minigame/land.png');
   game.load.image('taskbar', 'images/town/taskbar.png');
-  game.load.image('player', 'images/bunnykid.png');
+  game.load.image('player', 'images/town/scaled/bunnykid.png');
   game.load.image('feet', 'images/town/feet.png');
   game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
   game.load.image('mayor', 'images/main/owlmayor.png');
@@ -104,13 +104,17 @@ VillageState.prototype.preload = function() {
                        'images/dialogue/player-left-arrow.png');
   game.load.image('right-arrow',
                        'images/dialogue/right-arrow.png');
+
+  game.load.physics('village_collisions', 'images/village_collisions.json');
 };
 
 /**
  * Create sprites and other game objects
  */
 VillageState.prototype.create = function() {
-  game.physics.startSystem(Phaser.Physics.ARCADE);
+  //game.physics.startSystem(Phaser.Physics.ARCADE);
+  game.physics.startSystem(Phaser.Physics.P2JS);
+
   var self = this;
 
   if (!game.music) {
@@ -282,9 +286,9 @@ VillageState.prototype.create = function() {
 
   house2 = this.game.add.sprite(80, 500, 'house2');
   scaleTo(300, 300, house2);
-  house3 = this.game.add.sprite(600, 1000, 'house3');
+  house3 = this.game.add.sprite(640, 1000, 'house3');
   scaleTo(300, 300, house3);
-  hospital = this.game.add.sprite(950, 50, 'hospital');
+  hospital = this.game.add.sprite(955, 53, 'hospital');
   scaleTo(500, 300, hospital);
   well = this.game.add.sprite(750, 700, 'well');
   scaleTo(300, 300, well);
@@ -301,12 +305,25 @@ VillageState.prototype.create = function() {
   flamingo = this.game.add.sprite(1350, 500, 'flamingo');
   scaleTo(100, 200, flamingo);
 
-  var features = [house, house2, house3, hospital, well, mayor_office, dog, monkey, flamingo];
+  var features = [house, house2, house3, hospital, mayor_office, well, dog, monkey, flamingo];
   for (var i = 0; i < features.length; i++) {
     var feature = features[i];
-    game.physics.arcade.enable(feature);
-    feature.body.collideWorldBounds = true;
-    feature.body.immovable = true;
+    //game.physics.arcade.enable(feature);
+    feature.x += feature.width/2
+    feature.y += feature.height/2
+
+    game.physics.p2.enableBody(feature);
+    feature.body.static = true;
+    feature.body.clearShapes();
+    feature.body.loadPolygon('village_collisions', feature.key);
+   
+    // feature.body.collideWorldBounds = true;
+    // feature.body.immovable = true;
+    // feature.body.moves = false;
+    // feature.body.setZeroVelocity();
+    // feature.body.setZeroRotation();
+    // feature.body.allowGravity = false;
+    // feature.body.allowRotation = false;
   }
 
   // var house3 = this.game.add.button(600, 980, 'house3', function() {
@@ -386,31 +403,94 @@ VillageState.prototype.create = function() {
   // scaleTo(100, 200, flamingo);
   // flamingo.input.useHandCursor = true;
 
-  var playerSpriteX = game.playerData.location ? game.playerData.location.x : 650;
-  var playerSpriteY = game.playerData.location ? game.playerData.location.y : 500;
+  var playerSpriteX = game.playerData.location ? game.playerData.location.x : 670;
+  var playerSpriteY = game.playerData.location ? game.playerData.location.y : 690;
 
   playerSprite = this.game.add.sprite(playerSpriteX, playerSpriteY, 'player');
-  scaleTo(300, 200, playerSprite);
+  console.log(playerSprite)
+  //scaleTo(300, 200, playerSprite);
+  game.physics.p2.enableBody(playerSprite);
+  playerSprite.body.clearShapes();
+  playerSprite.body.loadPolygon('village_collisions', playerSprite.key)
+  playerSprite.body.collideWorldBounds = true;
+
+  playerSprite.body.onBeginContact.add(function(body, shapeA, shapeB, equation) {
+    console.log(equation);
+    self.saveLocation(body);
+    switch (body){
+
+      case house.body: 
+        self.game.playerData.dialogue = self.waterPurificationDialogue;
+        self.game.state.start('dialogueState');
+        break;
+
+      case house2.body:
+        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_2;
+        self.game.state.start('doctorMinigame');
+        break;
+
+      case house3.body:
+        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_3;
+        self.game.state.start('doctorMinigame');
+        break;
+
+      case hospital.body:
+        self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOSPITAL;
+        self.game.state.start('doctorMinigame');
+        break;
+
+      case well.body:
+        self.game.playerData.dialogue = self.waterCollectionDialogue;
+        self.game.state.start('dialogueState');
+        break;
+
+      case dog.body:
+        self.game.playerData.inventory.matches = true;
+        self.game.playerData.dialogue = self.dogDialogue;
+        self.game.state.start('dialogueState');
+        break;
+
+      case monkey.body:
+        if (!self.game.playerData.inventory.waterbucket) {
+            self.game.playerData.inventory.waterbucket = true;
+            self.game.playerData.dialogue = self.monkeyBucketDialogue;
+            self.game.state.start('dialogueState');
+        } else {
+            self.game.playerData.inventory.waterbucket = true;
+            self.game.playerData.dialogue = self.monkeyBucketDialogue;
+            self.game.state.start('dialogueState');
+        }
+        break;
+
+      case flamingo.body:
+        self.game.playerData.inventory.paper = true;
+        self.game.playerData.dialogue = self.flamingoDialogue;
+        self.game.state.start('dialogueState');
+        break;
+    }
+  }, this);
+
+  // // playerSprite.anchor.setTo(0.5, 0.5);
+  // game.physics.arcade.enable(playerSprite);
   // playerSprite.anchor.setTo(0.5, 0.5);
-  game.physics.arcade.enable(playerSprite);
-  playerSprite.anchor.setTo(0.5, 0.5);
-  // playerSprite.body.center.x = playerSprite.body.x + playerSprite.width/2;
-  // playerSprite.body.position.x += 150;
-  // playerSprite.body.gravity.x = 0;
-  // playerSprite.body.gravity.y = 0;
-  // playerSprite.body.bounce.x = 0;
-  // playerSprite.body.bounce.y = 0;
-  // playerSprite.body.collideWorldBounds = true;
-  // playerSprite.body.checkCollision.up = false;
-  // playerSprite.body.checkCollision.left = false;
-  // playerSprite.body.checkCollision.right = false;
+  // // playerSprite.body.center.x = playerSprite.body.x + playerSprite.width/2;
+  // // playerSprite.body.position.x += 150;
+  // // playerSprite.body.gravity.x = 0;
+  // // playerSprite.body.gravity.y = 0;
+  // // playerSprite.body.bounce.x = 0;
+  // // playerSprite.body.bounce.y = 0;
+  // // playerSprite.body.collideWorldBounds = true;
+  // // playerSprite.body.checkCollision.up = false;
+  // // playerSprite.body.checkCollision.left = false;
+  // // playerSprite.body.checkCollision.right = false;
+
 
   
 
-  feet = this.game.add.sprite(playerSpriteX - 30, playerSpriteY + 85, 'feet');
-  scaleTo(50, 50, feet);
-  game.physics.arcade.enable(feet);
-  feet.body.collideWorldBounds = true;
+  // feet = this.game.add.sprite(playerSpriteX - 30, playerSpriteY + 85, 'feet');
+  // scaleTo(50, 50, feet);
+  // game.physics.arcade.enable(feet);
+  // feet.body.collideWorldBounds = true;
   // feet.anchor.setTo(0.5, 0.5);
   
 
@@ -513,91 +593,95 @@ VillageState.prototype.create = function() {
 VillageState.prototype.update = function() {
   var self = this;
   var SPEED = 100;
-  playerSprite.body.velocity.setTo(0, 0);
-  feet.body.velocity.setTo(0, 0);
+  //playerSprite.body.velocity.setTo(0, 0);
+  playerSprite.body.setZeroVelocity();
+  playerSprite.body.setZeroRotation();
+  //feet.body.velocity.setTo(0, 0);
   if ((cursors.up.isDown || this.up.input.pointerOver()) && playerSprite.y > playerSprite.height/2) {
     playerSprite.body.velocity.y = -1*SPEED;
-    feet.body.velocity.y = -1*SPEED;
+    //feet.body.velocity.y = -1*SPEED;
   }
   if ((cursors.down.isDown || this.down.input.pointerOver()) && playerSprite.y < 1200 - playerSprite.height/2) {
     playerSprite.body.velocity.y = SPEED;
-    feet.body.velocity.y = SPEED;
+    //feet.body.velocity.y = SPEED;
   }
   if ((cursors.left.isDown || this.left.input.pointerOver()) && playerSprite.x > playerSprite.width/2) {
     playerSprite.body.velocity.x = -1*SPEED;
-    feet.body.velocity.x = -1*SPEED;
+    //feet.body.velocity.x = -1*SPEED;
   }
   if ((cursors.right.isDown || this.right.input.pointerOver()) && playerSprite.x < 1600 - playerSprite.width/2) {
     playerSprite.body.velocity.x = SPEED;
-    feet.body.velocity.x = SPEED;
+    //feet.body.velocity.x = SPEED;
   }
 
-  game.physics.arcade.collide(feet, house, function() {
-    self.saveLocation();
-    self.game.playerData.dialogue = self.waterPurificationDialogue;
-    self.game.state.start('dialogueState');
-  });
 
-  game.physics.arcade.collide(feet, house2, function() {
-    self.saveLocation();
-    self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_2;
-    self.game.state.start('doctorMinigame');
-  });
 
-  game.physics.arcade.collide(feet, house3, function() {
-    self.saveLocation();
-    self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_3;
-    self.game.state.start('doctorMinigame');
-  });
+  // game.physics.arcade.collide(feet, house, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.dialogue = self.waterPurificationDialogue;
+  //   self.game.state.start('dialogueState');
+  // });
 
-  game.physics.arcade.collide(feet, hospital, function() {
-    self.saveLocation();
-    self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOSPITAL;
-    self.game.state.start('doctorMinigame');
-  });
+  // game.physics.arcade.collide(feet, house2, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_2;
+  //   self.game.state.start('doctorMinigame');
+  // });
 
-  game.physics.arcade.collide(feet, well, function() {
-    self.saveLocation();
-    self.game.playerData.dialogue = self.waterCollectionDialogue;
-    self.game.state.start('dialogueState');
-  });
+  // game.physics.arcade.collide(feet, house3, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOUSE_3;
+  //   self.game.state.start('doctorMinigame');
+  // });
 
-  game.physics.arcade.collide(feet, dog, function() {
-    self.saveLocation();
-    self.game.playerData.inventory.matches = true;
-    self.game.playerData.dialogue = self.dogDialogue;
-    self.game.state.start('dialogueState');
-  });
+  // game.physics.arcade.collide(feet, hospital, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.buildingJustEntered = VillageState.BuildingEnum.HOSPITAL;
+  //   self.game.state.start('doctorMinigame');
+  // });
 
-  if (!self.game.playerData.inventory.waterbucket) {
-    game.physics.arcade.collide(feet, monkey, function() {
-      self.saveLocation();
-      self.game.playerData.inventory.waterbucket = true;
-      self.game.playerData.dialogue = self.monkeyBucketDialogue;
-      self.game.state.start('dialogueState');
-    });
-  } else {
-    game.physics.arcade.collide(feet, monkey, function() {
-      self.saveLocation();
-      self.game.playerData.inventory.waterbucket = true;
-      self.game.playerData.dialogue = self.monkeyBucketDialogue;
-      self.game.state.start('dialogueState');
-    });
-  }
+  // game.physics.arcade.collide(feet, well, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.dialogue = self.waterCollectionDialogue;
+  //   self.game.state.start('dialogueState');
+  // });
 
-  game.physics.arcade.collide(feet, flamingo, function() {
-    self.saveLocation();
-    self.game.playerData.inventory.paper = true;
-    self.game.playerData.dialogue = self.flamingoDialogue;
-    self.game.state.start('dialogueState');
-  });
+  // game.physics.arcade.collide(feet, dog, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.inventory.matches = true;
+  //   self.game.playerData.dialogue = self.dogDialogue;
+  //   self.game.state.start('dialogueState');
+  // });
+
+  // if (!self.game.playerData.inventory.waterbucket) {
+  //   game.physics.arcade.collide(feet, monkey, function() {
+  //     self.saveLocation();
+  //     self.game.playerData.inventory.waterbucket = true;
+  //     self.game.playerData.dialogue = self.monkeyBucketDialogue;
+  //     self.game.state.start('dialogueState');
+  //   });
+  // } else {
+  //   game.physics.arcade.collide(feet, monkey, function() {
+  //     self.saveLocation();
+  //     self.game.playerData.inventory.waterbucket = true;
+  //     self.game.playerData.dialogue = self.monkeyBucketDialogue;
+  //     self.game.state.start('dialogueState');
+  //   });
+  // }
+
+  // game.physics.arcade.collide(feet, flamingo, function() {
+  //   self.saveLocation();
+  //   self.game.playerData.inventory.paper = true;
+  //   self.game.playerData.dialogue = self.flamingoDialogue;
+  //   self.game.state.start('dialogueState');
+  // });
 
 
 };
 
-VillageState.prototype.saveLocation = function() {
+VillageState.prototype.saveLocation = function(body) {
   this.game.playerData.location = {
-    x: playerSprite.x,
-    y: playerSprite.y,
+    x: body.x,
+    y: body.y + playerSprite.height/2,
   }
 }
