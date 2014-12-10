@@ -52,7 +52,10 @@ MayorDialogueState.prototype.createDialogue = function() {
   var completedGames = game.playerData.completedGames;
   Object.keys(completedGames).forEach(function(key) {
     if (completedGames[key]) {
-      numCompleted += 1;
+      if (key == "list" && game.playerData.doctorMinigameState != DoctorMinigame.StateEnum.FINISHED){
+      } else {
+        numCompleted += 1;
+      }
     }
   });
 
