@@ -47,18 +47,18 @@ MayorDialogueState.prototype.createDialogue = function() {
   var mayorOfficeMonsterUncagedGroup =
                     createBackgroundGroup('mayorOfficeMonsterUncaged');
 
-  var failureDialogue = new Dialogue(
-      [{
-        text: 'Really? That\'s all?'
-      }],
-      [{
-        text: 'I guess I will come back with more information',
-        nextState: 'villageState'
-      }]
-  );
+  var numCompleted = 0;
 
-  var mayorConvincedDialogue = new Dialogue(
-      [{
+  var completedGames = game.playerData.completedGames;
+  Object.keys(completedGames).forEach(function(key) {
+    if (completedGames[key]) {
+      numCompleted += 1;
+    }
+  });
+
+  switch (numCompleted) {
+    case 3:
+      var finalDialogue = new Dialogue([{
         text: 'I think, that with all this evidence we have to ' +
               'set the monster free. I\'m so sorry.',
         group: mayorOfficeMonsterUncagedGroup
@@ -69,106 +69,100 @@ MayorDialogueState.prototype.createDialogue = function() {
       [{
         text: 'You\'re welcome, friend.',
         nextState: 'credits'
-      }]
-  );
-
-
-  var maybeLibraryChoices = [{
-    text: 'I don\'t know',
-    dialogue: failureDialogue
-  }];
-
-  // Apparently library doesn't exist and was lies
-  if (true || this.game.playerData.completedGames.library) {
-    maybeLibraryChoices = [{
-      // text: 'I went to the library and found that according to ' +
-      //       'the books, the attacked villagers have cholera. ' +
-      //       'It\'s a disease caused by bad bacteria in water!',
-      text: 'Cholera is a disease I read about once. It is caused by ' +
-            'bad bacteria in water.',
-      dialogue: mayorConvincedDialogue
-    }];
+      }]);
+      break;
+    default:
+      var finalDialogue = new Dialogue([{
+        text: 'I\'m afraid that\'s not enough evidence.'
+      }],
+      [{
+        text: 'I guess I\'ll come back with more information next time.',
+        nextState: 'villageState'
+      }]);
+      break;
   }
+  
+  var finalChoices = [{text: "That's all I have.", dialogue: finalDialogue}];
 
-  var maybeLibraryDialogue = new Dialogue(
-    [{
-      text: 'But what is in the water?'
-    }],
-    maybeLibraryChoices
-  );
-  var maybePurificationChoices = [{
-    text: 'Oh…that is all I know',
-    dialogue: failureDialogue
-  }];
-
-  if (this.game.playerData.completedGames.tablets) {
-    maybePurificationChoices = [{
-      text: 'I helped boil and clean water. A lot of people ' +
+  switch (completedGames.tablets) {
+    case false:
+      var nextChoices3 = finalChoices;
+      break;
+    case true:
+      var nextChoices3 = [{
+        text: 'I helped boil and clean water. A lot of people ' +
             'didn\'t boil their water, even if it was dirty. ' +
             'It\'s the water that is making people sick.',
-      dialogue: maybeLibraryDialogue
-    }];
+        dialogue: new Dialogue([{text: "Anything else?"}], finalChoices)
+      }];
+      break;
   }
 
-  var maybePurificationDialogue = new Dialogue(
-    [{
-      text: 'Oh dear! That water is indeed very dirty.'
-    }],
-    maybePurificationChoices
-  );
-
-
-  var maybeCollectionChoices = [{
-    text: 'Oh…that is all I know',
-    dialogue: failureDialogue
-  }];
-
-  if (this.game.playerData.completedGames.bottle) {
-    maybeCollectionChoices = [{
-      text: 'While I was collecting water with my friend, ' +
+  switch (completedGames.bottle) {
+    case false:
+      var nextChoices2 = nextChoices3;
+      break;
+    case true:
+      var nextChoices2 = [{
+        text: 'While I was collecting water with my friend, ' +
             'I realized that a lot of the places that ' +
             'people were collecting water from were dirty!',
-      dialogue: maybePurificationDialogue
-    }];
+        dialogue: new Dialogue([{text: "I'm following, go on."}], nextChoices3)
+      }];
+      break;
   }
 
-  var maybeCollectionDialogue = new Dialogue(
-    [{
-      text: 'I see. Please continue.'
-    }],
-    maybeCollectionChoices
-  );
-
+  switch (completedGames.list) {
+    case false:
+      var nextChoices = nextChoices2;
+      break;
+    case true:
+      var nextChoices = [{
+        text: 'From helping out the doctor I learned that ' +
+              'some people got sick because they drank river water.',
+        dialogue: new Dialogue([{text: "Ok, continue."}], nextChoices2)
+      }];
+      break;
+  }
 
   var doctorProceedDialogue = new Dialogue(
     [{
-      text: 'Alright, proceed.'
-    }],
-    [{
-      text: 'From helping out the doctor I learned that ' +
-            'some people got sick because they drank river water.',
-      dialogue: maybeCollectionDialogue
-    }]
+      text: 'Alright, proceed.',
+    }], nextChoices
   );
 
-  var startChoices = [{
-    text: 'No…',
-    nextState: 'villageState'
-  }];
-
-  if (this.game.playerData.completedGames.list && this.game.playerData.doctorMinigameState == DoctorMinigame.StateEnum.FINISHED) {
-    startChoices = [{
-      text: 'I do! I can prove that the monster has not hurt the village!',
-      dialogue: doctorProceedDialogue
-    }];
+  switch (numCompleted) {
+    case 0:
+      var startChoices = [{
+        text: 'No…I\'ll explore the town more.',
+        nextState: 'villageState'
+      }];
+      break;
+    case 1:
+      var startChoices = [{
+        text: 'I think I\'m starting to get an idea of what\'s happening!',
+        dialogue: doctorProceedDialogue
+      }];
+      break;
+    case 2:
+      var startChoices = [{
+        text: 'I think I\'m almost there!',
+        dialogue: doctorProceedDialogue
+      }];
+      break;
+    case 3:
+      var startChoices = [{
+        text: 'I do! I can prove that the monster has not hurt the village!',
+        dialogue: doctorProceedDialogue
+      }];
+      break;
   }
 
   var startDialogue = new Dialogue(
     [{
       text: 'So, Kojo, do you know what is actually hurting Gora Gora?',
-      group: mayorOfficeMonsterCagedGroup
-    }],
-    startChoices
+      group: mayorOfficeMonsterCagedGroup,
+    }], startChoices
   );
 
   return startDialogue;
