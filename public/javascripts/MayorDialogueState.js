@@ -101,7 +101,7 @@ MayorDialogueState.prototype.createDialogue = function() {
     dialogue: failureDialogue
   }];
 
-  if (this.game.playerData.completedGames.bottle) {
+  if (this.game.playerData.completedGames.tablets) {
     maybePurificationChoices = [{
       text: 'I helped boil and clean water. A lot of people ' +
             'didn\'t boil their water, even if it was dirty. ' +
@@ -123,7 +123,7 @@ MayorDialogueState.prototype.createDialogue = function() {
     dialogue: failureDialogue
   }];
 
-  if (this.game.playerData.completedGames.tablets) {
+  if (this.game.playerData.completedGames.bottle) {
     maybeCollectionChoices = [{
       text: 'While I was collecting water with my friend, ' +
             'I realized that a lot of the places that ' +
