@@ -59,17 +59,21 @@ MayorDialogueState.prototype.createDialogue = function() {
   switch (numCompleted) {
     case 3:
       var finalDialogue = new Dialogue([{
-        text: 'I think, that with all this evidence we have to ' +
-              'set the monster free. I\'m so sorry.',
-        group: mayorOfficeMonsterUncagedGroup
-      },
-      {
-        text: 'It\'s alright. Thank you for helping me, Kojo.'
-      }],
-      [{
-        text: 'You\'re welcome, friend.',
-        nextState: 'credits'
-      }]);
+        text: 'That\'s quite a lot of evidence. What is in the water?'
+      }], [{
+        text: 'Cholera is a disease I read about once. It is caused by ' +
+          'bad bacteria in water.',
+        dialogue: new Dialogue([{
+          text: 'With all this evidence, I think we have to set the monster free. I\'m sorry, Sal.',
+          group: mayorOfficeMonsterUncagedGroup
+        },
+        {
+          text: 'It\'s alright. Thank you for helping me, Kojo.'
+        }],
+        [{
+          text: 'You\'re welcome, friend.',
+          nextState: 'credits'
+        }])}]);
       break;
     default:
       var finalDialogue = new Dialogue([{
