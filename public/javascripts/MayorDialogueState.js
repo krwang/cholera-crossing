@@ -15,7 +15,7 @@ MayorDialogueState.prototype.preload = function() {
   this.game.load.image('mayorOfficeMonsterCagedBackground',
                        'images/start_dialogue/mayor_office_monster_caged_background.png');
   this.game.load.image('mayorOfficeMonsterUncagedBackground',
-                       'images/start_dialogue/mayor_office_monster_uncaged_background.png');
+                       'images/start_dialogue/mayor_office_monster_uncaged.png');
   this.dialogueView.preload();
 };
 
@@ -68,7 +68,7 @@ MayorDialogueState.prototype.createDialogue = function() {
       }],
       [{
         text: 'You\'re welcome, friend.',
-        nextState: 'end'
+        nextState: 'credits'
       }]
   );
 

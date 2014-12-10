@@ -58,65 +58,31 @@ StartDialogueState.prototype.createDialogue = function() {
   var mayorOfficeMonsterCagedGroup =
                     createBackgroundGroup('mayorOfficeMonsterCaged');
 
-  // var mayorOkayWithItDialogue = new Dialogue(
-  //   [{
-  //     text: 'Hmm, I guess there’d be no reason to keep him here then.'
-  //   }],
-  //   [{
-  //     text: 'I\'ll figure it out!',
-  //     nextState: 'villageState'
-  //   }]
-  // );
-
-  // var mayorUnconvincedDialogue = new Dialogue(
-  //   [{
-  //     text: 'I’m not so sure…'
-  //   }],
-  //   [{
-  //     text: 'What if I can find out what’s really causing everyone to ' +
-  //           'get sick?',
-  //     dialogue: mayorOkayWithItDialogue
-  //   }]
-  // );
-
   var monsterSobbingDialogue = new Dialogue(
       [{
-        text: '...But what else could possibly be ' +
+        text: 'But what else could possibly be ' +
               'causing everyone to get sick?'
       }],
       [{
-        text: 'I don’t know, but I\'ll figure it out!',
+        text: 'I don’t know, but I\'ll figure it out.',
         nextState: 'villageState'
-        // dialogue: mayorOkayWithItDialogue,
       }]
   );
 
-  // var mayorWouldDialogue = new Dialogue(
-  //     [],
-  //     [{
-  //       text: 'Would an evil monster be crying like that?',
-  //       dialogue: monsterSobbingDialogue
-  //     }]
-  // );
-
   var mayorWhyDialogue = new Dialogue(
       [{
-        text: 'What? Then why did you bring him in?'
+        text: 'What? Then why did you bring him here?'
       }],
       [{
-        text: 'So you would convince everyone that he’s innocent!',
+        text: 'So you can convince everyone that he is innocent!',
         dialogue: monsterSobbingDialogue
       }]
   );
 
   var wahhhhhDialogue = new Dialogue(
       [
-      // {
-      //   text: 'WAHHHHH!!!!',
-      //   group: mayorOfficeMonsterCagedGroup
-      // },
       {
-        text: 'Good work. You brought in the monster that was making everyone sick!',
+        text: 'Good work, Kojo. You helped us capture the monster that was making everyone sick!',
         group: mayorOfficeMonsterCagedGroup
       }],
       [{
@@ -125,82 +91,32 @@ StartDialogueState.prototype.createDialogue = function() {
       }]
   );
 
-  // var beforeMayorDialogue = new Dialogue(
-  //     [{
-  //       text: 'Are you sure this is a good idea?',
-  //       group: mayorOfficeOutsideGroup
-  //     }],
-  //     [{
-  //       text: 'Don’t worry! Me and the mayor go way back. He’s a great guy.',
-  //       dialogue: wahhhhhDialogue
-  //     }]
-  // );
-
   var willYouHelpDialogue = new Dialogue(
       [{
-        text: 'Everyone’s blaming me for everyone being sick and ' +
-              'so they’re trying to chase me out of town. '+ 
-              'Will you help me clear my name?',
+        text: 'Everyone is saying I made villagers get sick. They\'re trying to'
+        + 'chase me out of town! Can you help me clear my name?',
               group: monsterListeningGroup,
       }],
       [{
-        text: 'Of course! I know just the person to talk to.',
+        text: 'Of course! I know someone who can help!',
         group: mayorOfficeOutsideGroup,
         dialogue: wahhhhhDialogue,
       }]
   );
 
-  // var expositionDialogue = new Dialogue(
-  //     [{
-  //       text: 'Everyone’s blaming me for everyone being sick and ' +
-  //             'so they’re trying to chase me out of town.'
-  //     }],
-  //     [{
-  //       text: 'That’s terrible!',
-  //       dialogue: willYouHelpDialogue
-  //     }]
-  // );
-
-  // var monsterDoesntThinkDialogue = new Dialogue(
-  //     [{
-  //       text: 'You don’t think I did it?',
-  //       group: monsterListeningGroup
-  //     }],
-  //     [{
-  //       text: 'Did what?',
-  //       dialogue: willYouHelpDialogue
-  //     }]
-  // );
-
   var startDialogue = new Dialogue(
     [
       {
-        text: 'Oh no! I’ve been spotted! Please don’t hurt me! I didn’t do it! I’m innocent!',
+        text: 'Oh no! I’ve been spotted! Please don’t hurt me! I didn’t do it!',
         group: monsterHidingGroup
       },
-      // {
-      //   text: ''
-      // }
     ],
     [{
-      text: 'Why would I hurt you? And why were those people chasing ' +
+      text: 'Huh? Why would I hurt you? Why were people chasing ' +
             'you?',
       dialogue: willYouHelpDialogue
     }]
   );
-
-  // var startDialogue = new Dialogue(
-  //   [{
-  //     text: 'That was a close one. I don’t know how much longer I can ' +
-  //           'keep running away like this.',
-  //     group: monsterRunningGroup
-  //   }],
-  //   [{
-  //     text: 'Excuse me, who are you? I haven’t seen you around the ' +
-  //           'village before.',
-  //     dialogue: monsterSpottedDialogue
-  //   }]
-  // );
 
   return startDialogue;
 };

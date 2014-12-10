@@ -15,7 +15,7 @@ var gameStates = {
   startDialogueState: StartDialogueState,
   mayorDialogueState: MayorDialogueState,
   start: start,
-  end: end
+  credits: Credits
 };
 
 game.music = undefined;

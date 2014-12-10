@@ -68,6 +68,7 @@ VillageState.prototype.preload = function() {
   game.load.image('clue', 'images/town/clue.png');
   game.load.image('item', 'images/town/item.png');
   game.load.image('help', 'images/town/help.png');
+  game.load.image('map', 'images/town/map.png');
   game.load.image('home', 'images/town/home.png');
 
   game.load.image('paper', 'images/town/paper.png');
@@ -77,6 +78,8 @@ VillageState.prototype.preload = function() {
   game.load.image('tablets', 'images/town/tablets.png');
   game.load.image('bottle', 'images/town/dirty_water.png');
   game.load.image('list', 'images/town/list.png');
+
+  game.load.image('startButton', 'images/filtration_minigame/start_button.png');
 
   this.game.load.image('big-button-background',
                        'images/dialogue/dialogue-big-button-background.png');
@@ -98,7 +101,6 @@ VillageState.prototype.preload = function() {
  * Create sprites and other game objects
  */
 VillageState.prototype.create = function() {
-  //game.physics.startSystem(Phaser.Physics.ARCADE);
   game.physics.startSystem(Phaser.Physics.P2JS);
 
   var self = this;
@@ -201,7 +203,7 @@ VillageState.prototype.create = function() {
   if (!game.playerData.inventory.paper) {
     this.flamingoDialogue = new Dialogue(
       [{text: 'Hey, Kojo. Can you do me a favor? The doctor ordered paper, but I\'m ' + 
-      'currently stuck fixing a flat tire. Can you go take it to him?', group: npc_group2}],
+      'currently stuck here. Can you go take it to him?', group: npc_group2}],
         [{text: 'No problem!', nextState: 'villageState'}]
     );
   } else {
@@ -246,17 +248,17 @@ VillageState.prototype.create = function() {
   this.game.add.tileSprite(0, 0, 1600, 1200, 'town_map');
   this.game.world.setBounds(0, 0, 1600, 1300);
 
-  house = this.game.add.sprite(450, 300, 'house');
+  house = this.game.add.sprite(440, 300, 'house');
   scaleTo(300, 300, house);
   house2 = this.game.add.sprite(80, 500, 'house2');
   scaleTo(300, 300, house2);
-  house3 = this.game.add.sprite(640, 1000, 'house3');
+  house3 = this.game.add.sprite(645, 1000, 'house3');
   scaleTo(300, 300, house3);
-  hospital = this.game.add.sprite(955, 53, 'hospital');
+  hospital = this.game.add.sprite(965, 60, 'hospital');
   scaleTo(500, 300, hospital);
-  well = this.game.add.sprite(750, 700, 'well');
+  well = this.game.add.sprite(850, 700, 'well');
   scaleTo(300, 300, well);
-  mayor_office = this.game.add.sprite(1250, 400, 'mayor_office');
+  mayor_office = this.game.add.sprite(1300, 420, 'mayor_office');
   scaleTo(300, 300, mayor_office);
   dog = this.game.add.sprite(100, 950, 'dog');
   scaleTo(100, 200, dog);
@@ -266,7 +268,7 @@ VillageState.prototype.create = function() {
     monkey = this.game.add.sprite(800, 430, 'monkey');
   }
   scaleTo(100, 200, monkey);
-  flamingo = this.game.add.sprite(1350, 500, 'flamingo');
+  flamingo = this.game.add.sprite(1200, 450, 'flamingo');
   scaleTo(100, 200, flamingo);
 
   var features = [house, house2, house3, hospital, mayor_office, well, dog, monkey, flamingo];
@@ -323,6 +325,10 @@ VillageState.prototype.create = function() {
       case well.body:
         self.game.playerData.dialogue = self.waterCollectionDialogue;
         self.game.state.start('dialogueState');
+        break;
+
+      case mayor_office.body:
+        self.game.state.start('mayorDialogueState');
         break;
 
       case dog.body:
@@ -418,9 +424,23 @@ VillageState.prototype.create = function() {
     }
   });
 
-  var homeImage = this.game.add.sprite(630, 525, 'home');
+  var mapGroup = new Phaser.Group(this.game, null, 'mapGroup', true);
+  var map = game.add.sprite(0, 0, 'map');
+  scaleTo(800, 600, map);
+  mapGroup.add(map);
+  var mapButton = game.add.button(700, 500, 'home', function() {
+    mapGroup.visible = false;
+  });
+  mapButton.input.useHandCursor = true;
+  mapGroup.add(mapButton);
+  mapGroup.visible = false;
+
+  var homeImage = this.game.add.button(630, 525, 'home', function() {
+    mapGroup.visible = true;
+  });
   scaleTo(60, 60, homeImage);
   homeImage.fixedToCamera = true;
+  homeImage.input.useHandCursor = true;
 
   var help_group = new Phaser.Group(this.game, null, 'help_group', true);
   var help_bg = new Phaser.Image(this.game, 0, 0, 'caged_monster');
@@ -435,7 +455,7 @@ VillageState.prototype.create = function() {
   );
 
   var helpImage = this.game.add.button(720, 525, 'help', function() {
-    saveLocation();
+    self.saveLocation(playerSprite);
     self.game.playerData.dialogue = self.helpDialogue;
     self.game.state.start('dialogueState');
   });
@@ -449,7 +469,7 @@ VillageState.prototype.create = function() {
  */
 VillageState.prototype.update = function() {
   var self = this;
-  var SPEED = 100;
+  var SPEED = 200;
   playerSprite.body.setZeroVelocity();
   playerSprite.body.setZeroRotation();
   if ((cursors.up.isDown || this.up.input.pointerOver()) && playerSprite.y > playerSprite.height/2) {
