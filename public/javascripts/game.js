@@ -18,6 +18,8 @@ var gameStates = {
   end: end
 };
 
+game.music = undefined;
+
 /**
  * Game-global registry of player-related data
  */
@@ -29,7 +31,7 @@ Object.keys(gameStates).forEach(function(stateName) {
   game.state.add(stateName, stateConstructor);
 });
 
-game.state.start('start');
+game.state.start('villageState');
 
 WebFontConfig = {
     google: {
