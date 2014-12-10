@@ -116,7 +116,7 @@ MayorDialogueState.prototype.createDialogue = function() {
       break;
   }
 
-  switch (completedGames.list) {
+  switch (completedGames.list && this.game.playerData.doctorMinigameState == DoctorMinigame.StateEnum.FINISHED) {
     case false:
       var nextChoices = nextChoices2;
       break;
