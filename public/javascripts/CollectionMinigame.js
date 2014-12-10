@@ -8,7 +8,7 @@ var stage = function(game) {
 stage.prototype = {
 
     preload: function() {
-        game.load.audio('peaceful-now', 'music/peaceful-now.wav');
+        // game.load.audio('peaceful-now', 'music/peaceful-now.wav');
 
         game.load.image('land', 'images/collection_minigame/land.png');
         game.load.image('river', 'images/collection_minigame/river.png');
@@ -38,11 +38,11 @@ stage.prototype = {
     },
 
     create: function() {
-        if (this.game.music) {
-            this.game.music.stop();
-        }
-        this.game.music = game.add.audio('peaceful-now', 0.5, true);
-        this.game.music.play();
+        // if (this.game.music) {
+        //     this.game.music.stop();
+        // }
+        // this.game.music = game.add.audio('peaceful-now', 0.5, true);
+        // this.game.music.play();
 
         game.add.sprite(0, 0, 'land');
         

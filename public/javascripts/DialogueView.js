@@ -291,10 +291,10 @@ DialogueView.prototype.displayPlayerChoices = function() {
 var playDialogueSound = function(key) {
     var music;
     if (key == 'ok') {
-      music = game.add.audio('ok-sound', 1, false);
+      music = game.add.audio('ok-sound', 0.5, false);
     }
     else {
-      var music = game.add.audio('next-textbox', 1, false);
+      var music = game.add.audio('next-textbox', 0.5, false);
     }
     music.play();
 };

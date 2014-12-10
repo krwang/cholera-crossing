@@ -39,7 +39,7 @@ function VillageState(game) {
  * Pre-load any assets required by the game
  */
 VillageState.prototype.preload = function() {
-  game.load.audio('day-by-day', 'music/day-by-day.wav');
+  game.load.audio('african-skies', 'music/african-skies.mp3');
 
   game.load.image('up', 'images/dialogue/up-arrow.png');
   game.load.image('down', 'images/dialogue/down-arrow.png');
@@ -118,12 +118,12 @@ VillageState.prototype.create = function() {
   var self = this;
 
   if (!game.music) {
-    game.music = game.add.audio('day-by-day', 0.5, true);
+    game.music = game.add.audio('african-skies', 0.25, true);
     game.music.play();
   }
-  if (game.music.key != 'day-by-day') {
+  if (game.music.key != 'african-skies') {
     game.music.stop();
-    game.music = game.add.audio('day-by-day', 0.5, true);
+    game.music = game.add.audio('african-skies', 0.25, true);
     game.music.play();
   }
 
