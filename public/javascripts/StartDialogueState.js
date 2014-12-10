@@ -58,13 +58,14 @@ StartDialogueState.prototype.createDialogue = function() {
   var mayorOfficeMonsterCagedGroup =
                     createBackgroundGroup('mayorOfficeMonsterCaged');
 
+
+
   var monsterSobbingDialogue = new Dialogue(
       [{
-        text: 'But what else could possibly be ' +
-              'causing everyone to get sick?'
+        text: 'Can you prove that Sal isn\'t to blame? Use the arrow keys to explore the village. Bring back any evidence you find.'
       }],
       [{
-        text: 'I don’t know, but I\'ll figure it out.',
+        text: 'I\'ll figure it out and I\'ll be back!',
         nextState: 'villageState'
       }]
   );

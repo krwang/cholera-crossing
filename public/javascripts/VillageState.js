@@ -289,8 +289,8 @@ VillageState.prototype.create = function() {
   var fire = this.game.add.sprite(150, 980, 'fire');
   scaleTo(150, 150, fire);
 
-  var playerSpriteX = game.playerData.location ? game.playerData.location.x : 670;
-  var playerSpriteY = game.playerData.location ? game.playerData.location.y : 690;
+  var playerSpriteX = game.playerData.location ? game.playerData.location.x : 1450;
+  var playerSpriteY = game.playerData.location ? game.playerData.location.y : 630;
 
   playerSprite = this.game.add.sprite(playerSpriteX, playerSpriteY, 'player');
   game.physics.p2.enableBody(playerSprite);
