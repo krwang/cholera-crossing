@@ -431,7 +431,7 @@ VillageState.prototype.create = function() {
   help_group.visible = false;
 
   this.helpDialogue = new Dialogue(
-    [{text: 'Travel around the village and see if you can gather evidence that Sal is innocent.', group: help_group}],
+    [{text: 'Use the arrow keys to travel around the village and see if you can gather evidence that Sal is innocent. Talk to other villagers or explore buildings to find clues!', group: help_group}],
     [{text: 'Okay, I\'m on it!',
         nextState: 'villageState'}]
   );
