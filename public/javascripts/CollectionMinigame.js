@@ -213,7 +213,7 @@ var features = {
     },
     well: {
         name: "well",
-        description: "This is a well.",
+        description: "The well! Good thing I brought along a bucket...",
         safeWater: function(x, y) {
             return true;
         },
