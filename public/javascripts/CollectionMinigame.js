@@ -290,7 +290,7 @@ var winModal = function(button, featureName) {
     }));
     modal.add(new Phaser.Button(button.game, 720, 510, 'right-arrow', function(button) {
         modal.destroy();
-        game.playerData.completedGames.tablets = true;
+        game.playerData.completedGames.bottle = true;
         game.state.start('villageState');
     }));
     modal.visible = true;

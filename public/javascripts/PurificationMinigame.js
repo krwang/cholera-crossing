@@ -353,7 +353,7 @@ PurificationMinigame.prototype = {
     },
 
     returnToHome: function() {
-        game.playerData.completedGames.bottle = true;
+        game.playerData.completedGames.tablets = true;
         this.game.state.start('villageState');
 
     },
