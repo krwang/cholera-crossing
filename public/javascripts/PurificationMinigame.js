@@ -116,7 +116,7 @@ PurificationMinigame.prototype = {
         
         this.help = game.add.button(726, 5, "helpButton", this.showHelpText, this);
 
-        this.hitBox = new Phaser.Rectangle(325, 250, 175, 150);
+        this.hitBox = new Phaser.Rectangle(325, 200, 175, 150);
         this.containersLeftText.setText("Containers Needed: " + this.containersLeft);
         this.fuelLeftText.setText("Firewood Left: " + this.firewoodLeft);
 
