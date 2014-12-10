@@ -81,17 +81,19 @@ MayorDialogueState.prototype.createDialogue = function() {
         text: 'I guess I will come back with more information.',
         nextState: 'villageState'
       }]);
+      break;
   }
   
   switch (completedGames.tablets) {
     case true:
       var nextDialogue3 = finalDialogue;
+      break;
     case false:
       var nextDialogue3 = new Dialogue([{
         text: 'While I was collecting water with my friend, ' +
             'I realized that a lot of the places that ' +
             'people were collecting water from were dirty!',
-        dialogue: nextDialogue2
+        dialogue: finalDialogue
       }]);
       break;
   }
@@ -105,7 +107,7 @@ MayorDialogueState.prototype.createDialogue = function() {
         text: 'While I was collecting water with my friend, ' +
             'I realized that a lot of the places that ' +
             'people were collecting water from were dirty!',
-        dialogue: nextDialogue2
+        dialogue: nextDialogue3
       }]);
       break;
   }
@@ -122,8 +124,6 @@ MayorDialogueState.prototype.createDialogue = function() {
       }]);
       break;
   }
-
-console.log(nextDialogue);
 
   var doctorProceedDialogue = new Dialogue(
     [{
@@ -150,6 +150,7 @@ console.log(nextDialogue);
         text: 'I think I\'m almost there!',
         dialogue: doctorProceedDialogue
       }];
+      break;
     case 3:
       var startChoices = [{
         text: 'I do! I can prove that the monster has not hurt the village!',
