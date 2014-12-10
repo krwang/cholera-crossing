@@ -424,24 +424,6 @@ VillageState.prototype.create = function() {
     }
   });
 
-  var mapGroup = new Phaser.Group(this.game, null, 'mapGroup', true);
-  var map = game.add.sprite(0, 0, 'map');
-  scaleTo(800, 600, map);
-  mapGroup.add(map);
-  var mapButton = game.add.button(700, 500, 'home', function() {
-    mapGroup.visible = false;
-  });
-  mapButton.input.useHandCursor = true;
-  mapGroup.add(mapButton);
-  mapGroup.visible = false;
-
-  var homeImage = this.game.add.button(630, 520, 'home', function() {
-    mapGroup.visible = true;
-  });
-  scaleTo(60, 60, homeImage);
-  homeImage.fixedToCamera = true;
-  homeImage.input.useHandCursor = true;
-
   var help_group = new Phaser.Group(this.game, null, 'help_group', true);
   var help_bg = new Phaser.Image(this.game, 0, 0, 'caged_monster');
   scaleTo(800, 600, help_bg);
@@ -462,6 +444,28 @@ VillageState.prototype.create = function() {
   scaleTo(60, 60, helpImage);
   helpImage.fixedToCamera = true;
   helpImage.input.useHandCursor = true;
+
+  var mapGroup = new Phaser.Group(this.game, null, 'mapGroup', true);
+  var map = game.add.sprite(0, 0, 'map');
+  scaleTo(800, 600, map);
+  mapGroup.add(map);
+  var mapButton = game.add.button(720, 520, 'home', function() {
+    mapGroup.visible = false;
+    helpImage.visible = true;
+  });
+  scaleTo(60, 60, mapButton)
+  mapButton.input.useHandCursor = true;
+  mapGroup.add(mapButton);
+  mapGroup.visible = false;
+
+  var homeImage = this.game.add.button(630, 520, 'home', function() {
+    mapGroup.visible = true;
+    helpImage.visible = false;
+
+  });
+  scaleTo(60, 60, homeImage);
+  homeImage.fixedToCamera = true;
+  homeImage.input.useHandCursor = true;
 };
 
 /**
