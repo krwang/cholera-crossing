@@ -199,7 +199,7 @@ DoctorMinigame.prototype = {
             [{
                text: 'Yes, I\'m curious to know what is happening.',
                dialogue: new Dialogue(
-                [{text: 'Here\'s list of symptons to look out for. ' + 
+                [{text: 'Here\'s list of symptoms to look out for. ' + 
                 'If they show some or all of these symptoms, tell them to come to me right away!',
                 group: this.symptomsAloneGroup,
                 nextState: DoctorMinigame.StateEnum.INITIATED
