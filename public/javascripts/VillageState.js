@@ -283,7 +283,6 @@ VillageState.prototype.create = function() {
 
   var lake = this.game.add.sprite(1100, 1000, 'lake');
   scaleTo(500, 300, lake);
-  lake.input.useHandCursor = true;
 
   var fire = this.game.add.sprite(150, 980, 'fire');
   scaleTo(150, 150, fire);
@@ -298,7 +297,6 @@ VillageState.prototype.create = function() {
   playerSprite.body.collideWorldBounds = true;
 
   playerSprite.body.onBeginContact.add(function(body, shapeA, shapeB, equation) {
-    console.log(equation);
     self.saveLocation(body);
     switch (body){
 
