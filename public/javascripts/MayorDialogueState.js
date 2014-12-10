@@ -14,6 +14,8 @@ function MayorDialogueState(game) {
 MayorDialogueState.prototype.preload = function() {
   this.game.load.image('mayorOfficeMonsterCagedBackground',
                        'images/start_dialogue/mayor_office_monster_caged_background.png');
+  this.game.load.image('mayorOfficeMonsterUncagedBackground',
+                       'images/start_dialogue/mayor_office_monster_uncaged_background.png');
   this.dialogueView.preload();
 };
 
@@ -72,23 +74,25 @@ MayorDialogueState.prototype.createDialogue = function() {
 
 
   var maybeLibraryChoices = [{
-    text: 'Oh…that is all I know',
+    text: 'I don\'t know',
     dialogue: failureDialogue
   }];
 
-  if (this.game.playerData.completedGames.library) {
+  // Apparently library doesn't exist and was lies
+  if (true || this.game.playerData.completedGames.library) {
     maybeLibraryChoices = [{
-      text: 'I went to the library and found that according to ' +
-            'the books, the attacked villagers have cholera. ' +
-            'It\'s a disease caused by bad bacteria in water!',
+      // text: 'I went to the library and found that according to ' +
+      //       'the books, the attacked villagers have cholera. ' +
+      //       'It\'s a disease caused by bad bacteria in water!',
+      text: 'Cholera is a disease I read about once. It is caused by ' +
+            'bad bacteria in water.',
       dialogue: mayorConvincedDialogue
     }];
   }
 
   var maybeLibraryDialogue = new Dialogue(
     [{
-      text: 'I think that with all this evidence we have to ' +
-            'set the monster free. I\'m so sorry'
+      text: 'But what is in the water?'
     }],
     maybeLibraryChoices
   );
