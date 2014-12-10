@@ -37,7 +37,7 @@ DoctorMinigame.prototype = {
       game.load.image('house_scene_2', 'images/doctor_minigame/inside_home_2.png');
       game.load.image('hospital_room', 'images/doctor_minigame/hospital_room.png');
       game.load.image('giraffe_doctor', 'images/doctor_minigame/giraffedoctor.png');
-      game.load.image('symptoms_button', 'images/filtration_minigame/help_button.png');
+      game.load.image('symptoms_button', 'images/doctor_minigame/list_button.png');
       game.load.image('symptoms_list', 'images/doctor_minigame/symptomsList.png');
   },
 
@@ -145,9 +145,12 @@ DoctorMinigame.prototype = {
 
       this.symptomsGroup = new Phaser.Group(this.game, null, 'symptomsGroup', true);
 
+      this.symptomsAloneGroup = new Phaser.Group(this.game, null, 'symptomsAlone', true);
+      this.symptomsAloneGroup.visible = false;
+      this.symptomsAloneGroup.create(0, 0, "symptoms_list");
+
       if (this.game.playerData.doctorMinigameState != DoctorMinigame.StateEnum.NOT_INITIATED) {
         //create symptoms list to be shown
-        console.log('made button')
         this.symptomsListButton = game.add.button(726, 5, "symptoms_button", showSymptoms, this);
         this.symptomsGroup.add(this.symptomsListButton);
         this.symptomsGroup.bringToTop(this.symptomsListButton);
@@ -210,6 +213,7 @@ DoctorMinigame.prototype = {
          }
         ]
       );
+      
 
       var dialogue1 = new Dialogue([],
         [{text: DoctorMinigameDialogues.player_npc1_player_1, 
@@ -233,7 +237,22 @@ DoctorMinigame.prototype = {
                   [{text:DoctorMinigameDialogues.player_npc1_npc1_4, 
                   group:cat2,
                   nextState:DoctorMinigame.StateEnum.SPOKE_NPC1}]
-                )}]
+                )},
+                {text:DoctorMinigameDialogues.player_npc1_player_5,
+                  group:cat2,
+                  dialogue: new Dialogue(
+                    [{text: "Are you sure Ebo shouldn't go to the doctor? Look again at the symptoms list.",
+                      group: this.symptomsAloneGroup}],
+                    [{text:DoctorMinigameDialogues.player_npc1_player_4, 
+                      group:cat4,
+                      dialogue: new Dialogue(
+                        [{text:DoctorMinigameDialogues.player_npc1_npc1_4, 
+                        group:cat2,
+                        nextState:DoctorMinigame.StateEnum.SPOKE_NPC1}]
+                      )
+                    }]
+                  )
+                }]
               )}]
             )}]
           )
@@ -262,7 +281,22 @@ DoctorMinigame.prototype = {
                   [{text:DoctorMinigameDialogues.player_npc2_npc2_4, 
                   group:monkey1,
                   nextState:DoctorMinigame.StateEnum.SPOKE_NPC2}]
-                )}]
+                )},
+                {text:DoctorMinigameDialogues.player_npc2_player_5,
+                  group:monkey1,
+                  dialogue: new Dialogue(
+                    [{text: "Are you sure Bodua shouldn't take his sister to the doctor? Look again at the symptoms list.",
+                      group: this.symptomsAloneGroup}],
+                    [{text:DoctorMinigameDialogues.player_npc2_player_4, 
+                      group:monkey1,
+                      dialogue: new Dialogue(
+                        [{text:DoctorMinigameDialogues.player_npc2_npc2_4, 
+                        group:monkey1,
+                        nextState:DoctorMinigame.StateEnum.SPOKE_NPC2}]
+                      )
+                    }]
+                  )
+                }]
               )}]
             )}]
           )
@@ -311,6 +345,28 @@ DoctorMinigame.prototype = {
 
         // show the dialogue view on screen
         result.dialogueView.create();
+      }
+
+      function startIdleReturnDialogue(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = new Dialogue(
+          [{text: "It looks like no one's home! Maybe you should return later after you talk to other people in town."}]
+        );
+
+        // show the dialogue view on screen
+        result.dialogueView.create();
+
+      }
+
+      function startIdleDialogue(result) {
+        // assign the global dialogue
+        result.dialogueView.game.playerData.dialogue = new Dialogue(
+          [{text: "It looks like no one's home!"}]
+        );
+
+        // show the dialogue view on screen
+        result.dialogueView.create();
+
       }
 
       function startIdleDialogue(result) {
@@ -373,12 +429,12 @@ DoctorMinigame.prototype = {
           else if (this.game.playerData.buildingJustEntered == VillageState.BuildingEnum.HOUSE_3) {
             // start idle
             this.house_scene_2.bringToTop();
-            startIdleDialogue({dialogueView: this.dialogueView});
+            startIdleReturnDialogue({dialogueView: this.dialogueView});
           }
           else {
             // start idle
             this.house_scene_1.bringToTop();
-            startIdleDialogue({dialogueView: this.dialogueView});
+            startIdleReturnDialogue({dialogueView: this.dialogueView});
           }
           break;
 

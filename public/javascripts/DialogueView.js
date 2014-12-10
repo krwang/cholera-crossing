@@ -13,13 +13,15 @@ function DialogueView(game, onDone) {
   this.onDone = onDone;
 
   this.width = this.game.width - 20;
-  this.height = 96;
+  this.height = 176;
 
   this.x = 10;
   this.y = this.game.height - this.height;
 
   this.buttonHeight = 40;
   this.buttonPadding = 8;
+
+  this.bigButtonLength = 66;
 
   this.leftButton = null;
   this.rightButton = null;
@@ -132,18 +134,22 @@ DialogueView.prototype.goForwards = function() {
  * Go backward one step if possible
  */
 DialogueView.prototype.goBack = function() {
-  if (this.choicesGroup) {
-    this.choicesGroup.destroy();
-    playDialogueSound('next');
-  }
 
   if (this.dialogue.displayIndex > 0) {
+    if (this.choicesGroup) {
+      this.choicesGroup.destroy();
+      playDialogueSound('next');
+    }
     this.dialogue.displayIndex -= 1;
     this.updateState();
     playDialogueSound('next');
   } else {
     if (!this.lastDialogue) {
       return;
+    }
+    if (this.choicesGroup) {
+      this.choicesGroup.destroy();
+      playDialogueSound('next');
     }
     this.dialogue = this.lastDialogue;
     this.lastDialogue = null;
@@ -251,15 +257,20 @@ DialogueView.prototype.displayPlayerChoices = function() {
     playDialogueSound('ok');
   }
 
-  var buttonHeight = (this.buttonHeight + this.buttonPadding) *
-                      choicesText.length;
+  var buttonHeight = 0;
+  for (var i = 0; i < choicesText.length; i++) {
+    buttonHeight += ((choicesText[i].length > this.bigButtonLength) ? this.buttonHeight * 2 : this.buttonHeight) + this.buttonPadding;
+  }
 
   for (var i = 0; i < choicesText.length; i++) {
     var x = this.game.width / 2;
     var y = this.y + this.height / 2 - buttonHeight / 2 +
-            (i + 0.5) * (this.buttonHeight + this.buttonPadding);
+            (i + 0.5) * (((choicesText[i].length > this.bigButtonLength) ? this.buttonHeight * 2 : this.buttonHeight) + this.buttonPadding);
+    if (i > 0) {
+      y += choicesText[i-1].length > this.bigButtonLength && choicesText[i].length <= this.bigButtonLength ? this.buttonHeight : 0;
+    }
     // This will probably leak an insignificant amount of memory
-    var choiceButton = new LabelButton(this.game, x, y, (choicesText[i].length > 65) ?
+    var choiceButton = new LabelButton(this.game, x, y, (choicesText[i].length > this.bigButtonLength) ?
                                         'big-button-background' : 'button-background',
                                        choicesText[i], chooseCallback,
                                        {choiceIndex: i});

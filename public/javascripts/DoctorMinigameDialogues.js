@@ -22,6 +22,8 @@ player_npc1_player_4: 'You should go see Doctor Akwasi! ' +
 										'I think you have the same sickness that alot of the town has been getting. ' +
 										'The doctor said this is very serious! ',
 
+player_npc1_player_5: 'I think you will be better soon. Just stay home and get rest.',
+
 player_npc1_npc1_4: 'I\'ll go over right now. Thanks Kojo!',
 
 
@@ -42,6 +44,8 @@ player_npc2_npc2_3: 'She did last night, but it went away this morning, so she m
 player_npc2_player_4: 'I spoke with Dr. Akwasi today and he said that other people in town ' +
 										'are getting sick too. You need to take your sister to him! ' + 
 										'It\'s very serious because she might die if she gets too dehydrated.',
+
+player_npc2_player_5: 'It\'s probably nothing, don\'t worry about bringing her to the doctor.',
 
 player_npc2_npc2_4: 'I had no idea! I\'ll take her right now. Thanks!',
 
