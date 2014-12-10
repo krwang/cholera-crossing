@@ -181,7 +181,7 @@ var features = {
     },
     river: {
         name: "river",
-        description: "The river! Why isn\'t it blue?",
+        description: "Oops! Looks like someone is peeing in the river.",
         safeWater: function(x, y) {
             return false;
         },
