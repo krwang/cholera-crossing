@@ -173,7 +173,7 @@ stage.prototype = {
 var features = {
     lake: {
         name: "lake",
-        description: "This is a lake.",
+        description: "I wish I could go swimming in this lake but it looks a bit dirty...",
         safeWater: function(x, y) {
             return false;
         },
@@ -181,7 +181,7 @@ var features = {
     },
     river: {
         name: "river",
-        description: "This is a river.",
+        description: "The river! Why isn\'t it blue?",
         safeWater: function(x, y) {
             return false;
         },
@@ -189,7 +189,7 @@ var features = {
     },
     latrines: {
         name: "latrines",
-        description: "These are latrines.",
+        description: "Latrines! Hm...there\'s no handwashing station though...",
         safeWater: function(x, y) {
             return false;
         },
@@ -197,7 +197,7 @@ var features = {
     },
     house: {
         name: "house",
-        description: "This is a house.",
+        description: "It looks like there isn\'t any water in this house...",
         safeWater: function(x, y) {
             return false;
         },
@@ -205,7 +205,7 @@ var features = {
     },
     waterPump: {
         name: "water pump",
-        description: "This is a water pump. You notice some rust.",
+        description: "It\'s a water spout! However, I\'m afraid it might be a bit rusty...",
         safeWater: function(x, y) {
             return false;
         },
