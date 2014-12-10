@@ -201,7 +201,9 @@ DoctorMinigame.prototype = {
                dialogue: new Dialogue(
                 [{text: 'Here\'s list of symptoms to look out for. ' + 
                 'If they show some or all of these symptoms, tell them to come to me right away!',
-                group: this.symptomsAloneGroup,
+                group: this.symptomsAloneGroup},
+                {text: 'Come see me again once you\'ve talked to all of your friends.',
+                group: doctorGroup,
                 nextState: DoctorMinigame.StateEnum.INITIATED
                 }])
              },
@@ -286,7 +288,8 @@ DoctorMinigame.prototype = {
                 {text:DoctorMinigameDialogues.player_npc2_player_5,
                   group:monkey1,
                   dialogue: new Dialogue(
-                    [{text: "Are you sure Bodua shouldn't take his sister to the doctor? Look again at the symptoms list.",
+                    [{text: "Are you sure Bodua shouldn't take his sister to the doctor? Look again at the symptoms list. "+
+                      "It's better to be safe than sorry!",
                       group: this.symptomsAloneGroup}],
                     [{text:DoctorMinigameDialogues.player_npc2_player_4, 
                       group:monkey1,
@@ -370,21 +373,10 @@ DoctorMinigame.prototype = {
 
       }
 
-      function startIdleDialogue(result) {
-        // assign the global dialogue
-        result.dialogueView.game.playerData.dialogue = new Dialogue(
-          [{text: "It looks like no one's home!"}]
-        );
-
-        // show the dialogue view on screen
-        result.dialogueView.create();
-
-      }
-
       function startIdleHospital(result) {
         // assign the global dialogue
         result.dialogueView.game.playerData.dialogue = new Dialogue(
-          [{text: "Have you spoken to all of your friends yet?",
+          [{text: "Have you spoken to all of your friends yet? Come see me again once you\'ve talked to all of your friends.",
             group: doctorGroup}]
         );
 
