@@ -493,6 +493,6 @@ VillageState.prototype.update = function() {
 VillageState.prototype.saveLocation = function(body) {
   this.game.playerData.location = {
     x: body.x,
-    y: body.y + playerSprite.height/2,
+    y: Math.min(body.y + playerSprite.height/2, 1200 - playerSprite.height/2)
   }
 }

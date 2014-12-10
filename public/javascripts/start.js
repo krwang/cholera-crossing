@@ -9,6 +9,9 @@ start.prototype = {
     },
 
     create: function() {
+        //reset the players progress
+        game.playerData = new PlayerData();
+        
         var splash = game.add.sprite(0, 0, 'splash');
         var splashScale = getImageScale(800, 600, splash);
         splash.scale.setTo(splashScale, splashScale);
