@@ -156,7 +156,7 @@ MayorDialogueState.prototype.createDialogue = function() {
     nextState: 'villageState'
   }];
 
-  if (this.game.playerData.completedGames.list) {
+  if (this.game.playerData.completedGames.list && this.game.playerData.doctorMinigameState == DoctorMinigame.StateEnum.FINISHED) {
     startChoices = [{
       text: 'I do! I can prove that the monster has not hurt the village!',
       dialogue: doctorProceedDialogue

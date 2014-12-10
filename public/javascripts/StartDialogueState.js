@@ -93,7 +93,7 @@ StartDialogueState.prototype.createDialogue = function() {
 
   var willYouHelpDialogue = new Dialogue(
       [{
-        text: 'Everyone is saying I made villagers get sick. They\'re trying to'
+        text: 'Everyone is saying I made villagers get sick. They\'re trying to '
         + 'chase me out of town! Can you help me clear my name?',
               group: monsterListeningGroup,
       }],

@@ -217,7 +217,8 @@ var features = {
         safeWater: function(x, y) {
             return true;
         },
-        explanationWater: "The well is a perfect place to get water from! Thanks for helping!",
+        explanationWater: "The well is a perfect place to get water from! Thanks for helping! "+
+        "Here, take a bottle of this water since we know it is clean.",
     },
 }
 

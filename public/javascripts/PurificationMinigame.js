@@ -343,7 +343,8 @@ PurificationMinigame.prototype = {
 
         var mom = game.add.sprite(25, 175, 'mom');
         var textBackground = this.game.add.sprite(110, 506, 'text-background');
-        this.game.add.text(110+12, 506+12, 'Thanks for your help bottling water!', {
+        this.game.add.text(110+12, 506+12, 'Thanks for your help bottling water! Always make sure water is safe before drinking it. ' +
+            'Take these water purification tablets. Use them to treat water that might not be clean!', {
             font: '18px Helvetica Neue',
             fill: 'black',
             wordWrap: true,

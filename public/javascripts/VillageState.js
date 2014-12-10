@@ -236,7 +236,7 @@ VillageState.prototype.create = function() {
     this.dogDialogue = new Dialogue(
       [{text: 'Fire is very important. We can use fire to boil water that is safe to drink and even cook our meals.', group: npc_group3},
       {text: ' But it can also be very dangerous. You should never play with fire by yourself.', group: npc_group3},
-      {text: 'Be sure to only use these with adult supervision.', group: npc_group3}],
+      {text: 'Here are some matches Kojo. Be sure to only use these with adult supervision.', group: npc_group3}],
       [{text: 'Got it, thanks!', nextState: 'villageState'}]
     );
   } else {
@@ -387,18 +387,18 @@ VillageState.prototype.create = function() {
   var inventory = game.playerData.inventory;
 
   for (var i = 0; i < 3; i++) {
-    var x = 310 + 90*i;
+    var x = 310 + 100*i;
     var inventoryImage = this.game.add.sprite(x, 520, 'item');
-    scaleTo(70, 70, inventoryImage);
+    scaleTo(60, 60, inventoryImage);
     inventoryImage.fixedToCamera = true;
   }
 
   var i = 0;
   Object.keys(inventory).forEach(function(key) {
     if (inventory[key]) {
-      var x = 315 + 90*i;
+      var x = 315 + 100*i;
       var inventoryImage = this.game.add.sprite(x, 525, key);
-      scaleTo(60, 60, inventoryImage);
+      scaleTo(50, 50, inventoryImage);
       inventoryImage.fixedToCamera = true;
       i++;
     }
@@ -409,7 +409,7 @@ VillageState.prototype.create = function() {
   for (var j = 0; j < 3; j++) {
     var x = 20 + 90*j;
     var clueImage = this.game.add.sprite(x, 520, 'clue');
-    scaleTo(70, 70, clueImage);
+    scaleTo(60, 60, clueImage);
     clueImage.fixedToCamera = true;
   }
 
@@ -418,7 +418,7 @@ VillageState.prototype.create = function() {
     if (completedGames[key]) {
       var x = 25 + 90*j;
       var clueImage = this.game.add.sprite(x, 525, key);
-      scaleTo(60, 60, clueImage);
+      scaleTo(50, 50, clueImage);
       clueImage.fixedToCamera = true;
       j++;
     }
@@ -435,7 +435,7 @@ VillageState.prototype.create = function() {
   mapGroup.add(mapButton);
   mapGroup.visible = false;
 
-  var homeImage = this.game.add.button(630, 525, 'home', function() {
+  var homeImage = this.game.add.button(630, 520, 'home', function() {
     mapGroup.visible = true;
   });
   scaleTo(60, 60, homeImage);
@@ -454,7 +454,7 @@ VillageState.prototype.create = function() {
         nextState: 'villageState'}]
   );
 
-  var helpImage = this.game.add.button(720, 525, 'help', function() {
+  var helpImage = this.game.add.button(720, 520, 'help', function() {
     self.saveLocation(playerSprite);
     self.game.playerData.dialogue = self.helpDialogue;
     self.game.state.start('dialogueState');
