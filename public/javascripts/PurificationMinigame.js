@@ -16,7 +16,7 @@ PurificationMinigame.prototype = {
 
    preload: function() { 
         // Function called first to load all the assets
-        game.load.audio('fashion-life', 'music/fashion-life.wav');
+        // game.load.audio('fashion-life', 'music/fashion-life.wav');
 
         game.load.image('background', 'images/filtration_minigame/filtration_background.png');
         game.load.image('toolbar_top', 'images/filtration_minigame/toolbar_top.png');
@@ -41,7 +41,7 @@ PurificationMinigame.prototype = {
         // Function called after 'preload' to setup the game
         this.score = 0;
         this.firewoodLeft = 8;
-        this.containersLeft = 2;
+        this.containersLeft = 20;
         this.queue = [];
 
         this.background = game.add.sprite(0, 0, 'background');
@@ -63,11 +63,11 @@ PurificationMinigame.prototype = {
 
         this.showHelpText();
 
-        if (this.game.music) {
-            this.game.music.stop();
-        }
-        this.game.music = game.add.audio('fashion-life', 0.5, true);
-        this.game.music.play();
+        // if (this.game.music) {
+        //     this.game.music.stop();
+        // }
+        // this.game.music = game.add.audio('fashion-life', 0.5, true);
+        // this.game.music.play();
     },
 
     showHelpText: function() {

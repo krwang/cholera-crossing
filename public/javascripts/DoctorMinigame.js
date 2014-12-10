@@ -22,7 +22,7 @@ DoctorMinigame.StateEnum = {
 
 DoctorMinigame.prototype = {
   preload: function() {
-      game.load.audio('exhale', 'music/exhale.wav');
+      // game.load.audio('exhale', 'music/exhale.wav');
 
       game.load.image('cat_happy', 'images/doctor_minigame/vectorcat-happy.png');
       game.load.image('cat_stomachache', 'images/doctor_minigame/vectorcat-stomachache.png');
@@ -42,11 +42,11 @@ DoctorMinigame.prototype = {
   },
 
   create: function() {
-      if (this.game.music) {
-        this.game.music.stop();
-      }
-      this.game.music = game.add.audio('exhale', 0.5, true);
-      this.game.music.play();
+      // if (this.game.music) {
+      //   this.game.music.stop();
+      // }
+      // this.game.music = game.add.audio('exhale', 0.5, true);
+      // this.game.music.play();
 
       //create the sprites and position them
       this.cat1 = game.add.sprite(0, 0, 'cat_happy');
